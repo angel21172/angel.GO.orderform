@@ -133,6 +133,18 @@ tr:hover td{background:#fff5f7}
 .empty-state{text-align:center;padding:3rem 1rem;color:#c2426d;opacity:.6}
 .empty-state .ei{font-size:3rem;margin-bottom:.5rem}
 .category-section{margin-bottom:.5rem}
+.category-folder{background:#fff;border:1.5px solid #ffc0d5;border-radius:14px;margin:0 1.5rem .75rem;overflow:hidden;transition:box-shadow .2s}
+.category-folder.open{box-shadow:0 4px 18px rgba(232,103,154,.15)}
+.folder-header{display:flex;align-items:center;gap:.75rem;padding:.85rem 1.1rem;cursor:pointer;user-select:none;transition:background .15s}
+.folder-header:hover{background:#fff5f8}
+.folder-icon{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.folder-info{flex:1;min-width:0}
+.folder-name{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.folder-count{font-size:.75rem;color:#c2426d;margin-top:1px}
+.folder-arrow{font-size:1rem;color:#e8679a;transition:transform .25s;flex-shrink:0}
+.category-folder.open .folder-arrow{transform:rotate(180deg)}
+.folder-body{display:none;padding:.25rem 1rem .85rem}
+.category-folder.open .folder-body{display:block}
 .category-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;padding:.75rem 1.5rem .4rem;display:flex;align-items:center;gap:.5rem}
 .category-title::after{content:'';flex:1;height:1px;background:#ffc0d5}
 .notes-box{background:#fff0f5;border:1.5px solid #f4a0c0;border-radius:12px;padding:1rem 1.2rem;margin:0 0 1rem;font-size:.8rem;color:#5c0e27;line-height:1.7}
@@ -191,8 +203,8 @@ tr:hover td{background:#fff5f7}
     <div class="section-title">✿ Available Items</div>
     <input class="search-bar" placeholder="🔍 Search items…" oninput="filterProducts(this.value)" />
   </div>
-  <div class="products-grid" id="customer-products">
-    <div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>Loading products…</p></div>
+  <div id="customer-products" style="padding-bottom:2rem">
+    <div class="empty-state"><div class="ei">🌸</div><p>Loading products…</p></div>
   </div>
 </div>
 
@@ -331,9 +343,8 @@ tr:hover td{background:#fff5f7}
       <div id="receipt-content"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
-        <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save / Share Image</button>
+        <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
       </div>
-      <div style="margin-top:.6rem;font-size:.75rem;color:#888;line-height:1.5" id="save-hint"></div>
     </div>
   </div>
 </div>
@@ -508,10 +519,20 @@ function productCardHtml(p){
   </div>`;
 }
 
+/* Category emoji map for folder icons */
+const CAT_EMOJI={'Plushies':'🧸','Stationery':'✏️','Accessories':'💍','Keychains':'🔑','Bags':'👜','Clothes':'👗','Shoes':'👟','Figures':'🗿','Cards':'🃏','Pins':'📌','Others':'📦'};
+function catEmoji(cat){return CAT_EMOJI[cat]||'🛍';}
+
+function toggleFolder(el){
+  const folder=el.closest('.category-folder');
+  folder.classList.toggle('open');
+}
+
 function renderCustomerProducts(filter=''){
-  const grid=document.getElementById('customer-products');
-  const items=state.products.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase())||((p.category||'').toLowerCase().includes(filter.toLowerCase())));
-  if(!items.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';return;}
+  const wrap=document.getElementById('customer-products');
+  const f=filter.toLowerCase();
+  const items=state.products.filter(p=>!f||p.name.toLowerCase().includes(f)||((p.category||'').toLowerCase().includes(f)));
+  if(!items.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🌸</div><p>No products found.</p></div>';return;}
 
   // Group by category
   const grouped={};
@@ -522,27 +543,30 @@ function renderCustomerProducts(filter=''){
   });
   const cats=Object.keys(grouped).sort((a,b)=>a==='Others'?1:b==='Others'?-1:a.localeCompare(b));
 
-  // If only one category (or all uncategorized), render flat
-  if(cats.length===1&&cats[0]==='Others'){
-    grid.innerHTML=items.map(productCardHtml).join('');
+  // If searching or only one "Others" bucket, show flat grid
+  if(f||(cats.length===1&&cats[0]==='Others')){
+    wrap.innerHTML=`<div class="products-grid" style="padding:0 1.5rem 1rem">${items.map(productCardHtml).join('')}</div>`;
     return;
   }
 
-  // Multi-category: render with section headers
-  grid.innerHTML='';
-  grid.style.display='block';
-  cats.forEach(cat=>{
-    const section=document.createElement('div');
-    section.className='category-section';
-    section.innerHTML=`<div class="category-title">✿ ${esc(cat)}</div><div class="products-grid" style="padding:0 0 .5rem">${grouped[cat].map(productCardHtml).join('')}</div>`;
-    grid.appendChild(section);
-  });
+  // Folder accordion view
+  wrap.innerHTML=cats.map((cat,i)=>`
+    <div class="category-folder${i===0?' open':''}">
+      <div class="folder-header" onclick="toggleFolder(this)">
+        <div class="folder-icon">${catEmoji(cat)}</div>
+        <div class="folder-info">
+          <div class="folder-name">${esc(cat)}</div>
+          <div class="folder-count">${grouped[cat].length} item${grouped[cat].length!==1?'s':''}</div>
+        </div>
+        <div class="folder-arrow">▼</div>
+      </div>
+      <div class="folder-body">
+        <div class="products-grid" style="padding:0">${grouped[cat].map(productCardHtml).join('')}</div>
+      </div>
+    </div>`).join('');
 }
-function filterProducts(val){
-  const grid=document.getElementById('customer-products');
-  grid.style.display='';
-  renderCustomerProducts(val);
-}
+
+function filterProducts(val){renderCustomerProducts(val);}
 
 function renderAdminProducts(){
   const tbody=document.getElementById('admin-prod-tbody');
@@ -710,7 +734,7 @@ async function submitOrder(){
   ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id=>document.getElementById(id).value='');
 }
 
-function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('save-hint').textContent='';document.getElementById('receipt-modal').classList.add('open');}
+function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('receipt-modal').classList.add('open');}
 function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
 
 function buildReceiptHtml(o){
@@ -741,72 +765,21 @@ function buildReceiptHtml(o){
   </div>`;
 }
 
-/* ── UPDATED: opens receipt as image in a new browser tab ── */
 async function saveReceiptAsImage(){
   const o=state.currentReceiptOrder;if(!o)return;
   const btn=document.getElementById('save-img-btn');
-  const hint=document.getElementById('save-hint');
-  btn.disabled=true;btn.textContent='⏳ Generating…';hint.textContent='';
+  btn.disabled=true;btn.textContent='⏳ Generating…';
   try{
-    const canvas=await html2canvas(document.getElementById('receipt-printable'),{
-      backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false
-    });
-    const dataUrl=canvas.toDataURL('image/png');
-
-    /* Try native Share API first (mobile browsers, incl. Chrome on Android) */
-    if(navigator.canShare && navigator.share){
-      canvas.toBlob(async blob=>{
-        const file=new File([blob],'AngelShop-'+o.goNum+'.png',{type:'image/png'});
-        if(navigator.canShare({files:[file]})){
-          try{
-            await navigator.share({files:[file],title:'Angel Shop — '+o.goNum});
-            btn.disabled=false;btn.textContent='📥 Save / Share Image';
-            return;
-          }catch(shareErr){/* user cancelled or not supported, fall through */}
-        }
-        openImageInTab(dataUrl,o.goNum);
-        btn.disabled=false;btn.textContent='📥 Save / Share Image';
-      },'image/png');
-    } else {
-      openImageInTab(dataUrl,o.goNum);
-      btn.disabled=false;btn.textContent='📥 Save / Share Image';
-    }
-  }catch(e){
-    alert('Could not generate image. Please try again.');
-    btn.disabled=false;btn.textContent='📥 Save / Share Image';
-  }
+    const canvas=await html2canvas(document.getElementById('receipt-printable'),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+    openImageInTab(canvas.toDataURL('image/png'),o.goNum);
+  }catch(e){alert('Could not generate image. Please try again.');}
+  btn.disabled=false;btn.textContent='📥 Save as Image';
 }
 
 function openImageInTab(dataUrl,goNum){
-  /* Opens the receipt image in a new tab.
-     From there the user can:
-     • Long-press (mobile) → Save Image / Share → Messenger/Facebook
-     • Right-click (desktop) → Save Image As…
-     • Use the browser's share button to send via any app */
   const win=window.open('','_blank');
-  if(!win){
-    /* Popup blocked fallback – direct download */
-    const a=document.createElement('a');a.download='AngelShop-'+goNum+'.png';a.href=dataUrl;a.click();
-    document.getElementById('save-hint').textContent='Image downloaded! You can now share it via Messenger or Facebook.';
-    return;
-  }
-  win.document.write(`<!DOCTYPE html>
-<html><head><meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>AngelShop-${goNum}</title>
-<style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#fff0f5;display:flex;flex-direction:column;align-items:center;padding:1.5rem;font-family:sans-serif;gap:1rem}
-  img{max-width:480px;width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
-  p{font-size:.85rem;color:#c2426d;text-align:center;line-height:1.5;max-width:380px}
-  .dl{background:#e8679a;color:#fff;border:none;padding:.6rem 1.4rem;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:600}
-</style></head>
-<body>
-  <img src="${dataUrl}" alt="Receipt ${goNum}"/>
-  <p>📱 <strong>Mobile:</strong> Long-press the image → <em>Save Image</em> or <em>Share</em> to send via Messenger / Facebook.<br><br>
-     💻 <strong>Desktop:</strong> Right-click the image → <em>Save Image As…</em></p>
-  <button class="dl" onclick="var a=document.createElement('a');a.href='${dataUrl}';a.download='AngelShop-${goNum}.png';a.click()">⬇ Download Image</button>
-</body></html>`);
+  if(!win){const a=document.createElement('a');a.download='AngelShop-'+goNum+'.png';a.href=dataUrl;a.click();return;}
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>AngelShop-${goNum}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff0f5;display:flex;justify-content:center;padding:1.5rem}img{max-width:520px;width:100%;border-radius:12px}</style></head><body><img src="${dataUrl}" alt="Receipt ${goNum}"/></body></html>`);
   win.document.close();
 }
 
