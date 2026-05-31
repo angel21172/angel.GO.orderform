@@ -5,16 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Angel Shop Group Orders</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;
-  --pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27;
-}
+:root{--pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;--pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27}
 body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh;color:#3d1a28}
-
-/* ── TOP NAV ── */
 .topnav{background:linear-gradient(135deg,#e8679a 0%,#c2426d 100%);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(194,66,109,.3)}
 .topnav .brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;letter-spacing:.03em}
 .topnav .brand span{font-style:normal;font-weight:600}
@@ -22,24 +17,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .mode-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.35);color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s;font-weight:500}
 .mode-btn.active{background:#fff;color:#c2426d;font-weight:600}
 .mode-btn:hover:not(.active){background:rgba(255,255,255,.35)}
-
-/* ── PAGES ── */
 .page{display:none;min-height:calc(100vh - 56px)}
 .page.active{display:block}
-
-/* ── HERO ── */
 .hero{background:linear-gradient(160deg,#ffd6e7 0%,#fff0f5 60%,#ffe0e8 100%);padding:2.5rem 1.5rem 2rem;text-align:center;border-bottom:1px solid #ffc0d5;position:relative;overflow:hidden}
 .hero::before{content:'✿ ✾ ✿';position:absolute;top:12px;left:50%;transform:translateX(-50%);font-size:18px;color:#e8679a;opacity:.4;letter-spacing:8px}
 .hero h1{font-family:'Playfair Display',serif;font-size:2rem;color:#8b1f42;line-height:1.2;margin-bottom:.4rem}
 .hero p{color:#c2426d;font-size:.9rem;font-weight:300;letter-spacing:.05em;text-transform:uppercase}
-
-/* ── ANNOUNCE BAR ── */
 .announce-bar{background:#ffc0d5;border:1px solid #f4a0c0;border-radius:10px;padding:.75rem 1.2rem;margin:1rem 1.5rem 0;display:flex;gap:.7rem;align-items:flex-start}
 .announce-bar .label{background:#c2426d;color:#fff;font-size:11px;padding:2px 8px;border-radius:10px;white-space:nowrap;font-weight:500;margin-top:1px}
 .announce-bar .text{font-size:.85rem;color:#5c0e27;line-height:1.5}
 .announce-bar.hidden{display:none}
-
-/* ── PRODUCTS ── */
 .section-header{padding:1.25rem 1.5rem .75rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
 .section-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:#8b1f42}
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1rem;padding:0 1.5rem 2rem}
@@ -57,8 +44,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .add-btn{width:100%;background:#e8679a;color:#fff;border:none;padding:.5rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;cursor:pointer;transition:background .2s}
 .add-btn:hover{background:#c2426d}
 .add-btn:disabled{background:#ddd;cursor:not-allowed;color:#aaa}
-
-/* ── ADMIN LAYOUT ── */
 .admin-header{background:linear-gradient(135deg,#ffd6e7,#fff0f5);padding:1.25rem 1.5rem;border-bottom:1px solid #ffc0d5}
 .admin-header h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:#8b1f42}
 .admin-header p{font-size:.8rem;color:#c2426d;margin-top:2px}
@@ -67,8 +52,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .admin-tab.active{border-bottom-color:#c2426d;color:#8b1f42;font-weight:600}
 .admin-panel{display:none;padding:1.25rem 1.5rem}
 .admin-panel.active{display:block}
-
-/* ── FORMS ── */
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
 .form-group{display:flex;flex-direction:column;gap:4px}
 .form-group.full{grid-column:1/-1}
@@ -76,8 +59,6 @@ label{font-size:.78rem;color:#8b1f42;font-weight:500;text-transform:uppercase;le
 input,select,textarea{font-family:'DM Sans',sans-serif;font-size:.88rem;padding:.5rem .75rem;border:1.5px solid #ffc0d5;border-radius:8px;color:#3d1a28;background:#fff;transition:border-color .2s;outline:none;width:100%}
 input:focus,select:focus,textarea:focus{border-color:#e8679a}
 textarea{resize:vertical;min-height:70px}
-
-/* ── BUTTONS ── */
 .btn{font-family:'DM Sans',sans-serif;padding:.55rem 1.25rem;border-radius:8px;font-size:.85rem;font-weight:500;cursor:pointer;transition:all .2s;border:none;display:inline-flex;align-items:center;gap:.35rem}
 .btn-primary{background:#e8679a;color:#fff}
 .btn-primary:hover{background:#c2426d}
@@ -87,21 +68,15 @@ textarea{resize:vertical;min-height:70px}
 .btn-danger:hover{background:#e05252}
 .btn-sm{padding:.35rem .8rem;font-size:.78rem}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-
-/* ── TABLES ── */
 .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #ffc0d5;margin-top:.75rem}
 table{width:100%;border-collapse:collapse;font-size:.83rem}
 th{background:#ffd6e7;color:#8b1f42;font-weight:600;padding:.6rem .85rem;text-align:left;white-space:nowrap}
 td{padding:.6rem .85rem;border-top:1px solid #ffe0e8;color:#3d1a28;vertical-align:middle}
 tr:hover td{background:#fff5f7}
 .action-row{display:flex;gap:.4rem}
-
-/* ── CART FAB ── */
 .cart-fab{position:fixed;bottom:24px;right:24px;background:#e8679a;color:#fff;border:none;border-radius:50%;width:54px;height:54px;font-size:22px;cursor:pointer;box-shadow:0 4px 16px rgba(232,103,154,.5);z-index:200;transition:transform .2s;display:none}
 .cart-fab:hover{transform:scale(1.1)}
 .cart-badge{position:absolute;top:-5px;right:-5px;background:#8b1f42;color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700}
-
-/* ── CART DRAWER ── */
 .overlay{position:fixed;inset:0;background:rgba(60,20,40,.45);z-index:300;display:none}
 .overlay.open{display:block}
 .drawer{position:fixed;right:0;top:0;height:100%;width:340px;max-width:95vw;background:#fff;z-index:400;transform:translateX(100%);transition:transform .3s ease;display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(60,20,40,.15)}
@@ -117,16 +92,12 @@ tr:hover td{background:#fff5f7}
 .qty-btn{background:#ffe0e8;border:none;width:22px;height:22px;border-radius:4px;cursor:pointer;font-size:14px;color:#c2426d;display:flex;align-items:center;justify-content:center;font-weight:700;line-height:1}
 .drawer-foot{padding:1rem;border-top:2px solid #ffc0d5}
 .cart-total-row{display:flex;justify-content:space-between;font-weight:600;font-size:1rem;color:#8b1f42;margin-bottom:.75rem}
-
-/* ── MODALS ── */
 .modal-wrap{position:fixed;inset:0;background:rgba(60,20,40,.5);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
 .modal-wrap.open{display:flex}
 .modal{background:#fff;border-radius:16px;width:500px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(60,20,40,.25)}
 .modal-head{background:linear-gradient(135deg,#e8679a,#c2426d);color:#fff;padding:1.25rem 1.5rem;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
 .modal-head h3{font-family:'Playfair Display',serif;font-size:1.15rem}
 .modal-body{padding:1.5rem}
-
-/* ── PASSWORD MODAL ── */
 .pw-modal{position:fixed;inset:0;background:rgba(60,20,40,.6);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
 .pw-modal.open{display:flex}
 .pw-box{background:#fff;border-radius:20px;padding:2.5rem 2rem;width:340px;max-width:100%;text-align:center;box-shadow:0 20px 60px rgba(60,20,40,.3)}
@@ -137,11 +108,6 @@ tr:hover td{background:#fff5f7}
 .pw-input-row input{flex:1;text-align:center;letter-spacing:.15em;font-size:1rem;border-radius:10px}
 .pw-error{color:#e05252;font-size:.8rem;min-height:1.1em;margin-bottom:.5rem}
 .pw-logout{font-size:.75rem;color:#c2426d;cursor:pointer;text-decoration:underline;margin-top:.75rem;display:inline-block}
-
-/* ── RECEIPT ── */
-.receipt-tabs{display:flex;gap:6px;margin-bottom:1rem}
-.receipt-tab{flex:1;padding:.5rem;border:1.5px solid #e8679a;border-radius:8px;background:#fff;color:#c2426d;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;font-weight:500;text-align:center;transition:all .2s}
-.receipt-tab.active{background:#e8679a;color:#fff}
 .receipt{background:#fff;border:2px dashed #ffc0d5;border-radius:12px;padding:1.5rem;font-size:.82rem;line-height:1.6}
 .receipt-head{text-align:center;border-bottom:2px dashed #ffc0d5;padding-bottom:1rem;margin-bottom:1rem}
 .receipt-title{font-family:'Playfair Display',serif;font-size:1.4rem;color:#8b1f42}
@@ -155,8 +121,6 @@ tr:hover td{background:#fff5f7}
 .r-total{display:flex;justify-content:space-between;font-weight:700;color:#c2426d;font-size:.95rem;border-top:2px solid #ffc0d5;margin-top:.5rem;padding-top:.5rem}
 .receipt-foot{text-align:center;margin-top:1rem;padding-top:1rem;border-top:2px dashed #ffc0d5;color:#c2426d;font-size:.78rem}
 .receipt-note{background:#fff0f5;border-radius:8px;padding:.6rem .85rem;margin-top:.6rem;font-size:.75rem;color:#8b1f42;line-height:1.5;text-align:left}
-
-/* ── MISC ── */
 .badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:.72rem;font-weight:600}
 .badge-pending{background:#fff0d6;color:#b87a00}
 .badge-confirmed{background:#d6f5e5;color:#1a7a4a}
@@ -182,7 +146,6 @@ tr:hover td{background:#fff5f7}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .sync-dot.syncing{background:#ffd97a;animation:pulse .7s infinite}
 .sync-dot.offline{background:#ff9a9a;animation:none}
-.section-actions{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
 @media(max-width:520px){
   .form-grid{grid-template-columns:1fr}
   .form-group.full{grid-column:1}
@@ -193,8 +156,6 @@ tr:hover td{background:#fff5f7}
 </style>
 </head>
 <body>
-
-<!-- ══════ TOP NAV ══════ -->
 <nav class="topnav">
   <div class="brand"><span>✿</span> Angel Shop <em>Group Orders</em></div>
   <div style="display:flex;align-items:center;gap:1rem">
@@ -209,7 +170,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </nav>
 
-<!-- ══════ CUSTOMER PAGE ══════ -->
 <div class="page active" id="customer-page">
   <div class="hero">
     <h1>Angel Shop<br>Group Orders</h1>
@@ -228,7 +188,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ ADMIN PAGE ══════ -->
 <div class="page" id="admin-page">
   <div class="admin-header">
     <h2>Admin Panel</h2>
@@ -239,8 +198,6 @@ tr:hover td{background:#fff5f7}
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
-
-  <!-- Products panel -->
   <div class="admin-panel active" id="panel-products">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Manage Products</div>
@@ -254,8 +211,6 @@ tr:hover td{background:#fff5f7}
       </table>
     </div>
   </div>
-
-  <!-- Orders panel -->
   <div class="admin-panel" id="panel-orders">
     <div style="font-weight:600;color:#8b1f42;margin-bottom:.75rem">Order Summaries</div>
     <div class="filter-row">
@@ -272,8 +227,6 @@ tr:hover td{background:#fff5f7}
       </table>
     </div>
   </div>
-
-  <!-- Announcements panel -->
   <div class="admin-panel" id="panel-announcements">
     <div style="font-weight:600;color:#8b1f42;margin-bottom:1rem">Important Announcements</div>
     <div class="form-group" style="margin-bottom:.75rem">
@@ -285,12 +238,10 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ CART FAB ══════ -->
 <button class="cart-fab" id="cart-fab" onclick="openCart()">
   🛒<span class="cart-badge" id="cart-count">0</span>
 </button>
 
-<!-- ══════ CART DRAWER ══════ -->
 <div class="overlay" id="cart-overlay" onclick="closeCart()"></div>
 <div class="drawer" id="cart-drawer">
   <div class="drawer-head">
@@ -304,7 +255,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ PASSWORD MODAL ══════ -->
 <div class="pw-modal" id="pw-modal">
   <div class="pw-box">
     <div class="pw-icon">🔐</div>
@@ -319,7 +269,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ ORDER FORM MODAL ══════ -->
 <div class="modal-wrap" id="order-modal">
   <div class="modal">
     <div class="modal-head">
@@ -328,34 +277,17 @@ tr:hover td{background:#fff5f7}
     </div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="form-group full">
-          <label>Full Name *</label>
-          <input id="o-name" placeholder="Your full name" />
-        </div>
-        <div class="form-group full">
-          <label>Facebook Account *</label>
-          <input id="o-fb" placeholder="Your FB name or profile link" />
-        </div>
-        <div class="form-group full">
-          <label>Complete Address *</label>
-          <textarea id="o-address" placeholder="House no., Street, Barangay, City, Province" rows="2"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Contact Number *</label>
-          <input id="o-contact" placeholder="09XXXXXXXXX" />
-        </div>
-        <div class="form-group">
-          <label>Shipping Type</label>
+        <div class="form-group full"><label>Full Name *</label><input id="o-name" placeholder="Your full name" /></div>
+        <div class="form-group full"><label>Facebook Account *</label><input id="o-fb" placeholder="Your FB name or profile link" /></div>
+        <div class="form-group"><label>Contact Number *</label><input id="o-contact" placeholder="09XXXXXXXXX" /></div>
+        <div class="form-group"><label>Shipping Type</label>
           <select id="o-shipping">
             <option value="ISF">ISF (In-Store Forwarding)</option>
             <option value="LSF">LSF (Local Shipping Forwarding)</option>
             <option value="Direct">Direct Shipping</option>
           </select>
         </div>
-        <div class="form-group full">
-          <label>Notes / Special Instructions</label>
-          <textarea id="o-notes" placeholder="Any special requests?" rows="2"></textarea>
-        </div>
+        <div class="form-group full"><label>Notes / Special Instructions</label><textarea id="o-notes" placeholder="Any special requests?" rows="2"></textarea></div>
       </div>
       <div id="order-err" style="color:#e05252;font-size:.82rem;margin:.5rem 0;display:none"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem">
@@ -366,7 +298,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ RECEIPT MODAL ══════ -->
 <div class="modal-wrap" id="receipt-modal">
   <div class="modal">
     <div class="modal-head">
@@ -374,21 +305,15 @@ tr:hover td{background:#fff5f7}
       <button class="close-btn" onclick="closeReceiptModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div class="receipt-tabs">
-        <button class="receipt-tab active" onclick="switchReceiptTab('confirm',this)">Order Confirmation</button>
-        <button class="receipt-tab" onclick="switchReceiptTab('shipping',this)">Shipping Details Form</button>
-      </div>
-      <div id="receipt-confirm"></div>
-      <div id="receipt-shipping" style="display:none"></div>
+      <div id="receipt-content"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem">
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
-        <button class="btn btn-primary btn-sm" onclick="printReceipt()">🖨 Save / Print</button>
+        <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════ PRODUCT MODAL (admin) ══════ -->
 <div class="modal-wrap" id="product-modal">
   <div class="modal">
     <div class="modal-head">
@@ -397,33 +322,17 @@ tr:hover td{background:#fff5f7}
     </div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="form-group full">
-          <label>Product Name *</label>
-          <input id="p-name" placeholder="e.g. Sanrio Tumbler" />
-        </div>
-        <div class="form-group">
-          <label>Price (₱) *</label>
-          <input id="p-price" type="number" placeholder="0.00" min="0" step="0.01" />
-        </div>
-        <div class="form-group">
-          <label>Stock Qty</label>
-          <input id="p-stock" type="number" placeholder="0" min="0" />
-        </div>
-        <div class="form-group full">
-          <label>Description</label>
-          <textarea id="p-desc" placeholder="Short product description…" rows="2"></textarea>
-        </div>
+        <div class="form-group full"><label>Product Name *</label><input id="p-name" placeholder="e.g. Sanrio Tumbler" /></div>
+        <div class="form-group"><label>Price (₱) *</label><input id="p-price" type="number" placeholder="0.00" min="0" step="0.01" /></div>
+        <div class="form-group"><label>Stock Qty</label><input id="p-stock" type="number" placeholder="0" min="0" /></div>
+        <div class="form-group full"><label>Description</label><textarea id="p-desc" placeholder="Short product description…" rows="2"></textarea></div>
         <div class="form-group full">
           <label>Product Image</label>
-          <label class="img-upload-label">
-            📷 Upload Image
-            <input type="file" accept="image/*" id="p-img-input" onchange="previewImg(this)" />
-          </label>
+          <label class="img-upload-label">📷 Upload Image<input type="file" accept="image/*" id="p-img-input" onchange="previewImg(this)" /></label>
           <img id="p-img-prev" class="img-prev" alt="preview" />
           <input type="hidden" id="p-img-data" />
         </div>
-        <div class="form-group">
-          <label>Status</label>
+        <div class="form-group"><label>Status</label>
           <select id="p-status">
             <option value="available">Available</option>
             <option value="limited">Limited</option>
@@ -440,7 +349,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ ORDER DETAIL MODAL (admin) ══════ -->
 <div class="modal-wrap" id="order-detail-modal">
   <div class="modal">
     <div class="modal-head">
@@ -451,292 +359,142 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ FIREBASE + APP LOGIC ══════ -->
 <script>
-// ─────────────────────────────────────────────
-// FIREBASE CONFIG
-// Replace the values below with YOUR Firebase project.
-// How to get them:
-//   1. Go to https://console.firebase.google.com
-//   2. Create a project (free) → Add web app
-//   3. Copy the firebaseConfig object and paste here
-//   4. Go to Firestore Database → Create database (start in test mode)
-// ─────────────────────────────────────────────
 const firebaseConfig = {
-  apiKey:            "PASTE_YOUR_apiKey_HERE",
-  authDomain:        "PASTE_YOUR_authDomain_HERE",
-  projectId:         "PASTE_YOUR_projectId_HERE",
-  storageBucket:     "PASTE_YOUR_storageBucket_HERE",
-  messagingSenderId: "PASTE_YOUR_messagingSenderId_HERE",
-  appId:             "PASTE_YOUR_appId_HERE"
+  apiKey: "AIzaSyBuPsD3Gp6M2-U6g2gKnWdnDPeHGCdZDVQ",
+  authDomain: "angel-shop-59900.firebaseapp.com",
+  projectId: "angel-shop-59900",
+  storageBucket: "angel-shop-59900.firebasestorage.app",
+  messagingSenderId: "40392532598",
+  appId: "1:40392532598:web:9360d6ba0e142f6cc0f557"
 };
 
-// ─────────────────────────────────────────────
-// ADMIN PASSWORD  ← change this to your desired password
-// ─────────────────────────────────────────────
 const ADMIN_PASSWORD = "angelshop2025";
-
-// ─────────────────────────────────────────────
-// FIREBASE INIT
-// ─────────────────────────────────────────────
-let db = null;
-let firebaseReady = false;
+const CONFIG_FILLED = firebaseConfig.apiKey !== "PASTE_YOUR_apiKey_HERE";
+let db = null, firebaseReady = false;
 
 function initFirebase() {
+  if (!CONFIG_FILLED) { setSyncStatus('offline'); fallbackToLocal(); return; }
   try {
-    firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
-    // test connection by reading settings doc
+    db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
     db.collection('settings').doc('announcement').get()
-      .then(() => {
-        firebaseReady = true;
-        setSyncStatus('online');
-        startListeners();
-      })
-      .catch(e => {
-        console.warn('Firestore error:', e);
-        setSyncStatus('offline');
-        fallbackToLocal();
-      });
-  } catch(e) {
-    console.warn('Firebase init failed:', e);
-    setSyncStatus('offline');
-    fallbackToLocal();
-  }
+      .then(() => { firebaseReady=true; setSyncStatus('online'); startListeners(); })
+      .catch(e => { console.warn('Firestore:',e); setSyncStatus('offline'); fallbackToLocal(); });
+  } catch(e) { console.warn('Firebase:',e); setSyncStatus('offline'); fallbackToLocal(); }
 }
 
-function setSyncStatus(status) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  dot.className = 'sync-dot' + (status === 'syncing' ? ' syncing' : status === 'offline' ? ' offline' : '');
-  lbl.textContent = status === 'online' ? 'Synced' : status === 'syncing' ? 'Saving…' : 'Offline (local only)';
+function setSyncStatus(s) {
+  const dot=document.getElementById('sync-dot'), lbl=document.getElementById('sync-label');
+  dot.className='sync-dot'+(s==='syncing'?' syncing':s==='offline'?' offline':'');
+  lbl.textContent=s==='online'?'Synced':s==='syncing'?'Saving…':'Offline (local only)';
 }
 
-// ─────────────────────────────────────────────
-// LOCAL STATE (used as cache / offline fallback)
-// ─────────────────────────────────────────────
-let state = {
-  products: [],
-  orders: [],
-  announcement: '',
-  goCounter: 1001,
-  cart: [],
-  adminLoggedIn: false,
-  currentMode: 'customer',
-  orderFilter: 'all',
-  currentReceiptOrder: null
-};
+let state={products:[],orders:[],announcement:'',goCounter:1001,cart:[],adminLoggedIn:false,currentMode:'customer',orderFilter:'all',currentReceiptOrder:null};
 
-function loadLocal() {
-  try {
-    const raw = localStorage.getItem('angelshop_v2');
-    if (raw) {
-      const d = JSON.parse(raw);
-      state.products = d.products || [];
-      state.orders = d.orders || [];
-      state.announcement = d.announcement || '';
-      state.goCounter = d.goCounter || 1001;
-    }
-  } catch(e) {}
+function loadLocal(){
+  try{const r=localStorage.getItem('angelshop_v2');if(r){const d=JSON.parse(r);state.products=d.products||[];state.orders=d.orders||[];state.announcement=d.announcement||'';state.goCounter=d.goCounter||1001;}}catch(e){}
 }
-function saveLocal() {
-  try {
-    localStorage.setItem('angelshop_v2', JSON.stringify({
-      products: state.products,
-      orders: state.orders,
-      announcement: state.announcement,
-      goCounter: state.goCounter
-    }));
-  } catch(e) {}
+function saveLocal(){
+  try{localStorage.setItem('angelshop_v2',JSON.stringify({products:state.products,orders:state.orders,announcement:state.announcement,goCounter:state.goCounter}));}catch(e){}
 }
 
-// ─────────────────────────────────────────────
-// FIRESTORE LISTENERS (real-time sync)
-// ─────────────────────────────────────────────
-function startListeners() {
-  // Products
-  db.collection('products').onSnapshot(snap => {
-    state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    saveLocal();
-    renderCustomerProducts();
-    if (state.currentMode === 'admin') renderAdminProducts();
-  }, err => console.warn('products listener:', err));
-
-  // Orders
-  db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snap => {
-    state.orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    saveLocal();
-    if (state.currentMode === 'admin') renderAdminOrders();
-  }, err => {
-    // orderBy requires an index; fall back to unordered
-    db.collection('orders').onSnapshot(snap2 => {
-      state.orders = snap2.docs.map(d => ({ id: d.id, ...d.data() }))
-        .sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-      saveLocal();
-      if (state.currentMode === 'admin') renderAdminOrders();
+function startListeners(){
+  db.collection('products').onSnapshot(snap=>{
+    state.products=snap.docs.map(d=>({id:d.id,...d.data()}));
+    saveLocal();renderCustomerProducts();
+    if(state.currentMode==='admin')renderAdminProducts();
+  },err=>console.warn(err));
+  db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap=>{
+    state.orders=snap.docs.map(d=>({id:d.id,...d.data()}));
+    saveLocal();if(state.currentMode==='admin')renderAdminOrders();
+  },()=>{
+    db.collection('orders').onSnapshot(s2=>{
+      state.orders=s2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      saveLocal();if(state.currentMode==='admin')renderAdminOrders();
     });
   });
-
-  // Announcement
-  db.collection('settings').doc('announcement').onSnapshot(snap => {
-    if (snap.exists) {
-      state.announcement = snap.data().text || '';
-      updateAnnounceDisplay();
-      if (state.currentMode === 'admin') document.getElementById('announce-input').value = state.announcement;
-    }
+  db.collection('settings').doc('announcement').onSnapshot(snap=>{
+    if(snap.exists){state.announcement=snap.data().text||'';updateAnnounceDisplay();if(state.currentMode==='admin')document.getElementById('announce-input').value=state.announcement;}
   });
-
-  // goCounter
-  db.collection('settings').doc('meta').onSnapshot(snap => {
-    if (snap.exists) state.goCounter = snap.data().goCounter || state.goCounter;
-  });
+  db.collection('settings').doc('meta').onSnapshot(snap=>{if(snap.exists)state.goCounter=snap.data().goCounter||state.goCounter;});
 }
 
-function fallbackToLocal() {
-  loadLocal();
-  renderCustomerProducts();
-  updateAnnounceDisplay();
+function fallbackToLocal(){loadLocal();renderCustomerProducts();updateAnnounceDisplay();}
+
+async function fsSet(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).set(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
+async function fsAdd(c,d){if(!firebaseReady)return null;setSyncStatus('syncing');try{const r=await db.collection(c).add(d);setSyncStatus('online');return r.id;}catch(e){console.warn(e);setSyncStatus('offline');return null;}}
+async function fsUpdate(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).update(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
+async function fsDelete(c,id){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).delete();setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
+
+function switchMode(mode){
+  state.currentMode=mode;
+  document.querySelectorAll('.mode-btn').forEach((b,i)=>b.classList.toggle('active',(i===0&&mode==='customer')||(i===1&&mode==='admin')));
+  document.getElementById('customer-page').classList.toggle('active',mode==='customer');
+  document.getElementById('admin-page').classList.toggle('active',mode==='admin');
+  document.getElementById('cart-fab').style.display=mode==='customer'?'flex':'none';
+  if(mode==='customer')renderCustomerProducts();
+  if(mode==='admin'){renderAdminProducts();renderAdminOrders();document.getElementById('announce-input').value=state.announcement;}
 }
 
-// ─────────────────────────────────────────────
-// FIRESTORE HELPERS
-// ─────────────────────────────────────────────
-async function fsSet(col, docId, data) {
-  if (!firebaseReady) return;
-  setSyncStatus('syncing');
-  try { await db.collection(col).doc(docId).set(data); setSyncStatus('online'); }
-  catch(e) { console.warn(e); setSyncStatus('offline'); }
-}
-async function fsAdd(col, data) {
-  if (!firebaseReady) return null;
-  setSyncStatus('syncing');
-  try { const ref = await db.collection(col).add(data); setSyncStatus('online'); return ref.id; }
-  catch(e) { console.warn(e); setSyncStatus('offline'); return null; }
-}
-async function fsUpdate(col, docId, data) {
-  if (!firebaseReady) return;
-  setSyncStatus('syncing');
-  try { await db.collection(col).doc(docId).update(data); setSyncStatus('online'); }
-  catch(e) { console.warn(e); setSyncStatus('offline'); }
-}
-async function fsDelete(col, docId) {
-  if (!firebaseReady) return;
-  setSyncStatus('syncing');
-  try { await db.collection(col).doc(docId).delete(); setSyncStatus('online'); }
-  catch(e) { console.warn(e); setSyncStatus('offline'); }
-}
-
-// ─────────────────────────────────────────────
-// MODE SWITCH
-// ─────────────────────────────────────────────
-function switchMode(mode) {
-  state.currentMode = mode;
-  document.querySelectorAll('.mode-btn').forEach((b,i) =>
-    b.classList.toggle('active', (i===0&&mode==='customer')||(i===1&&mode==='admin'))
-  );
-  document.getElementById('customer-page').classList.toggle('active', mode==='customer');
-  document.getElementById('admin-page').classList.toggle('active', mode==='admin');
-  document.getElementById('cart-fab').style.display = mode==='customer' ? 'flex' : 'none';
-  if (mode==='customer') renderCustomerProducts();
-  if (mode==='admin') { renderAdminProducts(); renderAdminOrders(); document.getElementById('announce-input').value = state.announcement; }
-}
-
-// ─────────────────────────────────────────────
-// ADMIN PASSWORD
-// ─────────────────────────────────────────────
-function onAdminClick() {
-  if (state.adminLoggedIn) { switchMode('admin'); return; }
-  document.getElementById('pw-input').value = '';
-  document.getElementById('pw-error').textContent = '';
+function onAdminClick(){
+  if(state.adminLoggedIn){switchMode('admin');return;}
+  document.getElementById('pw-input').value='';document.getElementById('pw-error').textContent='';
   document.getElementById('pw-modal').classList.add('open');
-  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+  setTimeout(()=>document.getElementById('pw-input').focus(),100);
 }
-function checkPw() {
-  const val = document.getElementById('pw-input').value;
-  if (val === ADMIN_PASSWORD) {
-    state.adminLoggedIn = true;
-    closePwModal();
-    switchMode('admin');
-  } else {
-    document.getElementById('pw-error').textContent = '❌ Incorrect password. Try again.';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
-  }
+function checkPw(){
+  const v=document.getElementById('pw-input').value;
+  if(v===ADMIN_PASSWORD){state.adminLoggedIn=true;closePwModal();switchMode('admin');}
+  else{document.getElementById('pw-error').textContent='❌ Incorrect password. Try again.';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}
 }
-function closePwModal() { document.getElementById('pw-modal').classList.remove('open'); }
-function adminLogout() {
-  state.adminLoggedIn = false;
-  switchMode('customer');
-}
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closePwModal(){document.getElementById('pw-modal').classList.remove('open');}
+function adminLogout(){state.adminLoggedIn=false;switchMode('customer');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-// ─────────────────────────────────────────────
-// ANNOUNCEMENT
-// ─────────────────────────────────────────────
-async function saveAnnouncement() {
-  const txt = document.getElementById('announce-input').value.trim();
-  state.announcement = txt;
-  updateAnnounceDisplay();
-  saveLocal();
-  await fsSet('settings', 'announcement', { text: txt });
-  const el = document.getElementById('announce-saved-msg');
-  el.textContent = '✓ Announcement saved!';
-  setTimeout(() => el.textContent = '', 2500);
+async function saveAnnouncement(){
+  const txt=document.getElementById('announce-input').value.trim();
+  state.announcement=txt;updateAnnounceDisplay();saveLocal();
+  await fsSet('settings','announcement',{text:txt});
+  const el=document.getElementById('announce-saved-msg');
+  el.textContent='✓ Announcement saved!';setTimeout(()=>el.textContent='',2500);
 }
-function updateAnnounceDisplay() {
-  const bar = document.getElementById('announce-display');
-  if (state.announcement) {
-    bar.classList.remove('hidden');
-    document.getElementById('announce-text').textContent = state.announcement;
-  } else {
-    bar.classList.add('hidden');
-  }
+function updateAnnounceDisplay(){
+  const bar=document.getElementById('announce-display');
+  if(state.announcement){bar.classList.remove('hidden');document.getElementById('announce-text').textContent=state.announcement;}
+  else bar.classList.add('hidden');
 }
 
-// ─────────────────────────────────────────────
-// PRODUCTS — CUSTOMER
-// ─────────────────────────────────────────────
-function renderCustomerProducts(filter='') {
-  const grid = document.getElementById('customer-products');
-  const items = state.products.filter(p => !filter || p.name.toLowerCase().includes(filter.toLowerCase()));
-  if (!items.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';
-    return;
-  }
-  grid.innerHTML = items.map(p => `
+function renderCustomerProducts(filter=''){
+  const grid=document.getElementById('customer-products');
+  const items=state.products.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase()));
+  if(!items.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';return;}
+  grid.innerHTML=items.map(p=>`
     <div class="product-card">
-      <div class="product-img">
-        ${p.img ? `<img src="${p.img}" alt="${p.name}" loading="lazy" />` : '<span style="font-size:2.5rem">🛍</span>'}
-      </div>
+      <div class="product-img">${p.img?`<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>`:'<span style="font-size:2.5rem">🛍</span>'}</div>
       <div class="product-info">
         <div class="product-name">${esc(p.name)}</div>
         <div class="product-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
         <div class="product-stock ${p.status==='limited'?'low':p.status==='soldout'?'out':''}">
           ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
         </div>
-        ${p.desc ? `<div class="product-desc">${esc(p.desc)}</div>` : ''}
+        ${p.desc?`<div class="product-desc">${esc(p.desc)}</div>`:''}
         <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
           ${p.status==='soldout'?'Sold Out':'+ Add to Order'}
         </button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-function filterProducts(val) { renderCustomerProducts(val); }
+function filterProducts(val){renderCustomerProducts(val);}
 
-// ─────────────────────────────────────────────
-// PRODUCTS — ADMIN
-// ─────────────────────────────────────────────
-function renderAdminProducts() {
-  const tbody = document.getElementById('admin-prod-tbody');
-  if (!state.products.length) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#c2426d;padding:2rem">No products yet. Click "+ Add Product" to start.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = state.products.map(p => `
+function renderAdminProducts(){
+  const tbody=document.getElementById('admin-prod-tbody');
+  if(!state.products.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:#c2426d;padding:2rem">No products yet. Click "+ Add Product" to start.</td></tr>';return;}
+  tbody.innerHTML=state.products.map(p=>`
     <tr>
       <td><div style="width:42px;height:42px;border-radius:7px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem">
-        ${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover" />` : '🛍'}
+        ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}
       </div></td>
       <td><div style="font-weight:500">${esc(p.name)}</div><div style="font-size:.73rem;color:#888">${esc(p.desc||'')}</div></td>
       <td>₱${parseFloat(p.price||0).toFixed(2)}</td>
@@ -748,129 +506,109 @@ function renderAdminProducts() {
         <button class="btn btn-secondary btn-sm" onclick="openProductModal('${p.id}')">Edit</button>
         <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Del</button>
       </div></td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function openProductModal(id) {
-  ['p-name','p-desc'].forEach(x => document.getElementById(x).value = '');
-  ['p-price','p-stock'].forEach(x => document.getElementById(x).value = '');
-  document.getElementById('p-img-data').value = '';
-  document.getElementById('p-img-prev').style.display = 'none';
-  document.getElementById('p-img-prev').src = '';
-  document.getElementById('p-status').value = 'available';
-  document.getElementById('p-edit-id').value = '';
-  document.getElementById('product-modal-title').textContent = 'Add New Product';
-  document.getElementById('save-prod-btn').textContent = 'Add Product';
-  if (id) {
-    const p = state.products.find(x => x.id === id);
-    if (p) {
-      document.getElementById('p-name').value = p.name || '';
-      document.getElementById('p-price').value = p.price || '';
-      document.getElementById('p-stock').value = p.stock || 0;
-      document.getElementById('p-desc').value = p.desc || '';
-      document.getElementById('p-status').value = p.status || 'available';
-      document.getElementById('p-edit-id').value = id;
-      document.getElementById('product-modal-title').textContent = 'Edit Product';
-      document.getElementById('save-prod-btn').textContent = 'Save Changes';
-      if (p.img) {
-        const pr = document.getElementById('p-img-prev');
-        pr.src = p.img; pr.style.display = 'block';
-        document.getElementById('p-img-data').value = p.img;
-      }
+function openProductModal(id){
+  ['p-name','p-desc'].forEach(x=>document.getElementById(x).value='');
+  ['p-price','p-stock'].forEach(x=>document.getElementById(x).value='');
+  document.getElementById('p-img-data').value='';
+  document.getElementById('p-img-prev').style.display='none';
+  document.getElementById('p-img-prev').src='';
+  document.getElementById('p-img-input').value='';
+  document.getElementById('p-status').value='available';
+  document.getElementById('p-edit-id').value='';
+  document.getElementById('product-modal-title').textContent='Add New Product';
+  document.getElementById('save-prod-btn').textContent='Add Product';
+  if(id){
+    const p=state.products.find(x=>x.id===id);
+    if(p){
+      document.getElementById('p-name').value=p.name||'';
+      document.getElementById('p-price').value=p.price||'';
+      document.getElementById('p-stock').value=p.stock||0;
+      document.getElementById('p-desc').value=p.desc||'';
+      document.getElementById('p-status').value=p.status||'available';
+      document.getElementById('p-edit-id').value=id;
+      document.getElementById('product-modal-title').textContent='Edit Product';
+      document.getElementById('save-prod-btn').textContent='Save Changes';
+      if(p.img){const pr=document.getElementById('p-img-prev');pr.src=p.img;pr.style.display='block';document.getElementById('p-img-data').value=p.img;}
     }
   }
   document.getElementById('product-modal').classList.add('open');
 }
-function closeProductModal() { document.getElementById('product-modal').classList.remove('open'); }
+function closeProductModal(){document.getElementById('product-modal').classList.remove('open');}
 
-function previewImg(input) {
-  const file = input.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('p-img-data').value = e.target.result;
-    const pr = document.getElementById('p-img-prev');
-    pr.src = e.target.result; pr.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+function previewImg(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=600;let w=img.width,h=img.height;
+      if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;}}
+      const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      const dataUrl=canvas.toDataURL('image/jpeg',0.75);
+      document.getElementById('p-img-data').value=dataUrl;
+      const pr=document.getElementById('p-img-prev');pr.src=dataUrl;pr.style.display='block';
+    };img.src=e.target.result;
+  };reader.readAsDataURL(file);
 }
 
-async function saveProduct() {
-  const name = document.getElementById('p-name').value.trim();
-  const price = parseFloat(document.getElementById('p-price').value);
-  const stock = parseInt(document.getElementById('p-stock').value) || 0;
-  const desc = document.getElementById('p-desc').value.trim();
-  const img = document.getElementById('p-img-data').value;
-  const status = document.getElementById('p-status').value;
-  const editId = document.getElementById('p-edit-id').value;
-  if (!name || isNaN(price)) { alert('Please fill in the product name and price.'); return; }
-
-  const btn = document.getElementById('save-prod-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const data = { name, price, stock, desc, img, status };
-
-  if (editId) {
-    // update in local cache first
-    const idx = state.products.findIndex(p => p.id === editId);
-    if (idx > -1) state.products[idx] = { id: editId, ...data };
-    await fsUpdate('products', editId, data);
-    if (!firebaseReady) { saveLocal(); renderAdminProducts(); }
-  } else {
-    if (firebaseReady) {
-      await fsAdd('products', { ...data, createdAt: Date.now() });
-    } else {
-      const localId = 'local_' + Date.now();
-      state.products.push({ id: localId, ...data });
-      saveLocal(); renderAdminProducts(); renderCustomerProducts();
-    }
+async function saveProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const price=parseFloat(document.getElementById('p-price').value);
+  const stock=parseInt(document.getElementById('p-stock').value)||0;
+  const desc=document.getElementById('p-desc').value.trim();
+  const img=document.getElementById('p-img-data').value;
+  const status=document.getElementById('p-status').value;
+  const editId=document.getElementById('p-edit-id').value;
+  if(!name||isNaN(price)){alert('Please fill in the product name and price.');return;}
+  const btn=document.getElementById('save-prod-btn');btn.disabled=true;btn.textContent='Saving…';
+  const data={name,price,stock,desc,img,status};
+  if(editId){
+    const idx=state.products.findIndex(p=>p.id===editId);
+    if(idx>-1)state.products[idx]={id:editId,...data};
+    if(firebaseReady)await fsUpdate('products',editId,data);
+    else{saveLocal();renderAdminProducts();renderCustomerProducts();}
+  }else{
+    if(firebaseReady)await fsAdd('products',{...data,createdAt:Date.now()});
+    else{state.products.push({id:'local_'+Date.now(),...data});saveLocal();renderAdminProducts();renderCustomerProducts();}
   }
-
-  btn.disabled = false;
-  closeProductModal();
-  showAlert('prod-alert', '✓ Product saved!', 'success');
+  btn.disabled=false;closeProductModal();showAlert('prod-alert','✓ Product saved!','success');
 }
 
-async function deleteProduct(id) {
-  if (!confirm('Delete this product?')) return;
-  state.products = state.products.filter(p => p.id !== id);
-  saveLocal(); renderAdminProducts(); renderCustomerProducts();
-  await fsDelete('products', id);
+async function deleteProduct(id){
+  if(!confirm('Delete this product?'))return;
+  state.products=state.products.filter(p=>p.id!==id);
+  saveLocal();renderAdminProducts();renderCustomerProducts();
+  await fsDelete('products',id);
 }
 
-// ─────────────────────────────────────────────
-// CART
-// ─────────────────────────────────────────────
-function addToCart(productId) {
-  const p = state.products.find(x => x.id === productId);
-  if (!p || p.status === 'soldout') return;
-  const ex = state.cart.find(i => i.productId === productId);
-  if (ex) ex.qty++;
-  else state.cart.push({ productId, name: p.name, price: p.price, img: p.img || '', qty: 1 });
+function addToCart(productId){
+  const p=state.products.find(x=>x.id===productId);if(!p||p.status==='soldout')return;
+  const ex=state.cart.find(i=>i.productId===productId);
+  if(ex)ex.qty++;else state.cart.push({productId,name:p.name,price:p.price,img:p.img||'',qty:1});
+  updateCartUI();
+  const fab=document.getElementById('cart-fab');
+  fab.style.transform='scale(1.25)';setTimeout(()=>fab.style.transform='',200);
+}
+function changeQty(productId,delta){
+  const item=state.cart.find(i=>i.productId===productId);if(!item)return;
+  item.qty+=delta;if(item.qty<=0)state.cart=state.cart.filter(i=>i.productId!==productId);
   updateCartUI();
 }
-function changeQty(productId, delta) {
-  const item = state.cart.find(i => i.productId === productId);
-  if (!item) return;
-  item.qty += delta;
-  if (item.qty <= 0) state.cart = state.cart.filter(i => i.productId !== productId);
-  updateCartUI();
-}
-function updateCartUI() {
-  const count = state.cart.reduce((s,i) => s + i.qty, 0);
-  const total = state.cart.reduce((s,i) => s + i.price * i.qty, 0);
-  document.getElementById('cart-count').textContent = count;
-  document.getElementById('cart-total-disp').textContent = '₱' + total.toFixed(2);
-  document.getElementById('cart-fab').style.display = state.currentMode === 'customer' ? 'flex' : 'none';
-  const body = document.getElementById('cart-body');
-  if (!state.cart.length) {
-    body.innerHTML = '<div class="empty-state"><div class="ei">🛒</div><p>Your cart is empty.</p></div>';
-    return;
-  }
-  body.innerHTML = state.cart.map(item => `
+function updateCartUI(){
+  const count=state.cart.reduce((s,i)=>s+i.qty,0);
+  const total=state.cart.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cart-count').textContent=count;
+  document.getElementById('cart-total-disp').textContent='₱'+total.toFixed(2);
+  document.getElementById('cart-fab').style.display=state.currentMode==='customer'?'flex':'none';
+  const body=document.getElementById('cart-body');
+  if(!state.cart.length){body.innerHTML='<div class="empty-state"><div class="ei">🛒</div><p>Your cart is empty.</p></div>';return;}
+  body.innerHTML=state.cart.map(item=>`
     <div class="cart-item">
-      <div class="cart-thumb">${item.img ? `<img src="${item.img}" alt="" />` : '🛍'}</div>
+      <div class="cart-thumb">${item.img?`<img src="${item.img}" alt=""/>`:'🛍'}</div>
       <div style="flex:1">
         <div style="font-size:.85rem;font-weight:500">${esc(item.name)}</div>
         <div style="font-size:.83rem;color:#c2426d;font-weight:600">₱${(item.price*item.qty).toFixed(2)}</div>
@@ -881,101 +619,42 @@ function updateCartUI() {
           <button class="qty-btn" onclick="changeQty('${item.productId}',-999)" style="background:#ffe0e8;margin-left:4px">✕</button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-function openCart() {
-  updateCartUI();
-  document.getElementById('cart-overlay').classList.add('open');
-  document.getElementById('cart-drawer').classList.add('open');
-}
-function closeCart() {
-  document.getElementById('cart-overlay').classList.remove('open');
-  document.getElementById('cart-drawer').classList.remove('open');
-}
+function openCart(){updateCartUI();document.getElementById('cart-overlay').classList.add('open');document.getElementById('cart-drawer').classList.add('open');}
+function closeCart(){document.getElementById('cart-overlay').classList.remove('open');document.getElementById('cart-drawer').classList.remove('open');}
 
-// ─────────────────────────────────────────────
-// ORDER FORM
-// ─────────────────────────────────────────────
-function openOrderForm() {
-  if (!state.cart.length) { alert('Please add items to your cart first.'); return; }
-  closeCart();
-  document.getElementById('order-modal').classList.add('open');
-}
-function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+function openOrderForm(){if(!state.cart.length){alert('Please add items to your cart first.');return;}closeCart();document.getElementById('order-modal').classList.add('open');}
+function closeOrderModal(){document.getElementById('order-modal').classList.remove('open');}
 
-async function submitOrder() {
-  const name = document.getElementById('o-name').value.trim();
-  const fb = document.getElementById('o-fb').value.trim();
-  const address = document.getElementById('o-address').value.trim();
-  const contact = document.getElementById('o-contact').value.trim();
-  const shipping = document.getElementById('o-shipping').value;
-  const notes = document.getElementById('o-notes').value.trim();
-  const err = document.getElementById('order-err');
-  if (!name||!fb||!address||!contact) {
-    err.textContent = '⚠ Please fill in all required fields.';
-    err.style.display = 'block'; return;
-  }
-  err.style.display = 'none';
-
-  const btn = document.getElementById('submit-order-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const goNum = 'GO-' + state.goCounter;
-  state.goCounter++;
-  const items = state.cart.map(i => ({ ...i }));
-  const total = items.reduce((s,i) => s + i.price * i.qty, 0);
-  const dateStr = new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-
-  const orderData = {
-    goNum, name, fb, address, contact, shipping, notes, items, total,
-    status: 'pending', date: dateStr, createdAt: Date.now()
-  };
-
-  let savedId = null;
-  if (firebaseReady) {
-    savedId = await fsAdd('orders', orderData);
-    await fsSet('settings', 'meta', { goCounter: state.goCounter });
-  }
-  if (!savedId) {
-    savedId = 'local_' + Date.now();
-    state.orders.unshift({ id: savedId, ...orderData });
-    saveLocal();
-  }
-
-  btn.disabled = false;
-  state.cart = [];
-  updateCartUI();
-  closeOrderModal();
-  showReceipt({ id: savedId, ...orderData });
-
-  // clear form
-  ['o-name','o-fb','o-contact','o-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('o-address').value = '';
+async function submitOrder(){
+  const name=document.getElementById('o-name').value.trim();
+  const fb=document.getElementById('o-fb').value.trim();
+  const contact=document.getElementById('o-contact').value.trim();
+  const shipping=document.getElementById('o-shipping').value;
+  const notes=document.getElementById('o-notes').value.trim();
+  const err=document.getElementById('order-err');
+  if(!name||!fb||!contact){err.textContent='⚠ Please fill in all required fields.';err.style.display='block';return;}
+  err.style.display='none';
+  const btn=document.getElementById('submit-order-btn');btn.disabled=true;btn.textContent='Saving…';
+  const goNum='GO-'+state.goCounter++;
+  const items=state.cart.map(i=>({...i}));
+  const total=items.reduce((s,i)=>s+i.price*i.qty,0);
+  const dateStr=new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+  const orderData={goNum,name,fb,contact,shipping,notes,items,total,status:'pending',date:dateStr,createdAt:Date.now()};
+  let savedId=null;
+  if(firebaseReady){savedId=await fsAdd('orders',orderData);await fsSet('settings','meta',{goCounter:state.goCounter});}
+  if(!savedId){savedId='local_'+Date.now();state.orders.unshift({id:savedId,...orderData});saveLocal();}
+  btn.disabled=false;state.cart=[];updateCartUI();closeOrderModal();
+  showReceipt({id:savedId,...orderData});
+  ['o-name','o-fb','o-contact','o-notes'].forEach(id=>document.getElementById(id).value='');
 }
 
-// ─────────────────────────────────────────────
-// RECEIPT
-// ─────────────────────────────────────────────
-function showReceipt(order) {
-  state.currentReceiptOrder = order;
-  renderConfirmReceipt(order);
-  renderShippingReceipt(order);
-  document.querySelectorAll('.receipt-tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  document.getElementById('receipt-confirm').style.display = 'block';
-  document.getElementById('receipt-shipping').style.display = 'none';
-  document.getElementById('receipt-modal').classList.add('open');
-}
-function closeReceiptModal() { document.getElementById('receipt-modal').classList.remove('open'); }
-function switchReceiptTab(tab, el) {
-  document.querySelectorAll('.receipt-tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('receipt-confirm').style.display = tab==='confirm' ? 'block' : 'none';
-  document.getElementById('receipt-shipping').style.display = tab==='shipping' ? 'block' : 'none';
-}
+function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('receipt-modal').classList.add('open');}
+function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
 
-function buildConfirmHtml(o) {
-  return `<div class="receipt">
+function buildReceiptHtml(o){
+  return `<div class="receipt" id="receipt-printable">
     <div class="receipt-head">
       <div class="receipt-title">Angel Shop</div>
       <div class="receipt-sub">Group Orders · Order Confirmation</div>
@@ -1001,81 +680,21 @@ function buildConfirmHtml(o) {
   </div>`;
 }
 
-function buildShippingHtml(o) {
-  return `<div class="receipt">
-    <div class="receipt-head">
-      <div class="receipt-title">Angel Shop</div>
-      <div class="receipt-sub">Shipping Details Order Form</div>
-      <div class="receipt-go">${o.goNum}</div>
-    </div>
-    <div class="r-row"><span class="r-label">Full Name</span><span class="r-val">${esc(o.name)}</span></div>
-    <div class="r-row"><span class="r-label">FB Account</span><span class="r-val">${esc(o.fb)}</span></div>
-    <div class="r-row"><span class="r-label">Complete Address</span><span class="r-val">${esc(o.address)}</span></div>
-    <div class="r-row"><span class="r-label">Contact No.</span><span class="r-val">${esc(o.contact)}</span></div>
-    <div class="r-row"><span class="r-label">Shipping Type</span><span class="r-val">${o.shipping}</span></div>
-    ${o.notes?`<div class="r-row"><span class="r-label">Notes</span><span class="r-val">${esc(o.notes)}</span></div>`:''}
-    <div style="margin:.5rem 0;font-size:.78rem;color:#8b1f42;font-weight:500">Order Details:</div>
-    <div class="r-items">
-      ${o.items.map(i=>`
-        <div class="r-item"><span>${esc(i.name)}</span><span>× ${i.qty}</span></div>
-        <div class="r-item" style="color:#999"><span>@ ₱${parseFloat(i.price).toFixed(2)} each</span><span>₱${(i.price*i.qty).toFixed(2)}</span></div>
-      `).join('')}
-      <div class="r-total"><span>Total Amount</span><span>₱${o.total.toFixed(2)}</span></div>
-    </div>
-    <div class="receipt-foot">
-      ✿ Thank you for your purchase! ✿
-      <div class="receipt-note">
-        📩 Please send this receipt through DM and I will send you the payment details.<br><br>
-        📦 ISF and LSF will be notified upon arrival of items in my address.
-      </div>
-    </div>
-  </div>`;
+async function saveReceiptAsImage(){
+  const o=state.currentReceiptOrder;if(!o)return;
+  const btn=document.getElementById('save-img-btn');btn.disabled=true;btn.textContent='⏳ Saving…';
+  try{
+    const canvas=await html2canvas(document.getElementById('receipt-printable'),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+    const link=document.createElement('a');link.download='AngelShop-'+o.goNum+'.png';link.href=canvas.toDataURL('image/png');link.click();
+  }catch(e){alert('Could not save image. Please try again.');}
+  btn.disabled=false;btn.textContent='📥 Save as Image';
 }
 
-function renderConfirmReceipt(o) { document.getElementById('receipt-confirm').innerHTML = buildConfirmHtml(o); }
-function renderShippingReceipt(o) { document.getElementById('receipt-shipping').innerHTML = buildShippingHtml(o); }
-
-function printReceipt() {
-  const o = state.currentReceiptOrder;
-  if (!o) return;
-  const w = window.open('', '_blank', 'width=700,height=900');
-  w.document.write(`<!DOCTYPE html><html><head><title>Angel Shop Receipt · ${o.goNum}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:sans-serif;max-width:600px;margin:2rem auto;padding:1rem;color:#3d1a28;background:#fff}
-    h2{color:#8b1f42;text-align:center;margin:1.5rem 0 .75rem;font-size:.9rem;text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid #ffc0d5;padding-bottom:.5rem}
-    .receipt{border:2px dashed #ffc0d5;border-radius:12px;padding:1.5rem;margin-bottom:2rem;font-size:13px;line-height:1.6}
-    .receipt-head{text-align:center;border-bottom:2px dashed #ffc0d5;padding-bottom:1rem;margin-bottom:1rem}
-    .receipt-title{font-size:1.6rem;color:#8b1f42;font-weight:700}
-    .receipt-sub{font-size:.72rem;color:#c2426d;text-transform:uppercase;letter-spacing:.08em}
-    .receipt-go{font-size:1rem;font-weight:700;color:#c2426d;margin-top:.3rem}
-    .r-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid #ffe0e8;gap:.5rem}
-    .r-label{font-weight:600;color:#8b1f42;white-space:nowrap}
-    .r-val{text-align:right}
-    .r-items{background:#fff5f7;border-radius:8px;padding:.75rem;margin:.5rem 0}
-    .r-item{display:flex;justify-content:space-between;font-size:.8rem;padding:.2rem 0}
-    .r-total{display:flex;justify-content:space-between;font-weight:700;color:#c2426d;border-top:2px solid #ffc0d5;margin-top:.5rem;padding-top:.5rem}
-    .receipt-foot{text-align:center;margin-top:1rem;padding-top:1rem;border-top:2px dashed #ffc0d5;color:#c2426d;font-size:.78rem}
-    .receipt-note{background:#fff0f5;border-radius:8px;padding:.6rem .85rem;margin-top:.6rem;font-size:.75rem;color:#8b1f42;line-height:1.5;text-align:left}
-  </style></head><body>
-  <h2>Order Confirmation</h2>${buildConfirmHtml(o)}
-  <h2>Shipping Details Form</h2>${buildShippingHtml(o)}
-  <script>window.onload=()=>window.print()<\/script>
-  </body></html>`);
-  w.document.close();
-}
-
-// ─────────────────────────────────────────────
-// ADMIN ORDERS
-// ─────────────────────────────────────────────
-function renderAdminOrders() {
-  const tbody = document.getElementById('admin-orders-tbody');
-  const list = state.orderFilter === 'all' ? state.orders : state.orders.filter(o => o.status === state.orderFilter);
-  if (!list.length) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = list.map(o => `
+function renderAdminOrders(){
+  const tbody=document.getElementById('admin-orders-tbody');
+  const list=state.orderFilter==='all'?state.orders:state.orders.filter(o=>o.status===state.orderFilter);
+  if(!list.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>';return;}
+  tbody.innerHTML=list.map(o=>`
     <tr>
       <td style="font-weight:600;color:#c2426d">${o.goNum}</td>
       <td>${esc(o.name)}</td>
@@ -1096,37 +715,23 @@ function renderAdminOrders() {
         <button class="btn btn-secondary btn-sm" onclick="viewOrder('${o.id}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">Del</button>
       </div></td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function filterOrders(f, el) {
-  state.orderFilter = f;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderAdminOrders();
+function filterOrders(f,el){
+  state.orderFilter=f;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderAdminOrders();
+}
+async function updateOrderStatus(id,status){
+  const o=state.orders.find(x=>x.id===id);if(o){o.status=status;saveLocal();await fsUpdate('orders',id,{status});}
+}
+async function deleteOrder(id){
+  if(!confirm('Delete this order permanently?'))return;
+  state.orders=state.orders.filter(o=>o.id!==id);saveLocal();renderAdminOrders();await fsDelete('orders',id);
 }
 
-async function updateOrderStatus(id, status) {
-  const o = state.orders.find(x => x.id === id);
-  if (o) {
-    o.status = status;
-    saveLocal();
-    await fsUpdate('orders', id, { status });
-  }
-}
-
-async function deleteOrder(id) {
-  if (!confirm('Delete this order permanently?')) return;
-  state.orders = state.orders.filter(o => o.id !== id);
-  saveLocal(); renderAdminOrders();
-  await fsDelete('orders', id);
-}
-
-function viewOrder(id) {
-  const o = state.orders.find(x => x.id === id);
-  if (!o) return;
-  document.getElementById('order-detail-body').innerHTML = `
+function viewOrder(id){
+  const o=state.orders.find(x=>x.id===id);if(!o)return;
+  document.getElementById('order-detail-body').innerHTML=`
     <div style="display:flex;flex-direction:column;gap:.75rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.84rem">
         <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
@@ -1135,7 +740,6 @@ function viewOrder(id) {
         <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
         <div><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(o.fb)}</div>
         <div><span style="color:#c2426d;font-weight:500">Shipping:</span> ${o.shipping}</div>
-        <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Address:</span> ${esc(o.address)}</div>
         ${o.notes?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Notes:</span> ${esc(o.notes)}</div>`:''}
       </div>
       <div style="background:#fff5f7;border-radius:8px;padding:.75rem">
@@ -1150,57 +754,27 @@ function viewOrder(id) {
         <button class="btn btn-primary btn-sm" onclick="closeModal('order-detail-modal');showReceipt(state.orders.find(x=>x.id==='${o.id}'))">View Receipt</button>
         <button class="btn btn-secondary btn-sm" onclick="closeModal('order-detail-modal')">Close</button>
       </div>
-    </div>
-  `;
+    </div>`;
   document.getElementById('order-detail-modal').classList.add('open');
 }
 
-// ─────────────────────────────────────────────
-// ADMIN TABS
-// ─────────────────────────────────────────────
-function adminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => {
-    t.classList.toggle('active', ['products','orders','announcements'][i] === tab);
-  });
-  document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('panel-' + tab).classList.add('active');
-  if (tab === 'orders') renderAdminOrders();
-  if (tab === 'products') renderAdminProducts();
-  if (tab === 'announcements') document.getElementById('announce-input').value = state.announcement;
+function adminTab(tab){
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['products','orders','announcements'][i]===tab));
+  document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='orders')renderAdminOrders();
+  if(tab==='products')renderAdminProducts();
+  if(tab==='announcements')document.getElementById('announce-input').value=state.announcement;
 }
 
-// ─────────────────────────────────────────────
-// UTILITIES
-// ─────────────────────────────────────────────
-function esc(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function showAlert(id, msg, type) {
-  const el = document.getElementById(id);
-  el.className = 'alert alert-' + type + ' show';
-  el.textContent = msg;
-  setTimeout(() => el.classList.remove('show'), 3000);
-}
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function showAlert(id,msg,type){const el=document.getElementById(id);el.className='alert alert-'+type+' show';el.textContent=msg;setTimeout(()=>el.classList.remove('show'),3000);}
 
-// ─────────────────────────────────────────────
-// BOOT — load Firebase scripts dynamically so
-// they are guaranteed to exist before we use them
-// ─────────────────────────────────────────────
-loadLocal();
-updateAnnounceDisplay();
-renderCustomerProducts();
-updateCartUI();
+loadLocal();updateAnnounceDisplay();renderCustomerProducts();updateCartUI();
 
-function loadScript(src, cb) {
-  const s = document.createElement('script');
-  s.src = src;
-  s.onload = cb;
-  s.onerror = () => { setSyncStatus('offline'); fallbackToLocal(); };
-  document.head.appendChild(s);
-}
-
-loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function() {
-  loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function() {
+function loadScript(src,cb){const s=document.createElement('script');s.src=src;s.onload=cb;s.onerror=()=>{setSyncStatus('offline');fallbackToLocal();};document.head.appendChild(s);}
+loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',function(){
+  loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js',function(){
     initFirebase();
   });
 });
