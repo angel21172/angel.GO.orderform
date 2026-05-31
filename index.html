@@ -132,6 +132,14 @@ tr:hover td{background:#fff5f7}
 .img-prev{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1.5px solid #ffc0d5;display:none;margin-top:.5rem}
 .empty-state{text-align:center;padding:3rem 1rem;color:#c2426d;opacity:.6}
 .empty-state .ei{font-size:3rem;margin-bottom:.5rem}
+.category-section{margin-bottom:.5rem}
+.category-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;padding:.75rem 1.5rem .4rem;display:flex;align-items:center;gap:.5rem}
+.category-title::after{content:'';flex:1;height:1px;background:#ffc0d5}
+.notes-box{background:#fff0f5;border:1.5px solid #f4a0c0;border-radius:12px;padding:1rem 1.2rem;margin:0 0 1rem;font-size:.8rem;color:#5c0e27;line-height:1.7}
+.notes-box .notes-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;font-weight:600;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.notes-box ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem}
+.notes-box li{list-style:none;padding-left:.2rem;position:relative}
+.notes-box li::before{content:'•';color:#e8679a;position:absolute;left:-.9rem;font-weight:700}
 .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
 .chip{background:#fff;border:1.5px solid #ffc0d5;border-radius:20px;padding:4px 12px;font-size:.78rem;cursor:pointer;color:#c2426d;transition:all .2s}
 .chip.active{background:#e8679a;color:#fff;border-color:#e8679a}
@@ -206,7 +214,7 @@ tr:hover td{background:#fff5f7}
     <div id="prod-alert" class="alert"></div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="admin-prod-tbody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
       </table>
     </div>
@@ -269,6 +277,7 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
+<!-- ORDER FORM MODAL — address field added -->
 <div class="modal-wrap" id="order-modal">
   <div class="modal">
     <div class="modal-head">
@@ -276,6 +285,19 @@ tr:hover td{background:#fff5f7}
       <button class="close-btn" onclick="closeOrderModal()">✕</button>
     </div>
     <div class="modal-body">
+      <div class="notes-box">
+        <div class="notes-title">⚠️ Important Notes</div>
+        <ul>
+          <li>After submitting the order form, please download the order confirmation/receipt. Payment details will be sent to you after.</li>
+          <li>Please send your proof of payment to my Facebook account: <strong>Angel</strong>.</li>
+          <li>ISF will be collected upon arrival of items here in the Philippines. Please read the Terms and Conditions on my pinned post and make sure you are 100% sure before ordering.</li>
+          <li><strong>Strictly no cancellation. No refund.</strong></li>
+          <li><strong>Full payment is required</strong> — we will not purchase your item without it.</li>
+          <li>Pay on time. Failure to pay before or on the deadline will move your order to the second batch. If payment is not settled, you will be blocked.</li>
+          <li>We will give you updates regarding your item via DM or post. You may also message this account directly for updates.</li>
+          <li>We will send you an arrival notice once items have arrived, along with a shipping form for your delivery details. Allow us 2–3 days to arrange all items, after which we will send you the ISF and Local SF fee. You will have <strong>1 week</strong> to pay. Failure to pay by the deadline will result in your order being forfeited with no refund.</li>
+        </ul>
+      </div>
       <div class="form-grid">
         <div class="form-group full"><label>Full Name *</label><input id="o-name" placeholder="Your full name" /></div>
         <div class="form-group full"><label>Facebook Account *</label><input id="o-fb" placeholder="Your FB name or profile link" /></div>
@@ -287,7 +309,8 @@ tr:hover td{background:#fff5f7}
             <option value="Direct">Direct Shipping</option>
           </select>
         </div>
-        <div class="form-group full"><label>Notes / Special Instructions</label><textarea id="o-notes" placeholder="Any special requests?" rows="2"></textarea></div>
+        <div class="form-group full"><label>Complete Address *</label><textarea id="o-address" placeholder="House/Unit No., Street, Barangay, City/Municipality, Province" rows="2"></textarea></div>
+        <div class="form-group full"><label>Notes / Special Instructions</label><textarea id="o-notes" placeholder="Any special requests or additional notes…" rows="3"></textarea></div>
       </div>
       <div id="order-err" style="color:#e05252;font-size:.82rem;margin:.5rem 0;display:none"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem">
@@ -306,10 +329,11 @@ tr:hover td{background:#fff5f7}
     </div>
     <div class="modal-body">
       <div id="receipt-content"></div>
-      <div style="margin-top:1rem;display:flex;gap:.75rem">
+      <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
-        <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
+        <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save / Share Image</button>
       </div>
+      <div style="margin-top:.6rem;font-size:.75rem;color:#888;line-height:1.5" id="save-hint"></div>
     </div>
   </div>
 </div>
@@ -323,6 +347,7 @@ tr:hover td{background:#fff5f7}
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group full"><label>Product Name *</label><input id="p-name" placeholder="e.g. Sanrio Tumbler" /></div>
+        <div class="form-group full"><label>Category</label><input id="p-category" placeholder="e.g. Plushies, Stationery, Accessories…" /></div>
         <div class="form-group"><label>Price (₱) *</label><input id="p-price" type="number" placeholder="0.00" min="0" step="0.01" /></div>
         <div class="form-group"><label>Stock Qty</label><input id="p-stock" type="number" placeholder="0" min="0" /></div>
         <div class="form-group full"><label>Description</label><textarea id="p-desc" placeholder="Short product description…" rows="2"></textarea></div>
@@ -466,37 +491,69 @@ function updateAnnounceDisplay(){
   else bar.classList.add('hidden');
 }
 
+function productCardHtml(p){
+  return `<div class="product-card">
+    <div class="product-img">${p.img?`<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>`:'<span style="font-size:2.5rem">🛍</span>'}</div>
+    <div class="product-info">
+      <div class="product-name">${esc(p.name)}</div>
+      <div class="product-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
+      <div class="product-stock ${p.status==='limited'?'low':p.status==='soldout'?'out':''}">
+        ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
+      </div>
+      ${p.desc?`<div class="product-desc">${esc(p.desc)}</div>`:''}
+      <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
+        ${p.status==='soldout'?'Sold Out':'+ Add to Order'}
+      </button>
+    </div>
+  </div>`;
+}
+
 function renderCustomerProducts(filter=''){
   const grid=document.getElementById('customer-products');
-  const items=state.products.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase()));
+  const items=state.products.filter(p=>!filter||p.name.toLowerCase().includes(filter.toLowerCase())||((p.category||'').toLowerCase().includes(filter.toLowerCase())));
   if(!items.length){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';return;}
-  grid.innerHTML=items.map(p=>`
-    <div class="product-card">
-      <div class="product-img">${p.img?`<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>`:'<span style="font-size:2.5rem">🛍</span>'}</div>
-      <div class="product-info">
-        <div class="product-name">${esc(p.name)}</div>
-        <div class="product-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
-        <div class="product-stock ${p.status==='limited'?'low':p.status==='soldout'?'out':''}">
-          ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
-        </div>
-        ${p.desc?`<div class="product-desc">${esc(p.desc)}</div>`:''}
-        <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
-          ${p.status==='soldout'?'Sold Out':'+ Add to Order'}
-        </button>
-      </div>
-    </div>`).join('');
+
+  // Group by category
+  const grouped={};
+  items.forEach(p=>{
+    const cat=(p.category||'').trim()||'Others';
+    if(!grouped[cat])grouped[cat]=[];
+    grouped[cat].push(p);
+  });
+  const cats=Object.keys(grouped).sort((a,b)=>a==='Others'?1:b==='Others'?-1:a.localeCompare(b));
+
+  // If only one category (or all uncategorized), render flat
+  if(cats.length===1&&cats[0]==='Others'){
+    grid.innerHTML=items.map(productCardHtml).join('');
+    return;
+  }
+
+  // Multi-category: render with section headers
+  grid.innerHTML='';
+  grid.style.display='block';
+  cats.forEach(cat=>{
+    const section=document.createElement('div');
+    section.className='category-section';
+    section.innerHTML=`<div class="category-title">✿ ${esc(cat)}</div><div class="products-grid" style="padding:0 0 .5rem">${grouped[cat].map(productCardHtml).join('')}</div>`;
+    grid.appendChild(section);
+  });
 }
-function filterProducts(val){renderCustomerProducts(val);}
+function filterProducts(val){
+  const grid=document.getElementById('customer-products');
+  grid.style.display='';
+  renderCustomerProducts(val);
+}
 
 function renderAdminProducts(){
   const tbody=document.getElementById('admin-prod-tbody');
-  if(!state.products.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:#c2426d;padding:2rem">No products yet. Click "+ Add Product" to start.</td></tr>';return;}
+  if(!state.products.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#c2426d;padding:2rem">No products yet. Click "+ Add Product" to start.</td></tr>';return;}
   tbody.innerHTML=state.products.map(p=>`
     <tr>
       <td><div style="width:42px;height:42px;border-radius:7px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem">
         ${p.img?`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}
       </div></td>
       <td><div style="font-weight:500">${esc(p.name)}</div><div style="font-size:.73rem;color:#888">${esc(p.desc||'')}</div></td>
+      <td><span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;white-space:nowrap">${esc(p.category||'—')}</span></td>
       <td>₱${parseFloat(p.price||0).toFixed(2)}</td>
       <td>${p.stock||0}</td>
       <td><span class="badge ${p.status==='available'?'badge-confirmed':p.status==='limited'?'badge-pending':''}">
@@ -510,7 +567,7 @@ function renderAdminProducts(){
 }
 
 function openProductModal(id){
-  ['p-name','p-desc'].forEach(x=>document.getElementById(x).value='');
+  ['p-name','p-desc','p-category'].forEach(x=>document.getElementById(x).value='');
   ['p-price','p-stock'].forEach(x=>document.getElementById(x).value='');
   document.getElementById('p-img-data').value='';
   document.getElementById('p-img-prev').style.display='none';
@@ -527,6 +584,7 @@ function openProductModal(id){
       document.getElementById('p-price').value=p.price||'';
       document.getElementById('p-stock').value=p.stock||0;
       document.getElementById('p-desc').value=p.desc||'';
+      document.getElementById('p-category').value=p.category||'';
       document.getElementById('p-status').value=p.status||'available';
       document.getElementById('p-edit-id').value=id;
       document.getElementById('product-modal-title').textContent='Edit Product';
@@ -560,12 +618,13 @@ async function saveProduct(){
   const price=parseFloat(document.getElementById('p-price').value);
   const stock=parseInt(document.getElementById('p-stock').value)||0;
   const desc=document.getElementById('p-desc').value.trim();
+  const category=document.getElementById('p-category').value.trim();
   const img=document.getElementById('p-img-data').value;
   const status=document.getElementById('p-status').value;
   const editId=document.getElementById('p-edit-id').value;
   if(!name||isNaN(price)){alert('Please fill in the product name and price.');return;}
   const btn=document.getElementById('save-prod-btn');btn.disabled=true;btn.textContent='Saving…';
-  const data={name,price,stock,desc,img,status};
+  const data={name,price,stock,desc,category,img,status};
   if(editId){
     const idx=state.products.findIndex(p=>p.id===editId);
     if(idx>-1)state.products[idx]={id:editId,...data};
@@ -631,26 +690,27 @@ async function submitOrder(){
   const name=document.getElementById('o-name').value.trim();
   const fb=document.getElementById('o-fb').value.trim();
   const contact=document.getElementById('o-contact').value.trim();
+  const address=document.getElementById('o-address').value.trim();
   const shipping=document.getElementById('o-shipping').value;
   const notes=document.getElementById('o-notes').value.trim();
   const err=document.getElementById('order-err');
-  if(!name||!fb||!contact){err.textContent='⚠ Please fill in all required fields.';err.style.display='block';return;}
+  if(!name||!fb||!contact||!address){err.textContent='⚠ Please fill in all required fields including your address.';err.style.display='block';return;}
   err.style.display='none';
   const btn=document.getElementById('submit-order-btn');btn.disabled=true;btn.textContent='Saving…';
   const goNum='GO-'+state.goCounter++;
   const items=state.cart.map(i=>({...i}));
   const total=items.reduce((s,i)=>s+i.price*i.qty,0);
   const dateStr=new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
-  const orderData={goNum,name,fb,contact,shipping,notes,items,total,status:'pending',date:dateStr,createdAt:Date.now()};
+  const orderData={goNum,name,fb,contact,address,shipping,notes,items,total,status:'pending',date:dateStr,createdAt:Date.now()};
   let savedId=null;
   if(firebaseReady){savedId=await fsAdd('orders',orderData);await fsSet('settings','meta',{goCounter:state.goCounter});}
   if(!savedId){savedId='local_'+Date.now();state.orders.unshift({id:savedId,...orderData});saveLocal();}
   btn.disabled=false;state.cart=[];updateCartUI();closeOrderModal();
   showReceipt({id:savedId,...orderData});
-  ['o-name','o-fb','o-contact','o-notes'].forEach(id=>document.getElementById(id).value='');
+  ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id=>document.getElementById(id).value='');
 }
 
-function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('receipt-modal').classList.add('open');}
+function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('save-hint').textContent='';document.getElementById('receipt-modal').classList.add('open');}
 function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
 
 function buildReceiptHtml(o){
@@ -664,6 +724,7 @@ function buildReceiptHtml(o){
     <div class="r-row"><span class="r-label">Name</span><span class="r-val">${esc(o.name)}</span></div>
     <div class="r-row"><span class="r-label">FB Account</span><span class="r-val">${esc(o.fb)}</span></div>
     <div class="r-row"><span class="r-label">Contact</span><span class="r-val">${esc(o.contact)}</span></div>
+    <div class="r-row"><span class="r-label">Address</span><span class="r-val">${esc(o.address||'—')}</span></div>
     <div class="r-row"><span class="r-label">Shipping Type</span><span class="r-val">${o.shipping}</span></div>
     <div style="margin:.5rem 0;font-size:.78rem;color:#8b1f42;font-weight:500">Order Items:</div>
     <div class="r-items">
@@ -680,14 +741,73 @@ function buildReceiptHtml(o){
   </div>`;
 }
 
+/* ── UPDATED: opens receipt as image in a new browser tab ── */
 async function saveReceiptAsImage(){
   const o=state.currentReceiptOrder;if(!o)return;
-  const btn=document.getElementById('save-img-btn');btn.disabled=true;btn.textContent='⏳ Saving…';
+  const btn=document.getElementById('save-img-btn');
+  const hint=document.getElementById('save-hint');
+  btn.disabled=true;btn.textContent='⏳ Generating…';hint.textContent='';
   try{
-    const canvas=await html2canvas(document.getElementById('receipt-printable'),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
-    const link=document.createElement('a');link.download='AngelShop-'+o.goNum+'.png';link.href=canvas.toDataURL('image/png');link.click();
-  }catch(e){alert('Could not save image. Please try again.');}
-  btn.disabled=false;btn.textContent='📥 Save as Image';
+    const canvas=await html2canvas(document.getElementById('receipt-printable'),{
+      backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false
+    });
+    const dataUrl=canvas.toDataURL('image/png');
+
+    /* Try native Share API first (mobile browsers, incl. Chrome on Android) */
+    if(navigator.canShare && navigator.share){
+      canvas.toBlob(async blob=>{
+        const file=new File([blob],'AngelShop-'+o.goNum+'.png',{type:'image/png'});
+        if(navigator.canShare({files:[file]})){
+          try{
+            await navigator.share({files:[file],title:'Angel Shop — '+o.goNum});
+            btn.disabled=false;btn.textContent='📥 Save / Share Image';
+            return;
+          }catch(shareErr){/* user cancelled or not supported, fall through */}
+        }
+        openImageInTab(dataUrl,o.goNum);
+        btn.disabled=false;btn.textContent='📥 Save / Share Image';
+      },'image/png');
+    } else {
+      openImageInTab(dataUrl,o.goNum);
+      btn.disabled=false;btn.textContent='📥 Save / Share Image';
+    }
+  }catch(e){
+    alert('Could not generate image. Please try again.');
+    btn.disabled=false;btn.textContent='📥 Save / Share Image';
+  }
+}
+
+function openImageInTab(dataUrl,goNum){
+  /* Opens the receipt image in a new tab.
+     From there the user can:
+     • Long-press (mobile) → Save Image / Share → Messenger/Facebook
+     • Right-click (desktop) → Save Image As…
+     • Use the browser's share button to send via any app */
+  const win=window.open('','_blank');
+  if(!win){
+    /* Popup blocked fallback – direct download */
+    const a=document.createElement('a');a.download='AngelShop-'+goNum+'.png';a.href=dataUrl;a.click();
+    document.getElementById('save-hint').textContent='Image downloaded! You can now share it via Messenger or Facebook.';
+    return;
+  }
+  win.document.write(`<!DOCTYPE html>
+<html><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AngelShop-${goNum}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#fff0f5;display:flex;flex-direction:column;align-items:center;padding:1.5rem;font-family:sans-serif;gap:1rem}
+  img{max-width:480px;width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.15)}
+  p{font-size:.85rem;color:#c2426d;text-align:center;line-height:1.5;max-width:380px}
+  .dl{background:#e8679a;color:#fff;border:none;padding:.6rem 1.4rem;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:600}
+</style></head>
+<body>
+  <img src="${dataUrl}" alt="Receipt ${goNum}"/>
+  <p>📱 <strong>Mobile:</strong> Long-press the image → <em>Save Image</em> or <em>Share</em> to send via Messenger / Facebook.<br><br>
+     💻 <strong>Desktop:</strong> Right-click the image → <em>Save Image As…</em></p>
+  <button class="dl" onclick="var a=document.createElement('a');a.href='${dataUrl}';a.download='AngelShop-${goNum}.png';a.click()">⬇ Download Image</button>
+</body></html>`);
+  win.document.close();
 }
 
 function renderAdminOrders(){
@@ -740,6 +860,7 @@ function viewOrder(id){
         <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
         <div><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(o.fb)}</div>
         <div><span style="color:#c2426d;font-weight:500">Shipping:</span> ${o.shipping}</div>
+        ${o.address?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Address:</span> ${esc(o.address)}</div>`:''}
         ${o.notes?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Notes:</span> ${esc(o.notes)}</div>`:''}
       </div>
       <div style="background:#fff5f7;border-radius:8px;padding:.75rem">
