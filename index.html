@@ -331,7 +331,10 @@ tr:hover td{background:#fff5f7}
     </div>
   </div>
   <div class="admin-panel" id="panel-orders">
-    <div style="font-weight:600;color:#8b1f42;margin-bottom:.75rem">Order Summaries</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+      <div style="font-weight:600;color:#8b1f42">Order Summaries</div>
+      <input class="search-bar" id="order-search" placeholder="🔍 Search name, GO#, item…" oninput="renderAdminOrders()" style="width:220px" />
+    </div>
     <div class="filter-row">
       <div class="chip active" onclick="filterOrders('all',this)">All</div>
       <div class="chip" onclick="filterOrders('pending',this)">Pending</div>
@@ -923,7 +926,20 @@ function buildReceiptHtml(o){
 
 function renderAdminOrders(){
   const tbody=document.getElementById('admin-orders-tbody');
-  const list=state.orderFilter==='all'?state.orders:state.orders.filter(o=>o.status===state.orderFilter);
+  const q=(document.getElementById('order-search')?.value||'').toLowerCase().trim();
+  let list=state.orderFilter==='all'?[...state.orders]:state.orders.filter(o=>o.status===state.orderFilter);
+  if(q){
+    list=list.filter(o=>
+      (o.goNum||'').toLowerCase().includes(q)||
+      (o.name||'').toLowerCase().includes(q)||
+      (o.fb||'').toLowerCase().includes(q)||
+      (o.contact||'').toLowerCase().includes(q)||
+      (o.address||'').toLowerCase().includes(q)||
+      (o.notes||'').toLowerCase().includes(q)||
+      (o.shipping||'').toLowerCase().includes(q)||
+      (o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))
+    );
+  }
   if(!list.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>';return;}
   tbody.innerHTML=list.map(o=>`
     <tr>
@@ -953,7 +969,10 @@ function renderAdminOrders(){
 }
 
 function filterOrders(f,el){
-  state.orderFilter=f;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderAdminOrders();
+  state.orderFilter=f;
+  document.querySelectorAll('#panel-orders .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderAdminOrders();
 }
 async function updateOrderStatus(id,status){
   const o=state.orders.find(x=>x.id===id);if(o){o.status=status;saveLocal();await fsUpdate('orders',id,{status});}
@@ -1024,11 +1043,23 @@ function renderDashboard(){
   const prodMap={};
   orders.forEach(o=>{
     (o.items||[]).forEach(item=>{
-      if(!prodMap[item.name])prodMap[item.name]={qty:0,revenue:0,orders:[]};
+      if(!prodMap[item.name])prodMap[item.name]={qty:0,revenue:0,orders:[],img:item.img||''};
       prodMap[item.name].qty+=item.qty;
       prodMap[item.name].revenue+=item.price*item.qty;
+      // Try to get the latest product image from state.products too
+      if(!prodMap[item.name].img){
+        const found=state.products.find(p=>p.name===item.name);
+        if(found&&found.img)prodMap[item.name].img=found.img;
+      }
       prodMap[item.name].orders.push({customer:o.name,qty:item.qty,status:o.status,goNum:o.goNum});
     });
+  });
+  // Also fill images from current products list (in case img wasn't on old order items)
+  Object.keys(prodMap).forEach(name=>{
+    if(!prodMap[name].img){
+      const found=state.products.find(p=>p.name===name);
+      if(found&&found.img)prodMap[name].img=found.img;
+    }
   });
   const prodList=Object.entries(prodMap).sort((a,b)=>b[1].qty-a[1].qty);
 
@@ -1075,7 +1106,10 @@ function renderDashboard(){
         prodList.map(([name,data])=>`
           <div style="margin-bottom:.9rem">
             <div class="prod-summary-row">
-              <div class="ps-name">🛍 ${esc(name)}</div>
+              <div style="width:40px;height:40px;border-radius:8px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">
+                ${data.img?`<img src="${data.img}" style="width:100%;height:100%;object-fit:cover" />`:'🛍'}
+              </div>
+              <div class="ps-name">${esc(name)}</div>
               <div class="ps-orders">${data.qty} ordered</div>
               <div class="ps-revenue">₱${data.revenue.toFixed(2)}</div>
             </div>
