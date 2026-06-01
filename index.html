@@ -32,7 +32,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1rem;padding:0 1.5rem 2rem}
 .product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,103,154,.18)}
-.product-img{width:100%;height:160px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden}
+.product-img{width:100%;height:140px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden}
 .product-img img{width:100%;height:100%;object-fit:cover}
 .product-info{padding:.9rem}
 .product-name{font-weight:500;font-size:.9rem;color:#3d1a28;margin-bottom:3px;line-height:1.3}
@@ -166,12 +166,82 @@ tr:hover td{background:#fff5f7}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .sync-dot.syncing{background:#ffd97a;animation:pulse .7s infinite}
 .sync-dot.offline{background:#ff9a9a;animation:none}
-@media(max-width:520px){
+
+/* ── Mobile-first responsive ── */
+@media(max-width:600px){
+  /* Nav */
+  .topnav{padding:0 .85rem;height:52px}
+  .topnav .brand{font-size:.95rem}
+  .mode-btn{padding:5px 10px;font-size:11px}
+  #sync-label{display:none}
+
+  /* Hero */
+  .hero{padding:1.75rem 1rem 1.4rem}
+  .hero h1{font-size:1.4rem}
+  .hero p{font-size:.78rem}
+
+  /* Announce bar */
+  .announce-bar{margin:.75rem .85rem 0;padding:.6rem .9rem}
+
+  /* Section header — stack search below title */
+  .section-header{flex-direction:column;align-items:flex-start;padding:1rem .85rem .5rem;gap:.5rem}
+  .search-bar{width:100%}
+
+  /* Category folders */
+  .category-folder{margin:0 .85rem .65rem}
+  .folder-header{padding:.75rem .9rem}
+  .folder-icon{width:36px;height:36px;font-size:1.1rem}
+  .folder-name{font-size:.92rem}
+  .folder-body{padding:.2rem .5rem .7rem}
+
+  /* Product grid — 2 columns on phone */
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:.6rem;padding:0 .85rem 1.5rem}
+
+  /* Product card — tight image */
+  .product-img{height:100px}
+  .product-info{padding:.6rem}
+  .product-name{font-size:.8rem}
+  .product-price{font-size:.88rem;margin-bottom:.25rem}
+  .product-stock{font-size:.68rem;margin-bottom:.35rem}
+  .product-desc{font-size:.68rem;margin-bottom:.35rem}
+  .add-btn{font-size:.74rem;padding:.38rem}
+
+  /* Admin */
   .form-grid{grid-template-columns:1fr}
   .form-group.full{grid-column:1}
-  .products-grid{grid-template-columns:repeat(auto-fill,minmax(148px,1fr))}
-  .hero h1{font-size:1.5rem}
-  .admin-tabs{overflow-x:auto}
+  .admin-panel{padding:1rem .85rem}
+  .admin-header{padding:1rem .85rem}
+  .admin-tabs{overflow-x:auto;padding:0 .85rem}
+
+  /* Modals */
+  .modal{border-radius:12px 12px 0 0;position:fixed;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:92vh;margin:0}
+  .modal-wrap{align-items:flex-end;padding:0}
+  .modal-head{border-radius:12px 12px 0 0}
+  .modal-body{padding:1.1rem}
+
+  /* Cart drawer full width on mobile */
+  .drawer{width:100%;max-width:100%}
+
+  /* Cart fab — slightly smaller, above bottom safe area */
+  .cart-fab{width:48px;height:48px;font-size:19px;bottom:18px;right:16px}
+
+  /* Notes box in order form */
+  .notes-box{font-size:.76rem;padding:.85rem .9rem}
+  .notes-box .notes-title{font-size:.9rem}
+
+  /* Receipt */
+  .receipt{padding:1rem;font-size:.78rem}
+  .receipt-title{font-size:1.2rem}
+
+  /* Table — reduce padding */
+  th,td{padding:.45rem .6rem;font-size:.75rem}
+}
+
+@media(max-width:380px){
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:.45rem;padding:0 .6rem 1rem}
+  .product-img{height:85px}
+  .product-name{font-size:.75rem}
+  .product-price{font-size:.82rem}
 }
 </style>
 </head>
@@ -502,6 +572,16 @@ function updateAnnounceDisplay(){
   else bar.classList.add('hidden');
 }
 
+function matchesSearch(p, f){
+  if(!f)return true;
+  const q=f.toLowerCase();
+  return (p.name||'').toLowerCase().includes(q)
+    ||(p.category||'').toLowerCase().includes(q)
+    ||(p.desc||'').toLowerCase().includes(q)
+    ||String(p.price||'').includes(q)
+    ||(p.status||'').toLowerCase().includes(q);
+}
+
 function productCardHtml(p){
   return `<div class="product-card">
     <div class="product-img">${p.img?`<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>`:'<span style="font-size:2.5rem">🛍</span>'}</div>
@@ -531,7 +611,7 @@ function toggleFolder(el){
 function renderCustomerProducts(filter=''){
   const wrap=document.getElementById('customer-products');
   const f=filter.toLowerCase();
-  const items=state.products.filter(p=>!f||p.name.toLowerCase().includes(f)||((p.category||'').toLowerCase().includes(f)));
+  const items=state.products.filter(p=>matchesSearch(p,f));
   if(!items.length){wrap.innerHTML='<div class="empty-state"><div class="ei">🌸</div><p>No products found.</p></div>';return;}
 
   // Group by category
@@ -771,16 +851,25 @@ async function saveReceiptAsImage(){
   btn.disabled=true;btn.textContent='⏳ Generating…';
   try{
     const canvas=await html2canvas(document.getElementById('receipt-printable'),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
-    openImageInTab(canvas.toDataURL('image/png'),o.goNum);
+    canvas.toBlob(blob=>{
+      // Create a blob URL — works on mobile browsers including Chrome/Safari on Android/iOS
+      const blobUrl=URL.createObjectURL(blob);
+      const win=window.open(blobUrl,'_blank');
+      // If popup blocked, fall back to anchor click
+      if(!win||win.closed||typeof win.closed==='undefined'){
+        const a=document.createElement('a');
+        a.href=blobUrl;
+        a.target='_blank';
+        a.rel='noopener';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+      // Revoke after a delay to allow the tab/download to start
+      setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+    },'image/png');
   }catch(e){alert('Could not generate image. Please try again.');}
   btn.disabled=false;btn.textContent='📥 Save as Image';
-}
-
-function openImageInTab(dataUrl,goNum){
-  const win=window.open('','_blank');
-  if(!win){const a=document.createElement('a');a.download='AngelShop-'+goNum+'.png';a.href=dataUrl;a.click();return;}
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>AngelShop-${goNum}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:#fff0f5;display:flex;justify-content:center;padding:1.5rem}img{max-width:520px;width:100%;border-radius:12px}</style></head><body><img src="${dataUrl}" alt="Receipt ${goNum}"/></body></html>`);
-  win.document.close();
 }
 
 function renderAdminOrders(){
