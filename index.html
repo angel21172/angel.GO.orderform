@@ -261,10 +261,6 @@ tr:hover td{background:#fff5f7}
 </nav>
 
 <div class="page active" id="customer-page">
-  <div id="fb-page-banner" style="display:none;background:#1877f2;color:#fff;padding:.7rem 1.1rem;font-size:.82rem;line-height:1.5;display:none">
-    📵 <strong>You're using the Facebook browser.</strong> To save your receipt after ordering, tap <strong>⋮</strong> (Android) or <strong>⋯</strong> (iPhone) → <em>Open in Chrome / Safari</em>.
-    &nbsp;<a id="fb-page-open-link" href="#" style="color:#fff;font-weight:700;text-decoration:underline">Open now →</a>
-  </div>
   <div class="hero">
     <h1>Angel Shop<br>Group Orders</h1>
     <p>✦ browse, order &amp; receive your faves ✦</p>
@@ -414,13 +410,6 @@ tr:hover td{background:#fff5f7}
       <button class="close-btn" onclick="closeReceiptModal()">✕</button>
     </div>
     <div class="modal-body">
-      <div id="fb-browser-tip" style="display:none;background:#e8f4ff;border:1.5px solid #90c4f0;border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.8rem;color:#1a3a5c;line-height:1.6">
-        <div style="font-weight:700;margin-bottom:.3rem">📵 You are using the Facebook browser</div>
-        To save this receipt to your device, please open this page in your real browser first:<br><br>
-        <strong>Android:</strong> Tap the <strong>⋮ menu</strong> (top right) → <em>"Open in Chrome"</em> or <em>"Open in browser"</em><br>
-        <strong>iPhone:</strong> Tap the <strong>⋯ menu</strong> (bottom right) → <em>"Open in Safari"</em><br><br>
-        <a id="fb-open-link" href="#" style="display:inline-block;background:#1877f2;color:#fff;padding:.4rem .9rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.8rem">🌐 Open in Browser</a>
-      </div>
       <div id="receipt-content"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
@@ -828,33 +817,12 @@ async function submitOrder(){
   ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id=>document.getElementById(id).value='');
 }
 
-function isFBBrowser(){
-  const ua=navigator.userAgent||'';
-  return /FBAN|FBAV|FB_IAB|FB4A|FBIOS|Instagram/.test(ua);
-}
-
 function showReceipt(order){
   state.currentReceiptOrder=order;
   document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);
-
-  const inFB=isFBBrowser();
+  // Show iOS tip only on iOS Safari (download attribute not supported there)
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
-
-  // FB in-app browser banner
-  const fbTip=document.getElementById('fb-browser-tip');
-  fbTip.style.display=inFB?'block':'none';
-  if(inFB){
-    // Set the "Open in Browser" link to the current page URL
-    document.getElementById('fb-open-link').href=window.location.href;
-  }
-
-  // iOS tip (only show if NOT in FB browser, since FB tip covers that)
-  document.getElementById('ios-tip').style.display=(!inFB&&isIOS)?'block':'none';
-
-  // Disable save button when in FB browser since download won't work
-  document.getElementById('save-img-btn').disabled=inFB;
-  document.getElementById('save-img-btn').title=inFB?'Open in your browser first to save':'Save receipt as image';
-
+  document.getElementById('ios-tip').style.display=isIOS?'block':'none';
   document.getElementById('receipt-modal').classList.add('open');
 }
 function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
@@ -992,13 +960,6 @@ function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt
 function showAlert(id,msg,type){const el=document.getElementById(id);el.className='alert alert-'+type+' show';el.textContent=msg;setTimeout(()=>el.classList.remove('show'),3000);}
 
 loadLocal();updateAnnounceDisplay();renderCustomerProducts();updateCartUI();
-
-// Show FB browser warning banner if needed
-if(isFBBrowser()){
-  const banner=document.getElementById('fb-page-banner');
-  banner.style.display='block';
-  document.getElementById('fb-page-open-link').href=window.location.href;
-}
 
 function loadScript(src,cb){const s=document.createElement('script');s.src=src;s.onload=cb;s.onerror=()=>{setSyncStatus('offline');fallbackToLocal();};document.head.appendChild(s);}
 loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js',function(){
