@@ -415,9 +415,6 @@ tr:hover td{background:#fff5f7}
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
         <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
       </div>
-      <div id="ios-tip" style="display:none;margin-top:.65rem;background:#fff0f5;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#8b1f42;line-height:1.5">
-        📱 <strong>iPhone/iPad:</strong> Tap <em>Save as Image</em> — if nothing downloads, take a <strong>screenshot</strong> instead (Side button + Volume Up).
-      </div>
     </div>
   </div>
 </div>
@@ -820,12 +817,46 @@ async function submitOrder(){
 function showReceipt(order){
   state.currentReceiptOrder=order;
   document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);
-  // Show iOS tip only on iOS Safari (download attribute not supported there)
-  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
-  document.getElementById('ios-tip').style.display=isIOS?'block':'none';
   document.getElementById('receipt-modal').classList.add('open');
 }
 function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
+
+async function saveReceiptAsImage(){
+  const o=state.currentReceiptOrder;if(!o)return;
+  const btn=document.getElementById('save-img-btn');
+  btn.disabled=true;btn.textContent='⏳ Generating…';
+  try{
+    const canvas=await html2canvas(document.getElementById('receipt-printable'),{
+      backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,
+      windowWidth:420,windowHeight:document.getElementById('receipt-printable').scrollHeight+40
+    });
+    canvas.toBlob(async blob=>{
+      const filename='AngelShop-'+o.goNum+'.png';
+      const file=new File([blob],filename,{type:'image/png'});
+      // 1. Try Web Share API with file (works in FB browser, Chrome Android, Safari iOS)
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{
+          await navigator.share({files:[file],title:'Angel Shop Receipt — '+o.goNum});
+          btn.disabled=false;btn.textContent='📥 Save as Image';
+          return;
+        }catch(e){
+          // User cancelled share — that's fine, don't fall through to download
+          if(e.name==='AbortError'){btn.disabled=false;btn.textContent='📥 Save as Image';return;}
+        }
+      }
+      // 2. Fallback: direct download (works in Chrome desktop, Firefox, Samsung browser)
+      const blobUrl=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=blobUrl;a.download=filename;a.style.display='none';
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(blobUrl);},5000);
+      btn.disabled=false;btn.textContent='📥 Save as Image';
+    },'image/png');
+  }catch(e){
+    alert('Could not generate image. Please try again.');
+    btn.disabled=false;btn.textContent='📥 Save as Image';
+  }
+}
 
 function buildReceiptHtml(o){
   return `<div class="receipt" id="receipt-printable">
@@ -853,29 +884,6 @@ function buildReceiptHtml(o){
       </div>
     </div>
   </div>`;
-}
-
-async function saveReceiptAsImage(){
-  const o=state.currentReceiptOrder;if(!o)return;
-  const btn=document.getElementById('save-img-btn');
-  btn.disabled=true;btn.textContent='⏳ Generating…';
-  try{
-    const canvas=await html2canvas(document.getElementById('receipt-printable'),{
-      backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,
-      windowWidth:420,windowHeight:document.getElementById('receipt-printable').scrollHeight+40
-    });
-    canvas.toBlob(blob=>{
-      const blobUrl=URL.createObjectURL(blob);
-      const a=document.createElement('a');
-      a.href=blobUrl;
-      a.download='AngelShop-'+o.goNum+'.png';
-      a.style.display='none';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(blobUrl);},5000);
-    },'image/png');
-  }catch(e){alert('Could not generate image: '+e.message);}
-  btn.disabled=false;btn.textContent='📥 Save as Image';
 }
 
 function renderAdminOrders(){
