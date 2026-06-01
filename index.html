@@ -265,6 +265,22 @@ tr:hover td{background:#fff5f7}
   .product-name{font-size:.75rem}
   .product-price{font-size:.82rem}
 }
+.arrival-receipt{background:#fff;border:2px dashed #90c4f0;border-radius:12px;padding:1.5rem;font-size:.82rem;line-height:1.6}
+.arrival-receipt .ar-head{text-align:center;border-bottom:2px dashed #90c4f0;padding-bottom:1rem;margin-bottom:1rem}
+.arrival-receipt .ar-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:#1a3a5c}
+.arrival-receipt .ar-sub{font-size:.72rem;color:#3a7abf;letter-spacing:.08em;text-transform:uppercase}
+.arrival-receipt .ar-go{font-size:1rem;font-weight:700;color:#1a5fa8;margin-top:.25rem}
+.arrival-receipt .ar-row{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid #e0f0ff;gap:.5rem}
+.arrival-receipt .ar-label{color:#1a3a5c;font-weight:500;white-space:nowrap}
+.arrival-receipt .ar-val{color:#3d1a28;text-align:right}
+.arrival-receipt .ar-items{background:#f0f7ff;border-radius:8px;padding:.7rem;margin:.5rem 0}
+.arrival-receipt .ar-item{display:flex;justify-content:space-between;font-size:.79rem;padding:.2rem 0}
+.arrival-receipt .ar-divider{border-top:1px solid #c0d8f0;margin:.35rem 0}
+.arrival-receipt .ar-sf-block{background:#fff8e6;border-radius:8px;padding:.7rem;margin:.5rem 0;border:1px solid #f4c97a}
+.arrival-receipt .ar-sf-row{display:flex;justify-content:space-between;font-size:.8rem;padding:.2rem 0;color:#7a4f00}
+.arrival-receipt .ar-grand{display:flex;justify-content:space-between;font-weight:700;color:#b87a00;font-size:.95rem;border-top:2px solid #f4c97a;margin-top:.4rem;padding-top:.4rem}
+.arrival-receipt .ar-foot{text-align:center;margin-top:1rem;padding-top:1rem;border-top:2px dashed #90c4f0;color:#3a7abf;font-size:.76rem}
+.arrival-receipt .ar-note{background:#f0f7ff;border-radius:8px;padding:.55rem .8rem;margin-top:.5rem;font-size:.74rem;color:#1a3a5c;line-height:1.5;text-align:left}
 </style>
 </head>
 <body>
@@ -309,6 +325,7 @@ tr:hover td{background:#fff5f7}
     <div class="admin-tab active" onclick="adminTab('dashboard')">📊 Dashboard</div>
     <div class="admin-tab" onclick="adminTab('products')">Products</div>
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
+    <div class="admin-tab" onclick="adminTab('arrival')">📬 Arrival Receipt</div>
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
 
@@ -360,6 +377,18 @@ tr:hover td{background:#fff5f7}
     </div>
     <button class="btn btn-primary btn-sm" onclick="saveAnnouncement()">Save Announcement</button>
     <div style="margin-top:.5rem;font-size:.75rem;color:#1a7a4a" id="announce-saved-msg"></div>
+  </div>
+
+  <!-- ARRIVAL RECEIPT PANEL -->
+  <div class="admin-panel" id="panel-arrival">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+      <div style="font-weight:600;color:#8b1f42">📬 Arrival Receipts</div>
+      <input class="search-bar" id="arrival-search" placeholder="🔍 Search name, GO#…" oninput="renderArrivalPanel()" style="width:210px" />
+    </div>
+    <div style="font-size:.78rem;color:#c2426d;margin-bottom:.85rem;background:#fff0f5;border-radius:8px;padding:.55rem .85rem;line-height:1.5">
+      Orders marked <strong>📦 PH Arrived</strong> appear here. Click <em>Generate Receipt</em> to input ISF/LSF fees and produce a printable arrival receipt for the customer.
+    </div>
+    <div id="arrival-list"></div>
   </div>
 </div>
 
@@ -488,6 +517,72 @@ tr:hover td{background:#fff5f7}
       <div style="margin-top:1rem;display:flex;gap:.75rem">
         <button class="btn btn-secondary" onclick="closeProductModal()" style="flex:1">Cancel</button>
         <button class="btn btn-primary" onclick="saveProduct()" style="flex:1" id="save-prod-btn">Add Product</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARRIVAL RECEIPT INPUT MODAL -->
+<div class="modal-wrap" id="arrival-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📬 Generate Arrival Receipt</h3>
+      <button class="close-btn" onclick="closeModal('arrival-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="arrival-order-info" style="background:#fff5f7;border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:#3d1a28;line-height:1.6"></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Shipping Type</label>
+          <select id="ar-shipping-type" onchange="toggleSFFields()">
+            <option value="ISF">ISF (In-Store Forwarding)</option>
+            <option value="LSF">LSF (Local Shipping Forwarding)</option>
+            <option value="both">Both ISF + LSF</option>
+          </select>
+        </div>
+        <div class="form-group" id="ar-isf-group">
+          <label>ISF Fee (₱)</label>
+          <input type="number" id="ar-isf" placeholder="0.00" min="0" step="0.01" oninput="calcArrivalTotal()" />
+        </div>
+        <div class="form-group" id="ar-lsf-group" style="display:none">
+          <label>LSF Fee (₱)</label>
+          <input type="number" id="ar-lsf" placeholder="0.00" min="0" step="0.01" oninput="calcArrivalTotal()" />
+        </div>
+        <div class="form-group full">
+          <label>Additional Notes (optional)</label>
+          <textarea id="ar-notes" placeholder="Payment deadline, pickup info, etc." rows="2"></textarea>
+        </div>
+      </div>
+      <!-- Totals preview -->
+      <div style="background:#fff0f5;border-radius:10px;padding:.85rem 1rem;margin-top:.75rem;font-size:.85rem">
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0;color:#3d1a28"><span>Order Total (already paid)</span><span id="ar-prev-order">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0;color:#3d1a28" id="ar-isf-row"><span>ISF Fee</span><span id="ar-prev-isf">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0;color:#3d1a28;display:none" id="ar-lsf-row"><span>LSF Fee</span><span id="ar-prev-lsf">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.4rem 0 0;border-top:2px solid #ffc0d5;margin-top:.4rem;font-weight:700;color:#c2426d;font-size:.95rem"><span>Total SF to Pay</span><span id="ar-prev-sf">₱0.00</span></div>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:.75rem">
+        <button class="btn btn-secondary" onclick="closeModal('arrival-modal')" style="flex:1">Cancel</button>
+        <button class="btn btn-primary" onclick="generateArrivalReceipt()" style="flex:1">Generate Receipt ✿</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARRIVAL RECEIPT PREVIEW MODAL -->
+<div class="modal-wrap" id="arrival-receipt-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📬 Arrival Receipt</h3>
+      <button class="close-btn" onclick="closeModal('arrival-receipt-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="arrival-receipt-content"></div>
+      <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('arrival-receipt-modal')">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="saveArrivalReceiptImage()">📥 Save as Image</button>
+      </div>
+      <div style="margin-top:.6rem;background:#fff8e6;border:1.5px solid #f4c97a;border-radius:8px;padding:.55rem .85rem;font-size:.75rem;color:#7a4f00;line-height:1.5">
+        📱 <strong>Using Facebook?</strong> Please screenshot this receipt and send to your customer via DM.
       </div>
     </div>
   </div>
@@ -1013,12 +1108,13 @@ function viewOrder(id){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['dashboard','products','orders','announcements'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['dashboard','products','orders','arrival','announcements'][i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   if(tab==='dashboard')renderDashboard();
   if(tab==='orders')renderAdminOrders();
   if(tab==='products')renderAdminProducts();
+  if(tab==='arrival')renderArrivalPanel();
   if(tab==='announcements')document.getElementById('announce-input').value=state.announcement;
 }
 
@@ -1038,6 +1134,10 @@ function renderDashboard(){
 
   const total=orders.length;
   const grandTotal=orders.reduce((s,o)=>s+(o.total||0),0);
+  const totalISF=orders.reduce((s,o)=>s+(parseFloat(o.arrivalISF)||0),0);
+  const totalLSF=orders.reduce((s,o)=>s+(parseFloat(o.arrivalLSF)||0),0);
+  const totalSF=totalISF+totalLSF;
+  const grandRevenue=grandTotal+totalSF;
 
   // Per-product summary
   const prodMap={};
@@ -1076,7 +1176,11 @@ function renderDashboard(){
       <div class="dash-grid">
         <div class="dash-card"><div class="dc-val">${total}</div><div class="dc-label">Total Orders</div></div>
         ${STATUSES.map(s=>`<div class="dash-card"><div class="dc-val" style="font-size:1.3rem">${orders.filter(o=>o.status===s.key).length}</div><div class="dc-label">${s.emoji} ${s.label}</div></div>`).join('')}
-        <div class="dash-card"><div class="dc-val" style="font-size:1rem">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Total Revenue</div></div>
+        <div class="dash-card" style="border-color:#c0d8f0;background:#f0f7ff"><div class="dc-val" style="font-size:.95rem;color:#1a5fa8">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Orders Revenue</div></div>
+        <div class="dash-card" style="border-color:#f4c97a;background:#fff8e6"><div class="dc-val" style="font-size:.95rem;color:#b87a00">₱${totalISF.toFixed(2)}</div><div class="dc-label">📦 Total ISF Added</div></div>
+        <div class="dash-card" style="border-color:#f4c97a;background:#fff8e6"><div class="dc-val" style="font-size:.95rem;color:#b87a00">₱${totalLSF.toFixed(2)}</div><div class="dc-label">🚚 Total Local SF</div></div>
+        <div class="dash-card" style="border-color:#f4c97a;background:#fff8e6"><div class="dc-val" style="font-size:.95rem;color:#996600">₱${totalSF.toFixed(2)}</div><div class="dc-label">📬 Total SF Fees</div></div>
+        <div class="dash-card" style="border-color:#8b1f42;background:#fff0f5"><div class="dc-val" style="font-size:.9rem;color:#8b1f42">₱${grandRevenue.toFixed(2)}</div><div class="dc-label">🏆 Grand Total Revenue</div></div>
         <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
       </div>
     </div>
@@ -1143,6 +1247,182 @@ function renderDashboard(){
     </div>
   `;
 }
+
+/* ── ARRIVAL RECEIPT ── */
+let currentArrivalOrder=null;
+
+function renderArrivalPanel(){
+  const q=(document.getElementById('arrival-search')?.value||'').toLowerCase().trim();
+  const arrivedOrders=state.orders.filter(o=>{
+    const isArrived=o.status==='ph_arrived'||o.status==='delivered';
+    if(!isArrived)return false;
+    if(!q)return true;
+    return (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
+           (o.fb||'').toLowerCase().includes(q)||(o.contact||'').toLowerCase().includes(q)||
+           (o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q));
+  });
+  const wrap=document.getElementById('arrival-list');
+  if(!arrivedOrders.length){
+    wrap.innerHTML='<div class="empty-state"><div class="ei">📦</div><p>No orders marked "PH Arrived" yet.<br>Change order status to 📦 PH Arrived to generate arrival receipts.</p></div>';
+    return;
+  }
+  wrap.innerHTML=arrivedOrders.map(o=>`
+    <div style="background:#fff;border:1.5px solid #c0d8f0;border-radius:12px;padding:.85rem 1rem;margin-bottom:.65rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;color:#1a3a5c;font-size:.92rem">${esc(o.name)} <span style="color:#aaa;font-weight:400;font-size:.78rem">(${o.goNum})</span></div>
+        <div style="font-size:.76rem;color:#555;margin-top:.2rem">${esc(o.fb)} · ${esc(o.contact)}</div>
+        <div style="font-size:.76rem;color:#555;margin-top:.1rem">${(o.items||[]).map(i=>esc(i.name)+'×'+i.qty).join(', ')}</div>
+        <div style="font-size:.76rem;color:#c2426d;font-weight:600;margin-top:.2rem">Order Total: ₱${(o.total||0).toFixed(2)} · ${o.shipping}</div>
+        ${o.arrivalSF?`<div style="font-size:.73rem;color:#1a7a4a;margin-top:.15rem">✓ Receipt generated · SF: ₱${parseFloat(o.arrivalSF||0).toFixed(2)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.4rem;flex-shrink:0">
+        <button class="btn btn-primary btn-sm" onclick="openArrivalModal('${o.id}')">
+          ${o.arrivalSF?'✏️ Edit Receipt':'📬 Generate Receipt'}
+        </button>
+        ${o.arrivalSF?`<button class="btn btn-secondary btn-sm" onclick="previewArrivalReceipt('${o.id}')">👁 Preview</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function openArrivalModal(orderId){
+  const o=state.orders.find(x=>x.id===orderId);if(!o)return;
+  currentArrivalOrder=o;
+
+  // Populate order info box
+  document.getElementById('arrival-order-info').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">
+      <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
+      <div><span style="color:#c2426d;font-weight:500">Date:</span> ${o.date}</div>
+      <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(o.name)}</div>
+      <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
+      <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(o.fb)}</div>
+      <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Address:</span> ${esc(o.address||'—')}</div>
+      <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Items:</span> ${(o.items||[]).map(i=>esc(i.name)+'×'+i.qty).join(', ')}</div>
+    </div>`;
+
+  // Set shipping type
+  const shType=o.arrivalShipType||(o.shipping==='ISF'?'ISF':o.shipping==='LSF'?'LSF':'ISF');
+  document.getElementById('ar-shipping-type').value=shType;
+
+  // Pre-fill saved values
+  document.getElementById('ar-isf').value=o.arrivalISF||'';
+  document.getElementById('ar-lsf').value=o.arrivalLSF||'';
+  document.getElementById('ar-notes').value=o.arrivalNotes||'';
+
+  toggleSFFields();
+  calcArrivalTotal();
+  document.getElementById('arrival-modal').classList.add('open');
+}
+
+function toggleSFFields(){
+  const t=document.getElementById('ar-shipping-type').value;
+  document.getElementById('ar-isf-group').style.display=(t==='ISF'||t==='both')?'flex':'none';
+  document.getElementById('ar-lsf-group').style.display=(t==='LSF'||t==='both')?'flex':'none';
+  document.getElementById('ar-isf-row').style.display=(t==='ISF'||t==='both')?'flex':'none';
+  document.getElementById('ar-lsf-row').style.display=(t==='LSF'||t==='both')?'flex':'none';
+  calcArrivalTotal();
+}
+
+function calcArrivalTotal(){
+  const o=currentArrivalOrder;
+  const orderTotal=o?o.total||0:0;
+  const t=document.getElementById('ar-shipping-type').value;
+  const isf=(t==='ISF'||t==='both')?parseFloat(document.getElementById('ar-isf').value)||0:0;
+  const lsf=(t==='LSF'||t==='both')?parseFloat(document.getElementById('ar-lsf').value)||0:0;
+  const sfTotal=isf+lsf;
+  document.getElementById('ar-prev-order').textContent='₱'+orderTotal.toFixed(2);
+  document.getElementById('ar-prev-isf').textContent='₱'+isf.toFixed(2);
+  document.getElementById('ar-prev-lsf').textContent='₱'+lsf.toFixed(2);
+  document.getElementById('ar-prev-sf').textContent='₱'+sfTotal.toFixed(2);
+}
+
+async function generateArrivalReceipt(){
+  const o=currentArrivalOrder;if(!o)return;
+  const t=document.getElementById('ar-shipping-type').value;
+  const isf=(t==='ISF'||t==='both')?parseFloat(document.getElementById('ar-isf').value)||0:0;
+  const lsf=(t==='LSF'||t==='both')?parseFloat(document.getElementById('ar-lsf').value)||0:0;
+  const notes=document.getElementById('ar-notes').value.trim();
+  const sfTotal=isf+lsf;
+
+  // Save to order record
+  const update={arrivalISF:isf,arrivalLSF:lsf,arrivalSF:sfTotal,arrivalShipType:t,arrivalNotes:notes,arrivalDate:new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'})};
+  const idx=state.orders.findIndex(x=>x.id===o.id);
+  if(idx>-1)Object.assign(state.orders[idx],update);
+  saveLocal();
+  if(firebaseReady)await fsUpdate('orders',o.id,update);
+
+  closeModal('arrival-modal');
+  previewArrivalReceipt(o.id);
+  renderArrivalPanel();
+}
+
+function previewArrivalReceipt(orderId){
+  const o=state.orders.find(x=>x.id===orderId);if(!o)return;
+  const t=o.arrivalShipType||'ISF';
+  const isf=parseFloat(o.arrivalISF||0);
+  const lsf=parseFloat(o.arrivalLSF||0);
+  const sfTotal=isf+lsf;
+  const now=o.arrivalDate||new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+
+  const sfRows=`
+    ${(t==='ISF'||t==='both')?`<div class="ar-sf-row"><span>ISF (In-Store Forwarding)</span><span>₱${isf.toFixed(2)}</span></div>`:''}
+    ${(t==='LSF'||t==='both')?`<div class="ar-sf-row"><span>LSF (Local Shipping Forwarding)</span><span>₱${lsf.toFixed(2)}</span></div>`:''}
+    <div class="ar-grand"><span>Total SF to Pay</span><span>₱${sfTotal.toFixed(2)}</span></div>`;
+
+  document.getElementById('arrival-receipt-content').innerHTML=`
+    <div class="arrival-receipt" id="arrival-receipt-printable">
+      <div class="ar-head">
+        <div class="ar-title">Angel Shop</div>
+        <div class="ar-sub">Group Orders · Arrival Notice</div>
+        <div class="ar-go">${o.goNum}</div>
+        <div style="font-size:.72rem;color:#888;margin-top:.2rem">${now}</div>
+      </div>
+      <div class="ar-row"><span class="ar-label">Name</span><span class="ar-val">${esc(o.name)}</span></div>
+      <div class="ar-row"><span class="ar-label">FB Account</span><span class="ar-val">${esc(o.fb)}</span></div>
+      <div class="ar-row"><span class="ar-label">Contact</span><span class="ar-val">${esc(o.contact)}</span></div>
+      <div class="ar-row"><span class="ar-label">Address</span><span class="ar-val">${esc(o.address||'—')}</span></div>
+      <div class="ar-row"><span class="ar-label">Shipping Type</span><span class="ar-val">${t==='both'?'ISF + LSF':t}</span></div>
+      <div style="margin:.5rem 0;font-size:.78rem;color:#1a3a5c;font-weight:500">Order Items:</div>
+      <div class="ar-items">
+        ${(o.items||[]).map(i=>`<div class="ar-item"><span>${esc(i.name)} × ${i.qty}</span><span>₱${(i.price*i.qty).toFixed(2)}</span></div>`).join('')}
+        <div class="ar-divider"></div>
+        <div class="ar-item" style="font-weight:700;color:#1a5fa8"><span>Order Total (Paid)</span><span>₱${(o.total||0).toFixed(2)}</span></div>
+      </div>
+      <div style="margin:.5rem 0;font-size:.78rem;color:#7a4f00;font-weight:500">Shipping Fee to Pay:</div>
+      <div class="ar-sf-block">${sfRows}</div>
+      ${o.arrivalNotes?`<div class="ar-row"><span class="ar-label">Notes</span><span class="ar-val">${esc(o.arrivalNotes)}</span></div>`:''}
+      <div class="ar-foot">
+        ✦ Your items have arrived in the Philippines! ✦
+        <div class="ar-note">
+          📩 Please send payment for the SF fee to our account. We will send you the payment details via DM.<br><br>
+          ⏰ Please settle the SF fee within <strong>1 week</strong>. Failure to pay on the deadline will result in your order being forfeited with no refund.<br><br>
+          📦 Items will be released for delivery/pickup once SF fee is confirmed paid.
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('arrival-receipt-modal').classList.add('open');
+}
+
+async function saveArrivalReceiptImage(){
+  const btn=event.target;
+  btn.disabled=true;btn.textContent='⏳ Generating…';
+  try{
+    const el=document.getElementById('arrival-receipt-printable');
+    const canvas=await html2canvas(el,{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,windowWidth:420,windowHeight:el.scrollHeight+40});
+    canvas.toBlob(async blob=>{
+      const file=new File([blob],'AngelShop-Arrival-'+currentArrivalOrder?.goNum+'.png',{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]})){
+        try{await navigator.share({files:[file],title:'Angel Shop Arrival Receipt'});btn.disabled=false;btn.textContent='📥 Save as Image';return;}catch(e){if(e.name==='AbortError'){btn.disabled=false;btn.textContent='📥 Save as Image';return;}}
+      }
+      const blobUrl=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=blobUrl;a.download='AngelShop-Arrival.png';a.style.display='none';
+      document.body.appendChild(a);a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(blobUrl);},5000);
+      btn.disabled=false;btn.textContent='📥 Save as Image';
+    },'image/png');
+  }catch(e){alert('Could not generate image.');btn.disabled=false;btn.textContent='📥 Save as Image';}
+}
+
 
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function showAlert(id,msg,type){const el=document.getElementById(id);el.className='alert alert-'+type+' show';el.textContent=msg;setTimeout(()=>el.classList.remove('show'),3000);}
