@@ -415,6 +415,9 @@ tr:hover td{background:#fff5f7}
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
         <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
       </div>
+      <div id="ios-tip" style="display:none;margin-top:.65rem;background:#fff0f5;border-radius:8px;padding:.55rem .8rem;font-size:.75rem;color:#8b1f42;line-height:1.5">
+        📱 <strong>iPhone/iPad:</strong> Tap <em>Save as Image</em> — if nothing downloads, take a <strong>screenshot</strong> instead (Side button + Volume Up).
+      </div>
     </div>
   </div>
 </div>
@@ -814,7 +817,14 @@ async function submitOrder(){
   ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id=>document.getElementById(id).value='');
 }
 
-function showReceipt(order){state.currentReceiptOrder=order;document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);document.getElementById('receipt-modal').classList.add('open');}
+function showReceipt(order){
+  state.currentReceiptOrder=order;
+  document.getElementById('receipt-content').innerHTML=buildReceiptHtml(order);
+  // Show iOS tip only on iOS Safari (download attribute not supported there)
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  document.getElementById('ios-tip').style.display=isIOS?'block':'none';
+  document.getElementById('receipt-modal').classList.add('open');
+}
 function closeReceiptModal(){document.getElementById('receipt-modal').classList.remove('open');}
 
 function buildReceiptHtml(o){
@@ -850,25 +860,21 @@ async function saveReceiptAsImage(){
   const btn=document.getElementById('save-img-btn');
   btn.disabled=true;btn.textContent='⏳ Generating…';
   try{
-    const canvas=await html2canvas(document.getElementById('receipt-printable'),{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+    const canvas=await html2canvas(document.getElementById('receipt-printable'),{
+      backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,
+      windowWidth:420,windowHeight:document.getElementById('receipt-printable').scrollHeight+40
+    });
     canvas.toBlob(blob=>{
-      // Create a blob URL — works on mobile browsers including Chrome/Safari on Android/iOS
       const blobUrl=URL.createObjectURL(blob);
-      const win=window.open(blobUrl,'_blank');
-      // If popup blocked, fall back to anchor click
-      if(!win||win.closed||typeof win.closed==='undefined'){
-        const a=document.createElement('a');
-        a.href=blobUrl;
-        a.target='_blank';
-        a.rel='noopener';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      }
-      // Revoke after a delay to allow the tab/download to start
-      setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+      const a=document.createElement('a');
+      a.href=blobUrl;
+      a.download='AngelShop-'+o.goNum+'.png';
+      a.style.display='none';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(blobUrl);},5000);
     },'image/png');
-  }catch(e){alert('Could not generate image. Please try again.');}
+  }catch(e){alert('Could not generate image: '+e.message);}
   btn.disabled=false;btn.textContent='📥 Save as Image';
 }
 
