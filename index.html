@@ -166,6 +166,28 @@ tr:hover td{background:#fff5f7}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .sync-dot.syncing{background:#ffd97a;animation:pulse .7s infinite}
 .sync-dot.offline{background:#ff9a9a;animation:none}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.25rem}
+.dash-card{background:#fff;border:1.5px solid #ffc0d5;border-radius:12px;padding:.9rem 1rem;text-align:center}
+.dash-card .dc-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#c2426d;line-height:1}
+.dash-card .dc-label{font-size:.73rem;color:#888;margin-top:.3rem;text-transform:uppercase;letter-spacing:.04em}
+.dash-section{margin-bottom:1.5rem}
+.dash-section-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.dash-section-title::after{content:'';flex:1;height:1px;background:#ffc0d5}
+.prod-summary-row{display:flex;align-items:center;gap:.75rem;padding:.55rem .75rem;background:#fff;border:1px solid #ffe0e8;border-radius:10px;margin-bottom:.4rem}
+.prod-summary-row .ps-name{flex:1;font-size:.84rem;font-weight:500;color:#3d1a28;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod-summary-row .ps-orders{font-size:.78rem;color:#c2426d;font-weight:600;white-space:nowrap}
+.prod-summary-row .ps-revenue{font-size:.78rem;color:#8b1f42;font-weight:700;white-space:nowrap}
+.cust-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.5rem .75rem;background:#fff;border:1px solid #ffe0e8;border-radius:10px;margin-bottom:.4rem;gap:.5rem;font-size:.82rem}
+.cust-row .cr-name{font-weight:600;color:#3d1a28}
+.cust-row .cr-meta{color:#888;font-size:.74rem;margin-top:1px}
+.status-pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.7rem;font-weight:600;white-space:nowrap}
+.sp-pending      {background:#fff0d6;color:#b87a00}
+.sp-confirmed    {background:#d6f5e5;color:#1a7a4a}
+.sp-order_placed {background:#e0f0ff;color:#1a5fa8}
+.sp-cn_warehouse {background:#fff0cc;color:#996600}
+.sp-in_transit   {background:#ffe8d6;color:#b84a00}
+.sp-ph_arrived   {background:#e8d6ff;color:#5a1ab8}
+.sp-delivered    {background:#d6ffe8;color:#0a6640}
 
 /* ── Mobile-first responsive ── */
 @media(max-width:600px){
@@ -284,11 +306,18 @@ tr:hover td{background:#fff5f7}
     <p>Angel Shop Group Orders · Management &nbsp;·&nbsp; <span onclick="adminLogout()" style="cursor:pointer;text-decoration:underline;color:#c2426d">Log out</span></p>
   </div>
   <div class="admin-tabs">
-    <div class="admin-tab active" onclick="adminTab('products')">Products</div>
+    <div class="admin-tab active" onclick="adminTab('dashboard')">📊 Dashboard</div>
+    <div class="admin-tab" onclick="adminTab('products')">Products</div>
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
-  <div class="admin-panel active" id="panel-products">
+
+  <!-- DASHBOARD PANEL -->
+  <div class="admin-panel active" id="panel-dashboard">
+    <div id="dashboard-content"></div>
+  </div>
+
+  <div class="admin-panel" id="panel-products">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Manage Products</div>
       <button class="btn btn-primary btn-sm" onclick="openProductModal()">+ Add Product</button>
@@ -307,7 +336,10 @@ tr:hover td{background:#fff5f7}
       <div class="chip active" onclick="filterOrders('all',this)">All</div>
       <div class="chip" onclick="filterOrders('pending',this)">Pending</div>
       <div class="chip" onclick="filterOrders('confirmed',this)">Confirmed</div>
-      <div class="chip" onclick="filterOrders('shipped',this)">Shipped</div>
+      <div class="chip" onclick="filterOrders('order_placed',this)">Order Placed</div>
+      <div class="chip" onclick="filterOrders('cn_warehouse',this)">CN Warehouse</div>
+      <div class="chip" onclick="filterOrders('in_transit',this)">In Transit</div>
+      <div class="chip" onclick="filterOrders('ph_arrived',this)">PH Arrived</div>
       <div class="chip" onclick="filterOrders('delivered',this)">Delivered</div>
     </div>
     <div class="table-wrap">
@@ -415,6 +447,9 @@ tr:hover td{background:#fff5f7}
         <button class="btn btn-secondary btn-sm" onclick="closeReceiptModal()">Close</button>
         <button class="btn btn-primary btn-sm" id="save-img-btn" onclick="saveReceiptAsImage()">📥 Save as Image</button>
       </div>
+      <div style="margin-top:.65rem;background:#fff8e6;border:1.5px solid #f4c97a;border-radius:8px;padding:.6rem .85rem;font-size:.75rem;color:#7a4f00;line-height:1.55">
+        📱 <strong>Using Facebook?</strong> Saving images is not supported inside the Facebook app. Please <strong>screenshot this receipt</strong> and send it to our account: <strong>Angel</strong>.
+      </div>
     </div>
   </div>
 </div>
@@ -514,7 +549,7 @@ function startListeners(){
   },err=>console.warn(err));
   db.collection('orders').orderBy('createdAt','desc').onSnapshot(snap=>{
     state.orders=snap.docs.map(d=>({id:d.id,...d.data()}));
-    saveLocal();if(state.currentMode==='admin')renderAdminOrders();
+    saveLocal();if(state.currentMode==='admin'){renderAdminOrders();renderDashboard();}
   },()=>{
     db.collection('orders').onSnapshot(s2=>{
       state.orders=s2.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -541,7 +576,7 @@ function switchMode(mode){
   document.getElementById('admin-page').classList.toggle('active',mode==='admin');
   document.getElementById('cart-fab').style.display=mode==='customer'?'flex':'none';
   if(mode==='customer')renderCustomerProducts();
-  if(mode==='admin'){renderAdminProducts();renderAdminOrders();document.getElementById('announce-input').value=state.announcement;}
+  if(mode==='admin'){renderDashboard();renderAdminProducts();renderAdminOrders();document.getElementById('announce-input').value=state.announcement;}
 }
 
 function onAdminClick(){
@@ -900,10 +935,13 @@ function renderAdminOrders(){
       <td style="font-weight:600;white-space:nowrap">₱${o.total.toFixed(2)}</td>
       <td>
         <select onchange="updateOrderStatus('${o.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
-          <option value="pending" ${o.status==='pending'?'selected':''}>Pending</option>
-          <option value="confirmed" ${o.status==='confirmed'?'selected':''}>Confirmed</option>
-          <option value="shipped" ${o.status==='shipped'?'selected':''}>Shipped</option>
-          <option value="delivered" ${o.status==='delivered'?'selected':''}>Delivered</option>
+          <option value="pending"       ${o.status==='pending'      ?'selected':''}>⏳ Pending</option>
+          <option value="confirmed"     ${o.status==='confirmed'    ?'selected':''}>✅ Confirmed</option>
+          <option value="order_placed"  ${o.status==='order_placed' ?'selected':''}>🛒 Order Placed</option>
+          <option value="cn_warehouse"  ${o.status==='cn_warehouse' ?'selected':''}>🏭 CN Warehouse</option>
+          <option value="in_transit"    ${o.status==='in_transit'   ?'selected':''}>✈️ In Transit</option>
+          <option value="ph_arrived"    ${o.status==='ph_arrived'   ?'selected':''}>📦 PH Arrived</option>
+          <option value="delivered"     ${o.status==='delivered'    ?'selected':''}>🎉 Delivered</option>
         </select>
       </td>
       <td style="font-size:.73rem;white-space:nowrap">${o.date}</td>
@@ -956,12 +994,120 @@ function viewOrder(id){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['products','orders','announcements'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['dashboard','products','orders','announcements'][i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
+  if(tab==='dashboard')renderDashboard();
   if(tab==='orders')renderAdminOrders();
   if(tab==='products')renderAdminProducts();
   if(tab==='announcements')document.getElementById('announce-input').value=state.announcement;
+}
+
+function renderDashboard(){
+  const orders=state.orders;
+  const products=state.products;
+
+  const STATUSES=[
+    {key:'pending',      label:'Pending',      emoji:'⏳'},
+    {key:'confirmed',    label:'Confirmed',    emoji:'✅'},
+    {key:'order_placed', label:'Order Placed', emoji:'🛒'},
+    {key:'cn_warehouse', label:'CN Warehouse', emoji:'🏭'},
+    {key:'in_transit',   label:'In Transit',   emoji:'✈️'},
+    {key:'ph_arrived',   label:'PH Arrived',   emoji:'📦'},
+    {key:'delivered',    label:'Delivered',    emoji:'🎉'},
+  ];
+
+  const total=orders.length;
+  const grandTotal=orders.reduce((s,o)=>s+(o.total||0),0);
+
+  // Per-product summary
+  const prodMap={};
+  orders.forEach(o=>{
+    (o.items||[]).forEach(item=>{
+      if(!prodMap[item.name])prodMap[item.name]={qty:0,revenue:0,orders:[]};
+      prodMap[item.name].qty+=item.qty;
+      prodMap[item.name].revenue+=item.price*item.qty;
+      prodMap[item.name].orders.push({customer:o.name,qty:item.qty,status:o.status,goNum:o.goNum});
+    });
+  });
+  const prodList=Object.entries(prodMap).sort((a,b)=>b[1].qty-a[1].qty);
+
+  const statusPill=s=>{
+    const found=STATUSES.find(x=>x.key===s);
+    const label=found?found.emoji+' '+found.label:s;
+    return `<span class="status-pill sp-${s}">${label}</span>`;
+  };
+
+  document.getElementById('dashboard-content').innerHTML=`
+    <!-- Overview cards -->
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Overview</div>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dc-val">${total}</div><div class="dc-label">Total Orders</div></div>
+        ${STATUSES.map(s=>`<div class="dash-card"><div class="dc-val" style="font-size:1.3rem">${orders.filter(o=>o.status===s.key).length}</div><div class="dc-label">${s.emoji} ${s.label}</div></div>`).join('')}
+        <div class="dash-card"><div class="dc-val" style="font-size:1rem">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Total Revenue</div></div>
+        <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
+      </div>
+    </div>
+
+    <!-- Order pipeline tracker -->
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Order Pipeline</div>
+      <div style="overflow-x:auto">
+        <div style="display:flex;gap:.4rem;min-width:max-content;padding:.5rem 0 .75rem;align-items:center">
+          ${STATUSES.map((s,i)=>`
+            <div style="text-align:center">
+              <div style="background:#fff;border:2px solid #ffc0d5;border-radius:10px;padding:.5rem .7rem;min-width:80px">
+                <div style="font-size:1.3rem">${s.emoji}</div>
+                <div style="font-size:.72rem;font-weight:600;color:#8b1f42;margin-top:.15rem">${s.label}</div>
+                <div style="font-size:1.1rem;font-weight:700;color:#c2426d">${orders.filter(o=>o.status===s.key).length}</div>
+              </div>
+            </div>
+            ${i<STATUSES.length-1?'<div style="color:#ffc0d5;font-size:1.2rem;padding-top:.5rem">→</div>':''}`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- Per-product breakdown -->
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Product Order Summary</div>
+      ${prodList.length===0?'<p style="color:#c2426d;font-size:.83rem">No orders yet.</p>':
+        prodList.map(([name,data])=>`
+          <div style="margin-bottom:.9rem">
+            <div class="prod-summary-row">
+              <div class="ps-name">🛍 ${esc(name)}</div>
+              <div class="ps-orders">${data.qty} ordered</div>
+              <div class="ps-revenue">₱${data.revenue.toFixed(2)}</div>
+            </div>
+            <div style="padding:.2rem .5rem .1rem">
+              ${data.orders.map(r=>`
+                <div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:#555;padding:.25rem .25rem;border-bottom:1px solid #ffe0e8;gap:.5rem">
+                  <span>${esc(r.customer)} <span style="color:#aaa">(${r.goNum})</span> × ${r.qty}</span>
+                  ${statusPill(r.status)}
+                </div>`).join('')}
+            </div>
+          </div>`).join('')}
+    </div>
+
+    <!-- Pending / not-yet-delivered -->
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Needs Attention (Not Delivered)</div>
+      ${orders.filter(o=>o.status!=='delivered').length===0
+        ?'<p style="color:#1a7a4a;font-size:.83rem">🎉 All orders delivered!</p>'
+        :orders.filter(o=>o.status!=='delivered').map(o=>`
+          <div class="cust-row">
+            <div>
+              <div class="cr-name">${esc(o.name)}</div>
+              <div class="cr-meta">${o.goNum} · ${o.date}</div>
+              <div class="cr-meta">${(o.items||[]).map(i=>i.name+'×'+i.qty).join(', ')}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:700;color:#c2426d;font-size:.88rem">₱${(o.total||0).toFixed(2)}</div>
+              <div style="margin-top:.25rem">${statusPill(o.status)}</div>
+            </div>
+          </div>`).join('')}
+    </div>
+  `;
 }
 
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
