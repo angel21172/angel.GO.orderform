@@ -251,6 +251,9 @@ tr:hover td{background:#fff5f7}
 .notes-box li{list-style:none;padding-left:.2rem;position:relative}
 .notes-box li::before{content:'•';color:#e8679a;position:absolute;left:-.9rem;font-weight:700}
 
+/* ── BATCH TAG ── */
+.batch-tag{font-size:.7rem;background:#ffd6e7;color:#8b1f42;padding:1px 8px;border-radius:9px;font-weight:600;white-space:nowrap;display:inline-block}
+
 /* ── ARRIVAL ── */
 .arrival-receipt{background:#fff;border:2px dashed #90c4f0;border-radius:12px;padding:1.5rem;font-size:.82rem;line-height:1.6}
 .arrival-receipt .ar-head{text-align:center;border-bottom:2px dashed #90c4f0;padding-bottom:1rem;margin-bottom:1rem}
@@ -500,10 +503,16 @@ tr:hover td{background:#fff5f7}
       <div class="chip" onclick="filterOrders('ph_arrived',this)">PH Arrived</div>
       <div class="chip" onclick="filterOrders('delivered',this)">Delivered</div>
     </div>
+    <div class="filter-row" id="batch-filter-row">
+      <div class="chip active" onclick="filterBatch('all',this)">All Batches</div>
+    </div>
+    <div style="margin-bottom:.6rem">
+      <button class="btn btn-secondary btn-sm" onclick="addNewBatch()">+ New Batch</button>
+    </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>GO#</th><th>Name</th><th>FB</th><th>Contact</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="admin-orders-tbody"><tr><td colspan="9" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
+        <thead><tr><th>GO#</th><th>Batch</th><th>Name</th><th>FB</th><th>Contact</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="admin-orders-tbody"><tr><td colspan="10" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -765,7 +774,7 @@ let state = {
   products: [], orders: [], announcement: '',
   goCounter: 1001, cart: [],
   adminLoggedIn: false, currentMode: 'customer',
-  orderFilter: 'all', currentReceiptOrder: null,
+  orderFilter: 'all', batchFilter: 'all', currentReceiptOrder: null,
   activeCat: 'all', searchQ: '', catSearchQ: ''
 };
 
@@ -1205,7 +1214,8 @@ async function submitOrder() {
   const items = state.cart.map(i => ({...i}));
   const total = items.reduce((s,i) => s+i.price*i.qty, 0);
   const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit' });
-  const orderData = { goNum, name, fb, contact, address, shipping, notes, items, total, status:'pending', date:dateStr, createdAt:Date.now() };
+  const currentBatch = getDefaultBatch();
+  const orderData = { goNum, name, fb, contact, address, shipping, notes, items, total, status:'pending', batch: currentBatch, date:dateStr, createdAt:Date.now() };
   let savedId = null;
   if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter }); }
   if (!savedId) { savedId = 'local_'+Date.now(); state.orders.unshift({ id:savedId,...orderData }); saveLocal(); }
@@ -1270,21 +1280,107 @@ async function saveReceiptAsImage() {
 }
 
 // ════════════════════════════════════════════
-// ADMIN ORDERS
+// BATCH HELPERS
 // ════════════════════════════════════════════
-function renderAdminOrders() {
+function batchNumFromName(name) {
+  const m = String(name||'').match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+function getAllBatches() {
+  const set = new Set(['Batch 1']);
+  state.orders.forEach(o => set.add(o.batch || 'Batch 1'));
+  return [...set].sort((a,b) => {
+    const na = batchNumFromName(a), nb = batchNumFromName(b);
+    if (na !== nb) return na - nb;
+    return a.localeCompare(b);
+  });
+}
+function getDefaultBatch() {
+  // Newest (highest-numbered) existing batch becomes the default for new orders
+  const batches = getAllBatches();
+  return batches[batches.length - 1] || 'Batch 1';
+}
+function getBatchOptions(selected) {
+  const opts = getAllBatches().map(b => `<option value="${esc(b)}" ${b===selected?'selected':''}>${esc(b)}</option>`).join('');
+  return opts + `<option value="__new__">+ New Batch…</option>`;
+}
+function renderBatchFilterChips() {
+  const row = document.getElementById('batch-filter-row');
+  if (!row) return;
+  const batches = getAllBatches();
+  row.innerHTML = `<div class="chip ${state.batchFilter==='all'?'active':''}" onclick="filterBatch('all',this)">All Batches</div>`
+    + batches.map(b => `<div class="chip ${state.batchFilter===b?'active':''}" onclick="filterBatch('${esc(b)}',this)">${esc(b)}</div>`).join('');
+}
+function filterBatch(b, el) {
+  state.batchFilter = b;
+  document.querySelectorAll('#batch-filter-row .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderAdminOrders();
+}
+async function updateOrderBatch(id, value) {
+  if (value === '__new__') {
+    const name = prompt('Enter new batch name (e.g. Batch 4):');
+    if (!name || !name.trim()) { renderAdminOrders(); return; }
+    value = name.trim();
+  }
+  const o = state.orders.find(x => x.id===id);
+  if (o) { o.batch = value; saveLocal(); await fsUpdate('orders', id, { batch: value }); }
+  renderAdminOrders();
+}
+function addNewBatch() {
+  const batches = getAllBatches();
+  let nextNum = 1;
+  batches.forEach(b => { const n = batchNumFromName(b); if (n >= nextNum) nextNum = n + 1; });
+  const suggestion = 'Batch ' + nextNum;
+  const name = prompt('New batch name:', suggestion);
+  if (!name || !name.trim()) return;
+  const val = name.trim();
+  // Just switch the filter to it; it'll appear once an order is assigned,
+  // but also render it immediately as a selectable filter chip.
+  if (!batches.includes(val)) {
+    state.batchFilter = val;
+    // Temporarily inject so the chip shows even with zero orders yet
+    const row = document.getElementById('batch-filter-row');
+    renderBatchFilterChips();
+    const extra = document.createElement('div');
+    extra.className = 'chip active';
+    extra.textContent = val;
+    extra.onclick = function() { filterBatch(val, extra); };
+    document.querySelectorAll('#batch-filter-row .chip').forEach(c => c.classList.remove('active'));
+    row.appendChild(extra);
+    renderAdminOrdersTableOnly();
+  } else {
+    filterBatch(val, document.querySelector('#batch-filter-row .chip'));
+  }
+}
+function renderAdminOrdersTableOnly() {
+  // Re-render the table body without rebuilding the batch chip row (keeps the temp "new batch" chip visible)
   const tbody = document.getElementById('admin-orders-tbody');
   const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
   let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
+  if (state.batchFilter !== 'all') list = list.filter(o => (o.batch||'Batch 1')===state.batchFilter);
   if (q) list = list.filter(o =>
     (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
     (o.fb||'').toLowerCase().includes(q)||(o.contact||'').toLowerCase().includes(q)||
-    (o.address||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))
+    (o.address||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+    (o.batch||'').toLowerCase().includes(q)
   );
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; return; }
-  tbody.innerHTML = list.map(o => `
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c2426d;padding:2rem">No orders in this batch yet.</td></tr>'; return; }
+  tbody.innerHTML = list.map(orderRowHtml).join('');
+}
+
+// ════════════════════════════════════════════
+// ADMIN ORDERS
+// ════════════════════════════════════════════
+function orderRowHtml(o) {
+  return `
     <tr>
       <td style="font-weight:600;color:#c2426d">${o.goNum}</td>
+      <td>
+        <select onchange="updateOrderBatch('${o.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
+          ${getBatchOptions(o.batch||'Batch 1')}
+        </select>
+      </td>
       <td>${esc(o.name)}</td>
       <td style="font-size:.77rem">${esc(o.fb)}</td>
       <td>${esc(o.contact)}</td>
@@ -1306,12 +1402,28 @@ function renderAdminOrders() {
         <button class="btn btn-secondary btn-sm" onclick="viewOrder('${o.id}')">View</button>
         <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">Del</button>
       </div></td>
-    </tr>`).join('');
+    </tr>`;
+}
+
+function renderAdminOrders() {
+  const tbody = document.getElementById('admin-orders-tbody');
+  const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
+  let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
+  if (state.batchFilter !== 'all') list = list.filter(o => (o.batch||'Batch 1')===state.batchFilter);
+  if (q) list = list.filter(o =>
+    (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
+    (o.fb||'').toLowerCase().includes(q)||(o.contact||'').toLowerCase().includes(q)||
+    (o.address||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+    (o.batch||'').toLowerCase().includes(q)
+  );
+  renderBatchFilterChips();
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; return; }
+  tbody.innerHTML = list.map(orderRowHtml).join('');
 }
 
 function filterOrders(f, el) {
   state.orderFilter = f;
-  document.querySelectorAll('#panel-orders .chip').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#panel-orders .filter-row:first-of-type .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active'); renderAdminOrders();
 }
 async function updateOrderStatus(id, status) {
@@ -1328,6 +1440,7 @@ function viewOrder(id) {
     <div style="display:flex;flex-direction:column;gap:.75rem">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.84rem">
         <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
+        <div><span style="color:#c2426d;font-weight:500">Batch:</span> <span class="batch-tag">${esc(o.batch||'Batch 1')}</span></div>
         <div><span style="color:#c2426d;font-weight:500">Date:</span> ${o.date}</div>
         <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(o.name)}</div>
         <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
@@ -1390,11 +1503,21 @@ function renderDashboard() {
       prodMap[item.name].qty += item.qty;
       prodMap[item.name].revenue += item.price * item.qty;
       if (!prodMap[item.name].img) { const f=state.products.find(p=>p.name===item.name); if(f&&f.img) prodMap[item.name].img=f.img; }
-      prodMap[item.name].orders.push({ customer:o.name, qty:item.qty, status:o.status, goNum:o.goNum });
+      prodMap[item.name].orders.push({ customer:o.name, qty:item.qty, status:o.status, goNum:o.goNum, batch:o.batch||'Batch 1' });
     });
   });
   const prodList = Object.entries(prodMap).sort((a,b) => b[1].qty - a[1].qty);
   const statusPill = s => { const f=STATUSES.find(x=>x.key===s); const label=f?f.emoji+' '+f.label:s; return `<span class="status-pill sp-${s}">${label}</span>`; };
+
+  // Per-batch overview
+  const batchMap = {};
+  orders.forEach(o => {
+    const b = o.batch||'Batch 1';
+    if (!batchMap[b]) batchMap[b] = { count:0, revenue:0 };
+    batchMap[b].count++; batchMap[b].revenue += (o.total||0);
+  });
+  const batchEntries = Object.entries(batchMap).sort((a,b) => batchNumFromName(a[0]) - batchNumFromName(b[0]));
+
   document.getElementById('dashboard-content').innerHTML = `
     <div class="dash-section">
       <div class="dash-section-title">✿ Overview</div>
@@ -1406,6 +1529,13 @@ function renderDashboard() {
         <div class="dash-card" style="border-color:#8b1f42;background:#fff0f5"><div class="dc-val" style="font-size:.9rem;color:#8b1f42">₱${grandRevenue.toFixed(2)}</div><div class="dc-label">🏆 Grand Total</div></div>
         <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
       </div>
+    </div>
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Orders by Batch</div>
+      ${batchEntries.length===0?'<p style="color:#c2426d;font-size:.83rem">No orders yet.</p>':`
+      <div class="dash-grid">
+        ${batchEntries.map(([b,d])=>`<div class="dash-card"><div class="dc-val" style="font-size:1.2rem">${d.count}</div><div class="dc-label">${esc(b)} · ₱${d.revenue.toFixed(2)}</div></div>`).join('')}
+      </div>`}
     </div>
     <div class="dash-section">
       <div class="dash-section-title">✿ Product Order Summary</div>
@@ -1421,7 +1551,7 @@ function renderDashboard() {
           </div>
           <div style="padding:.2rem .5rem .1rem">
             ${data.orders.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:#555;padding:.25rem;border-bottom:1px solid #ffe0e8;gap:.5rem">
-              <span>${esc(r.customer)} <span style="color:#aaa">(${r.goNum})</span> × ${r.qty}</span>
+              <span>${esc(r.customer)} <span style="color:#aaa">(${r.goNum})</span> <span class="batch-tag" style="font-size:.65rem;padding:0 6px">${esc(r.batch)}</span> × ${r.qty}</span>
               ${statusPill(r.status)}
             </div>`).join('')}
           </div>
@@ -1434,7 +1564,7 @@ function renderDashboard() {
         :orders.filter(o=>o.status!=='delivered').map(o=>`
           <div class="cust-row">
             <div>
-              <div class="cr-name">${esc(o.name)}</div>
+              <div class="cr-name">${esc(o.name)} <span class="batch-tag" style="margin-left:4px">${esc(o.batch||'Batch 1')}</span></div>
               <div class="cr-meta">${o.goNum} · ${o.date}</div>
               <div class="cr-meta">${(o.items||[]).map(i=>i.name+'×'+i.qty).join(', ')}</div>
             </div>
@@ -1458,14 +1588,15 @@ function renderArrivalPanel() {
     if (!ok) return false;
     if (!q) return true;
     return (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
-           (o.fb||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q));
+           (o.fb||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+           (o.batch||'').toLowerCase().includes(q);
   });
   const wrap = document.getElementById('arrival-list');
   if (!arrivedOrders.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📦</div><p>No orders marked "PH Arrived" yet.</p></div>'; return; }
   wrap.innerHTML = arrivedOrders.map(o => `
     <div style="background:#fff;border:1.5px solid #c0d8f0;border-radius:12px;padding:.85rem 1rem;margin-bottom:.65rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap">
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;color:#1a3a5c;font-size:.92rem">${esc(o.name)} <span style="color:#aaa;font-weight:400;font-size:.78rem">(${o.goNum})</span></div>
+        <div style="font-weight:700;color:#1a3a5c;font-size:.92rem">${esc(o.name)} <span style="color:#aaa;font-weight:400;font-size:.78rem">(${o.goNum})</span> <span class="batch-tag" style="margin-left:4px">${esc(o.batch||'Batch 1')}</span></div>
         <div style="font-size:.76rem;color:#555;margin-top:.2rem">${esc(o.fb)} · ${esc(o.contact)}</div>
         <div style="font-size:.76rem;color:#555;margin-top:.1rem">${(o.items||[]).map(i=>esc(i.name)+'×'+i.qty).join(', ')}</div>
         <div style="font-size:.76rem;color:#c2426d;font-weight:600;margin-top:.2rem">Order Total: ₱${(o.total||0).toFixed(2)} · ${o.shipping}</div>
@@ -1484,6 +1615,7 @@ function openArrivalModal(orderId) {
   document.getElementById('arrival-order-info').innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">
       <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
+      <div><span style="color:#c2426d;font-weight:500">Batch:</span> <span class="batch-tag">${esc(o.batch||'Batch 1')}</span></div>
       <div><span style="color:#c2426d;font-weight:500">Date:</span> ${o.date}</div>
       <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(o.name)}</div>
       <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
