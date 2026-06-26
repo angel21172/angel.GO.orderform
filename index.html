@@ -70,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}
 
 /* ── PRODUCT CARD ── */
-.product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;cursor:pointer}
+.product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,103,154,.18)}
 .product-img{width:100%;height:148px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden;flex-shrink:0}
 .product-img img{width:100%;height:100%;object-fit:cover}
@@ -82,15 +82,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .product-stock.low{color:#c2426d}
 .product-stock.out{color:#bbb}
 .product-desc{font-size:.71rem;color:#999;margin-bottom:.5rem;line-height:1.35;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.product-buttons{display:flex;gap:.4rem;margin-top:auto}
-.add-btn,.reserve-btn{flex:1;background:#e8679a;color:#fff;border:none;padding:.44rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:background .2s}
-.reserve-btn{background:#90c4f0}
+.add-btn{width:100%;background:#e8679a;color:#fff;border:none;padding:.44rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:background .2s;margin-top:auto}
 .add-btn:hover{background:#c2426d}
-.reserve-btn:hover{background:#5fa8d3}
-.add-btn:disabled,.reserve-btn:disabled{background:#e0e0e0;cursor:not-allowed;color:#aaa}
-
-/* ── VIEW DETAILS HINT ── */
-.view-details-hint{font-size:.68rem;color:#e8679a;text-align:center;padding:.3rem 0 .1rem;opacity:.8;letter-spacing:.02em}
+.add-btn:disabled{background:#e0e0e0;cursor:not-allowed;color:#aaa}
 
 /* ── NEW BADGE ── */
 .new-badge{position:absolute;top:8px;left:8px;background:#e8679a;color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.04em;text-transform:uppercase;z-index:1}
@@ -168,45 +162,6 @@ tr:hover td{background:#fff5f7}
 .modal-head h3{font-family:'Playfair Display',serif;font-size:1.15rem}
 .modal-body{padding:1.5rem}
 
-/* ── PRODUCT DETAILS MODAL ── */
-.product-detail-modal .modal{width:560px}
-.pd-hero{width:100%;height:240px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:5rem;overflow:hidden;border-radius:12px;margin-bottom:1.25rem;position:relative}
-.pd-hero img{width:100%;height:100%;object-fit:cover;border-radius:12px}
-.pd-new-badge{position:absolute;top:12px;left:12px;background:#e8679a;color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase}
-.pd-cat-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
-.pd-cat-tag{font-size:.72rem;background:#ffd6e7;color:#8b1f42;padding:2px 10px;border-radius:10px;font-weight:500}
-.pd-name{font-family:'Playfair Display',serif;font-size:1.4rem;color:#3d1a28;font-weight:600;line-height:1.25;margin-bottom:.5rem}
-.pd-price-row{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.75rem}
-.pd-price{font-size:1.65rem;font-weight:700;color:#c2426d;font-family:'Playfair Display',serif}
-.pd-stock-pill{font-size:.72rem;padding:3px 10px;border-radius:10px;font-weight:600}
-.pd-stock-available{background:#d6f5e5;color:#1a7a4a}
-.pd-stock-limited{background:#fff0d6;color:#b87a00}
-.pd-stock-soldout{background:#f0f0f0;color:#999}
-.pd-divider{border:none;border-top:1.5px solid #ffe0e8;margin:.85rem 0}
-.pd-desc-label{font-size:.72rem;color:#c2426d;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
-.pd-desc{font-size:.88rem;color:#555;line-height:1.65}
-.pd-stock-row{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#888}
-.pd-stock-row strong{color:#3d1a28}
-.pd-action-row{display:flex;gap:.65rem;margin-top:.25rem}
-.pd-action-row .add-btn,.pd-action-row .reserve-btn{flex:1;padding:.6rem;font-size:.85rem;border-radius:10px}
-.pd-qty-selector{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
-.pd-qty-selector .pd-qty-label{font-size:.78rem;color:#8b1f42;font-weight:500;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.pd-qty-selector .qty-btn{width:28px;height:28px;font-size:16px;border-radius:6px}
-.pd-qty-selector .pd-qty-val{font-size:.95rem;font-weight:600;min-width:24px;text-align:center;color:#3d1a28}
-.pd-info-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.85rem}
-.pd-info-chip{display:inline-flex;align-items:center;gap:.3rem;background:#fff0f5;border:1px solid #ffd6e7;border-radius:8px;padding:4px 10px;font-size:.74rem;color:#8b1f42}
-
-/* ── LIGHTBOX ── */
-.lightbox{position:fixed;inset:0;background:rgba(20,5,15,.92);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;cursor:zoom-out}
-.lightbox.open{display:flex}
-.lightbox-inner{position:relative;max-width:92vw;max-height:92vh;display:flex;align-items:center;justify-content:center}
-.lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:10px;box-shadow:0 8px 48px rgba(0,0,0,.6);cursor:default}
-.lightbox-close{position:fixed;top:16px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:26px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;backdrop-filter:blur(4px)}
-.lightbox-close:hover{background:rgba(255,255,255,.3)}
-.lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:.8rem;text-align:center;pointer-events:none;background:rgba(0,0,0,.4);padding:.35rem .9rem;border-radius:20px;backdrop-filter:blur(4px);white-space:nowrap}
-.pd-hero-clickable{cursor:zoom-in;position:relative}
-.pd-hero-clickable::after{content:'🔍 Tap to zoom';position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.45);color:#fff;font-size:.68rem;padding:3px 9px;border-radius:10px;pointer-events:none;backdrop-filter:blur(2px);letter-spacing:.02em}
-
 /* ── PASSWORD ── */
 .pw-modal{position:fixed;inset:0;background:rgba(60,20,40,.6);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
 .pw-modal.open{display:flex}
@@ -240,10 +195,20 @@ tr:hover td{background:#fff5f7}
 .badge-confirmed{background:#d6f5e5;color:#1a7a4a}
 .badge-shipped{background:#d6e8ff;color:#1a4a8b}
 .badge-delivered{background:#e8d6ff;color:#5a1ab8}
-.badge-reserved{background:#e0f0ff;color:#1a5fa8}
 .status-pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.7rem;font-weight:600;white-space:nowrap}
 .sp-pending{background:#fff0d6;color:#b87a00}
 .sp-confirmed{background:#d6f5e5;color:#1a7a4a}
+.sp-order_placed{background:#e0f0ff;color:#1a5fa8}
+.sp-cn_warehouse{background:#fff0cc;color:#996600}
+.sp-in_transit{background:#ffe8d6;color:#b84a00}
+.sp-ph_arrived{background:#e8d6ff;color:#5a1ab8}
+.sp-delivered{background:#d6ffe8;color:#0a6640}
+
+/* ── IMG UPLOAD ── */
+.img-upload-label{display:flex;align-items:center;gap:.5rem;background:#fff0f5;border:2px dashed #e8679a;border-radius:8px;padding:.6rem 1rem;cursor:pointer;font-size:.82rem;color:#c2426d;font-weight:500;transition:background .2s}
+.img-upload-label:hover{background:#ffd6e7}
+.img-upload-label input{display:none}
+.img-prev{width:64px;height:64px;object-fit:cover;border-radius:8px;border:1.5px solid #ffc0d5;display:none;margin-top:.5rem}
 
 /* ── CHIPS / FILTER ── */
 .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
@@ -268,10 +233,44 @@ tr:hover td{background:#fff5f7}
 .dash-card{background:#fff;border:1.5px solid #ffc0d5;border-radius:12px;padding:.9rem 1rem;text-align:center}
 .dash-card .dc-val{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#c2426d;line-height:1}
 .dash-card .dc-label{font-size:.73rem;color:#888;margin-top:.3rem;text-transform:uppercase;letter-spacing:.04em}
+.dash-section{margin-bottom:1.5rem}
+.dash-section-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.dash-section-title::after{content:'';flex:1;height:1px;background:#ffc0d5}
+.prod-summary-row{display:flex;align-items:center;gap:.75rem;padding:.55rem .75rem;background:#fff;border:1px solid #ffe0e8;border-radius:10px;margin-bottom:.4rem}
+.prod-summary-row .ps-name{flex:1;font-size:.84rem;font-weight:500;color:#3d1a28;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prod-summary-row .ps-orders{font-size:.78rem;color:#c2426d;font-weight:600;white-space:nowrap}
+.prod-summary-row .ps-revenue{font-size:.78rem;color:#8b1f42;font-weight:700;white-space:nowrap}
+.cust-row{display:flex;justify-content:space-between;align-items:flex-start;padding:.5rem .75rem;background:#fff;border:1px solid #ffe0e8;border-radius:10px;margin-bottom:.4rem;gap:.5rem;font-size:.82rem}
+.cust-row .cr-name{font-weight:600;color:#3d1a28}
+.cust-row .cr-meta{color:#888;font-size:.74rem;margin-top:1px}
 
 /* ── NOTES BOX ── */
 .notes-box{background:#fff0f5;border:1.5px solid #f4a0c0;border-radius:12px;padding:1rem 1.2rem;margin:0 0 1rem;font-size:.8rem;color:#5c0e27;line-height:1.7}
 .notes-box .notes-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;font-weight:600;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+.notes-box ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem}
+.notes-box li{list-style:none;padding-left:.2rem;position:relative}
+.notes-box li::before{content:'•';color:#e8679a;position:absolute;left:-.9rem;font-weight:700}
+
+/* ── BATCH TAG ── */
+.batch-tag{font-size:.7rem;background:#ffd6e7;color:#8b1f42;padding:1px 8px;border-radius:9px;font-weight:600;white-space:nowrap;display:inline-block}
+
+/* ── ARRIVAL ── */
+.arrival-receipt{background:#fff;border:2px dashed #90c4f0;border-radius:12px;padding:1.5rem;font-size:.82rem;line-height:1.6}
+.arrival-receipt .ar-head{text-align:center;border-bottom:2px dashed #90c4f0;padding-bottom:1rem;margin-bottom:1rem}
+.arrival-receipt .ar-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:#1a3a5c}
+.arrival-receipt .ar-sub{font-size:.72rem;color:#3a7abf;letter-spacing:.08em;text-transform:uppercase}
+.arrival-receipt .ar-go{font-size:1rem;font-weight:700;color:#1a5fa8;margin-top:.25rem}
+.arrival-receipt .ar-row{display:flex;justify-content:space-between;padding:.28rem 0;border-bottom:1px solid #e0f0ff;gap:.5rem}
+.arrival-receipt .ar-label{color:#1a3a5c;font-weight:500;white-space:nowrap}
+.arrival-receipt .ar-val{color:#3d1a28;text-align:right}
+.arrival-receipt .ar-items{background:#f0f7ff;border-radius:8px;padding:.7rem;margin:.5rem 0}
+.arrival-receipt .ar-item{display:flex;justify-content:space-between;font-size:.79rem;padding:.2rem 0}
+.arrival-receipt .ar-divider{border-top:1px solid #c0d8f0;margin:.35rem 0}
+.arrival-receipt .ar-sf-block{background:#fff8e6;border-radius:8px;padding:.7rem;margin:.5rem 0;border:1px solid #f4c97a}
+.arrival-receipt .ar-sf-row{display:flex;justify-content:space-between;font-size:.8rem;padding:.2rem 0;color:#7a4f00}
+.arrival-receipt .ar-grand{display:flex;justify-content:space-between;font-weight:700;color:#b87a00;font-size:.95rem;border-top:2px solid #f4c97a;margin-top:.4rem;padding-top:.4rem}
+.arrival-receipt .ar-foot{text-align:center;margin-top:1rem;padding-top:1rem;border-top:2px dashed #90c4f0;color:#3a7abf;font-size:.76rem}
+.arrival-receipt .ar-note{background:#f0f7ff;border-radius:8px;padding:.55rem .8rem;margin-top:.5rem;font-size:.74rem;color:#1a3a5c;line-height:1.5;text-align:left}
 
 /* ── DESKTOP: cap product card size ── */
 @media(min-width:900px){
@@ -280,45 +279,116 @@ tr:hover td{background:#fff5f7}
   .product-info{padding:.7rem .75rem}
   .product-name{font-size:.83rem}
   .product-price{font-size:.9rem}
-  .add-btn,.reserve-btn{font-size:.73rem;padding:.38rem}
+  .add-btn{font-size:.76rem;padding:.4rem}
   .hero h1{font-size:1.6rem}
   .hero{padding:1.4rem 1.5rem 1.1rem}
   .cat-sidebar{width:176px}
   .cat-list{max-height:520px}
-  .pd-hero{height:260px}
+}
+@media(min-width:1200px){
+  .shop-layout{max-width:1200px;margin:0 auto;padding:1rem 2rem 2rem}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(155px,192px));gap:.7rem}
 }
 
 /* ── MOBILE ── */
 @media(max-width:640px){
+  /* Nav */
   .topnav{padding:0 .85rem;height:50px}
   .topnav .brand{font-size:.88rem}
   .mode-btn{padding:5px 10px;font-size:11px}
   #sync-label{display:none}
+
+  /* Hero */
   .hero{padding:1.5rem 1rem 1.2rem}
   .hero h1{font-size:1.3rem}
-  .hero p{font-size:.74rem}
+  .hero p{font-size:.74rem;letter-spacing:.02em}
+
+  /* Announce */
   .announce-bar{margin:.6rem .85rem 0;padding:.5rem .8rem}
   .announce-bar .text{font-size:.8rem}
+
+  /* Stack shop layout */
   .shop-layout{flex-direction:column;padding:.7rem .85rem 1.5rem;gap:.65rem}
+
+  /* ── Category sidebar → 2-col grid ── */
   .cat-sidebar{width:100%;position:static}
+  .cat-sidebar-inner{border-radius:12px;overflow:hidden}
+  .cat-sidebar-title{padding:.5rem .85rem .38rem;font-size:.72rem}
+  .cat-search-wrap{padding:.38rem .55rem}
+  .cat-search{font-size:.74rem;padding:.28rem .6rem}
+  .cat-list{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    max-height:164px;
+    overflow-y:auto;
+    overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+    scrollbar-color:#ffc0d5 transparent;
+  }
+  .cat-list::-webkit-scrollbar{width:3px}
+  .cat-list::-webkit-scrollbar-thumb{background:#ffc0d5;border-radius:3px}
+  .cat-item{border-bottom:1px solid #fff0f5;border-right:1px solid #fff0f5}
+  .cat-item:nth-child(2n){border-right:none}
+  .cat-btn{
+    width:100%;display:flex;align-items:center;gap:.3rem;
+    padding:.5rem .65rem;background:none;border:none;cursor:pointer;
+    font-family:'DM Sans',sans-serif;font-size:.75rem;color:#3d1a28;
+    text-align:left;transition:background .12s;min-height:42px;border-radius:0;
+  }
+  .cat-btn:active{background:#ffd6e7}
+  .cat-btn.active{background:#ffd6e7;color:#8b1f42;font-weight:600}
+  .cat-btn .cat-emoji{display:none}
+  .cat-btn .cat-label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cat-no-results{grid-column:1/-1;padding:.5rem;font-size:.73rem}
+
+  /* Products area */
   .products-topbar{flex-direction:column;align-items:stretch;gap:.45rem;margin-bottom:.55rem}
   .products-topbar .section-title{font-size:.98rem}
   .search-bar{width:100%;font-size:.83rem;padding:.42rem .85rem}
   .products-grid{grid-template-columns:repeat(2,1fr);gap:.5rem}
   .product-img{height:108px}
   .product-info{padding:.55rem}
-  .product-buttons{flex-direction:column}
-  .add-btn,.reserve-btn{font-size:.7rem;padding:.35rem}
+  .product-cat-tag{font-size:.62rem;padding:1px 5px;margin-bottom:.22rem}
+  .product-name{font-size:.77rem}
+  .product-price{font-size:.86rem;margin-bottom:.22rem}
+  .product-stock{font-size:.65rem;margin-bottom:.3rem}
+  .product-desc{font-size:.64rem;margin-bottom:.3rem}
+  .add-btn{font-size:.73rem;padding:.38rem}
+  .new-badge{font-size:.57rem;padding:2px 5px}
+
+  /* Admin */
+  .admin-panel{padding:.85rem .85rem}
+  .admin-header{padding:.85rem .85rem}
+  .admin-tabs{padding:0 .85rem;overflow-x:auto}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:1}
+
+  /* Modals slide up */
   .modal-wrap{align-items:flex-end;padding:0}
   .modal{border-radius:14px 14px 0 0;position:fixed;bottom:0;left:0;right:0;width:100%;max-width:100%;max-height:93vh;margin:0}
   .modal-head{border-radius:14px 14px 0 0}
   .modal-body{padding:.95rem .9rem 1.1rem}
+  .notes-box{font-size:.74rem;padding:.75rem .85rem}
+  .notes-box .notes-title{font-size:.86rem}
+
+  /* Cart drawer full width */
+  .drawer{width:100%;max-width:100%}
   .cart-fab{width:48px;height:48px;font-size:19px;bottom:16px;right:14px}
+
+  /* Tables */
   th,td{padding:.38rem .5rem;font-size:.73rem}
-  .pd-hero{height:190px}
-  .pd-name{font-size:1.2rem}
-  .pd-price{font-size:1.35rem}
-  .pd-action-row{flex-direction:column}
+
+  /* Receipt */
+  .receipt{padding:1rem;font-size:.77rem}
+  .receipt-title{font-size:1.15rem}
+}
+@media(max-width:400px){
+  .products-grid{gap:.38rem}
+  .product-img{height:92px}
+  .product-name{font-size:.73rem}
+  .product-price{font-size:.8rem}
+  .cat-btn{min-height:38px;padding:.4rem .55rem;font-size:.71rem}
 }
 </style>
 </head>
@@ -351,17 +421,23 @@ tr:hover td{background:#fff5f7}
     <span class="text" id="announce-text"></span>
   </div>
 
+  <!-- SHOP LAYOUT: sidebar + products -->
   <div class="shop-layout">
+
+    <!-- CATEGORY SIDEBAR -->
     <aside class="cat-sidebar">
       <div class="cat-sidebar-inner">
         <div class="cat-sidebar-title">✿ Categories</div>
         <div class="cat-search-wrap">
           <input class="cat-search" id="cat-search-input" placeholder="🔍 Search categories…" oninput="onCatSearch(this.value)" autocomplete="off" />
         </div>
-        <ul class="cat-list" id="cat-list"></ul>
+        <ul class="cat-list" id="cat-list">
+          <!-- populated by JS -->
+        </ul>
       </div>
     </aside>
 
+    <!-- PRODUCTS AREA -->
     <div class="products-area">
       <div class="products-topbar">
         <div class="section-title" id="products-area-title">✿ All Items</div>
@@ -371,6 +447,7 @@ tr:hover td{background:#fff5f7}
         <div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>Loading products…</p></div>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -385,13 +462,17 @@ tr:hover td{background:#fff5f7}
   <div class="admin-tabs">
     <div class="admin-tab active" onclick="adminTab('dashboard')">📊 Dashboard</div>
     <div class="admin-tab" onclick="adminTab('products')">Products</div>
-    <div class="admin-tab" onclick="adminTab('reservations')">📌 Reservations</div>
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
+    <div class="admin-tab" onclick="adminTab('arrival')">📬 Arrival Receipt</div>
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
 
-  <div class="admin-panel active" id="panel-dashboard"><div id="dashboard-content"></div></div>
+  <!-- Dashboard -->
+  <div class="admin-panel active" id="panel-dashboard">
+    <div id="dashboard-content"></div>
+  </div>
 
+  <!-- Products -->
   <div class="admin-panel" id="panel-products">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Manage Products</div>
@@ -406,26 +487,7 @@ tr:hover td{background:#fff5f7}
     </div>
   </div>
 
-  <div class="admin-panel" id="panel-reservations">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
-      <div style="font-weight:600;color:#8b1f42">Reservation Management</div>
-      <input class="search-bar" id="reservation-search" placeholder="🔍 Search name, RES#…" oninput="renderReservations()" style="width:210px" />
-    </div>
-    <div class="filter-row">
-      <div class="chip active" onclick="filterReservations('all',this)">All</div>
-      <div class="chip" onclick="filterReservations('pending',this)">⏳ Pending</div>
-      <div class="chip" onclick="filterReservations('approved',this)">✅ Approved</div>
-      <div class="chip" onclick="filterReservations('converted',this)">🛒 Converted to Order</div>
-      <div class="chip" onclick="filterReservations('cancelled',this)">❌ Cancelled</div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>RES#</th><th>Product</th><th>Name</th><th>Contact</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="admin-reservations-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
+  <!-- Orders -->
   <div class="admin-panel" id="panel-orders">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Order Summaries</div>
@@ -435,16 +497,27 @@ tr:hover td{background:#fff5f7}
       <div class="chip active" onclick="filterOrders('all',this)">All</div>
       <div class="chip" onclick="filterOrders('pending',this)">Pending</div>
       <div class="chip" onclick="filterOrders('confirmed',this)">Confirmed</div>
+      <div class="chip" onclick="filterOrders('order_placed',this)">Order Placed</div>
+      <div class="chip" onclick="filterOrders('cn_warehouse',this)">CN Warehouse</div>
+      <div class="chip" onclick="filterOrders('in_transit',this)">In Transit</div>
+      <div class="chip" onclick="filterOrders('ph_arrived',this)">PH Arrived</div>
       <div class="chip" onclick="filterOrders('delivered',this)">Delivered</div>
+    </div>
+    <div class="filter-row" id="batch-filter-row">
+      <div class="chip active" onclick="filterBatch('all',this)">All Batches</div>
+    </div>
+    <div style="margin-bottom:.6rem">
+      <button class="btn btn-secondary btn-sm" onclick="addNewBatch()">+ New Batch</button>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>GO#</th><th>Name</th><th>Contact</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="admin-orders-tbody"><tr><td colspan="8" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
+        <thead><tr><th>GO#</th><th>Batch</th><th>Name</th><th>FB</th><th>Contact</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody id="admin-orders-tbody"><tr><td colspan="10" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
 
+  <!-- Announcements -->
   <div class="admin-panel" id="panel-announcements">
     <div style="font-weight:600;color:#8b1f42;margin-bottom:1rem">Important Announcements</div>
     <div class="form-group" style="margin-bottom:.75rem">
@@ -453,6 +526,18 @@ tr:hover td{background:#fff5f7}
     </div>
     <button class="btn btn-primary btn-sm" onclick="saveAnnouncement()">Save Announcement</button>
     <div style="margin-top:.5rem;font-size:.75rem;color:#1a7a4a" id="announce-saved-msg"></div>
+  </div>
+
+  <!-- Arrival Receipt -->
+  <div class="admin-panel" id="panel-arrival">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+      <div style="font-weight:600;color:#8b1f42">📬 Arrival Receipts</div>
+      <input class="search-bar" id="arrival-search" placeholder="🔍 Search name, GO#…" oninput="renderArrivalPanel()" style="width:210px" />
+    </div>
+    <div style="font-size:.78rem;color:#c2426d;margin-bottom:.85rem;background:#fff0f5;border-radius:8px;padding:.55rem .85rem;line-height:1.5">
+      Orders marked <strong>📦 PH Arrived</strong> appear here. Click <em>Generate Receipt</em> to input ISF/LSF fees.
+    </div>
+    <div id="arrival-list"></div>
   </div>
 </div>
 
@@ -490,63 +575,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ══════ PRODUCT DETAILS MODAL ══════ -->
-<div class="modal-wrap product-detail-modal" id="product-detail-modal">
-  <div class="modal" style="width:560px">
-    <div class="modal-head">
-      <h3>✿ Product Details</h3>
-      <button class="close-btn" onclick="closeProductDetailModal()">✕</button>
-    </div>
-    <div class="modal-body" id="product-detail-body"></div>
-  </div>
-</div>
-
-<!-- ── RESERVATION MODAL ── -->
-<div class="modal-wrap" id="reservation-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📌 Reserve Item</h3>
-      <button class="close-btn" onclick="closeReservationModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="background:#e0f0ff;border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem;color:#1a3a5c;line-height:1.6;border-left:4px solid #1a5fa8">
-        💙 Reserve this item and we'll notify you when it's available. Send your reservation note and contact details.
-      </div>
-      <div style="background:#fff0f5;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.8rem;color:#8b1f42">
-        <div style="font-weight:600;margin-bottom:.3rem">📦 Product Reserved:</div>
-        <div id="res-product-name" style="font-weight:500">Product Name</div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group full"><label>Full Name *</label><input id="res-name" placeholder="Your full name" /></div>
-        <div class="form-group full"><label>Contact Number *</label><input id="res-contact" placeholder="09XXXXXXXXX" /></div>
-        <div class="form-group full"><label>Facebook Account (Optional)</label><input id="res-fb" placeholder="Your FB name or profile link" /></div>
-      </div>
-      <div id="res-err" style="color:#e05252;font-size:.82rem;margin:.5rem 0;display:none"></div>
-      <div style="margin-top:1rem;display:flex;gap:.75rem">
-        <button class="btn btn-secondary" onclick="closeReservationModal()" style="flex:1">Cancel</button>
-        <button class="btn btn-primary" id="submit-res-btn" onclick="submitReservation()" style="flex:1">Submit Reservation ✿</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── RESERVATION CONFIRMATION MODAL ── -->
-<div class="modal-wrap" id="res-confirm-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📌 Reservation Confirmed</h3>
-      <button class="close-btn" onclick="closeResConfirmModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="res-confirm-content"></div>
-      <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
-        <button class="btn btn-secondary btn-sm" onclick="closeResConfirmModal()">Close</button>
-        <button class="btn btn-primary btn-sm" id="save-res-img-btn" onclick="saveResConfirmAsImage()">📥 Save as Image</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- ── ORDER FORM MODAL ── -->
 <div class="modal-wrap" id="order-modal">
   <div class="modal">
@@ -557,19 +585,30 @@ tr:hover td{background:#fff5f7}
     <div class="modal-body">
       <div class="notes-box">
         <div class="notes-title">⚠️ Important Notes</div>
-        <ul style="padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem">
-          <li>After submitting the order form, please download the order confirmation/receipt.</li>
-          <li>Payment details will be sent to you after order confirmation.</li>
-          <li>Please send your proof of payment to: <strong>Angel</strong>.</li>
+        <ul>
+          <li>After submitting the order form, please download the order confirmation/receipt. Payment details will be sent to you after.</li>
+          <li>Please send your proof of payment to my Facebook account: <strong>Angel</strong>.</li>
+          <li>ISF will be collected upon arrival of items here in the Philippines. Please read the Terms and Conditions on my pinned post and make sure you are 100% sure before ordering.</li>
           <li><strong>Strictly no cancellation. No refund.</strong></li>
-          <li><strong>Full payment is required</strong> — we will not purchase without it.</li>
+          <li><strong>Full payment is required</strong> — we will not purchase your item without it.</li>
+          <li>Pay on time. Failure to pay before or on the deadline will move your order to the second batch. If payment is not settled, you will be blocked.</li>
+          <li>We will give you updates regarding your item via DM or post. You may also message this account directly for updates.</li>
+          <li>We will send you an arrival notice once items have arrived, along with a shipping form for your delivery details. Allow us 2–3 days to arrange all items, after which we will send you the ISF and Local SF fee. You will have <strong>1 week</strong> to pay.</li>
         </ul>
       </div>
       <div class="form-grid">
         <div class="form-group full"><label>Full Name *</label><input id="o-name" placeholder="Your full name" /></div>
         <div class="form-group full"><label>Facebook Account *</label><input id="o-fb" placeholder="Your FB name or profile link" /></div>
         <div class="form-group"><label>Contact Number *</label><input id="o-contact" placeholder="09XXXXXXXXX" /></div>
+        <div class="form-group"><label>Shipping Type</label>
+          <select id="o-shipping">
+            <option value="ISF">ISF (In-Store Forwarding)</option>
+            <option value="LSF">LSF (Local Shipping Forwarding)</option>
+            <option value="Direct">Direct Shipping</option>
+          </select>
+        </div>
         <div class="form-group full"><label>Complete Address *</label><textarea id="o-address" placeholder="House/Unit No., Street, Barangay, City/Municipality, Province" rows="2"></textarea></div>
+        <div class="form-group full"><label>Notes / Special Instructions</label><textarea id="o-notes" placeholder="Any special requests…" rows="2"></textarea></div>
       </div>
       <div id="order-err" style="color:#e05252;font-size:.82rem;margin:.5rem 0;display:none"></div>
       <div style="margin-top:1rem;display:flex;gap:.75rem">
@@ -620,8 +659,8 @@ tr:hover td{background:#fff5f7}
         <div class="form-group full"><label>Description</label><textarea id="p-desc" placeholder="Short product description…" rows="2"></textarea></div>
         <div class="form-group full">
           <label>Product Image</label>
-          <label class="img-upload-label" style="display:flex;align-items:center;gap:.5rem;background:#fff0f5;border:2px dashed #e8679a;border-radius:8px;padding:.6rem 1rem;cursor:pointer;font-size:.82rem;color:#c2426d;font-weight:500;transition:background .2s">📷 Upload Image<input type="file" accept="image/*" id="p-img-input" onchange="previewImg(this)" style="display:none" /></label>
-          <img id="p-img-prev" style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1.5px solid #ffc0d5;display:none;margin-top:.5rem" alt="preview" />
+          <label class="img-upload-label">📷 Upload Image<input type="file" accept="image/*" id="p-img-input" onchange="previewImg(this)" /></label>
+          <img id="p-img-prev" class="img-prev" alt="preview" />
           <input type="hidden" id="p-img-data" />
         </div>
         <div class="form-group"><label>Status</label>
@@ -641,24 +680,75 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ── RESERVATION DETAIL MODAL ── -->
-<div class="modal-wrap" id="reservation-detail-modal">
+<!-- ── ARRIVAL MODALS ── -->
+<div class="modal-wrap" id="arrival-modal">
   <div class="modal">
     <div class="modal-head">
-      <h3>📌 Reservation Details</h3>
-      <button class="close-btn" onclick="closeModal('reservation-detail-modal')">✕</button>
+      <h3>📬 Generate Arrival Receipt</h3>
+      <button class="close-btn" onclick="closeModal('arrival-modal')">✕</button>
     </div>
-    <div class="modal-body" id="reservation-detail-body"></div>
+    <div class="modal-body">
+      <div id="arrival-order-info" style="background:#fff5f7;border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:#3d1a28;line-height:1.6"></div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Shipping Type</label>
+          <select id="ar-shipping-type" onchange="toggleSFFields()">
+            <option value="ISF">ISF (In-Store Forwarding)</option>
+            <option value="LSF">LSF (Local Shipping Forwarding)</option>
+            <option value="both">Both ISF + LSF</option>
+          </select>
+        </div>
+        <div class="form-group" id="ar-isf-group">
+          <label>ISF Fee (₱)</label>
+          <input type="number" id="ar-isf" placeholder="0.00" min="0" step="0.01" oninput="calcArrivalTotal()" />
+        </div>
+        <div class="form-group" id="ar-lsf-group" style="display:none">
+          <label>LSF Fee (₱)</label>
+          <input type="number" id="ar-lsf" placeholder="0.00" min="0" step="0.01" oninput="calcArrivalTotal()" />
+        </div>
+        <div class="form-group full">
+          <label>Additional Notes (optional)</label>
+          <textarea id="ar-notes" placeholder="Payment deadline, pickup info, etc." rows="2"></textarea>
+        </div>
+      </div>
+      <div style="background:#fff0f5;border-radius:10px;padding:.85rem 1rem;margin-top:.75rem;font-size:.85rem">
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0"><span>Order Total (paid)</span><span id="ar-prev-order">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0" id="ar-isf-row"><span>ISF Fee</span><span id="ar-prev-isf">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.2rem 0;display:none" id="ar-lsf-row"><span>LSF Fee</span><span id="ar-prev-lsf">₱0.00</span></div>
+        <div style="display:flex;justify-content:space-between;padding:.4rem 0 0;border-top:2px solid #ffc0d5;margin-top:.4rem;font-weight:700;color:#c2426d"><span>Total SF to Pay</span><span id="ar-prev-sf">₱0.00</span></div>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:.75rem">
+        <button class="btn btn-secondary" onclick="closeModal('arrival-modal')" style="flex:1">Cancel</button>
+        <button class="btn btn-primary" onclick="generateArrivalReceipt()" style="flex:1">Generate Receipt ✿</button>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ── LIGHTBOX ── -->
-<div class="lightbox" id="lightbox" onclick="closeLightbox()">
-  <div class="lightbox-inner" onclick="event.stopPropagation()">
-    <img id="lightbox-img" src="" alt="" />
+<div class="modal-wrap" id="arrival-receipt-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>📬 Arrival Receipt</h3>
+      <button class="close-btn" onclick="closeModal('arrival-receipt-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="arrival-receipt-content"></div>
+      <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('arrival-receipt-modal')">Close</button>
+        <button class="btn btn-primary btn-sm" onclick="saveArrivalReceiptImage()">📥 Save as Image</button>
+      </div>
+    </div>
   </div>
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<div class="modal-wrap" id="order-detail-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Order Details</h3>
+      <button class="close-btn" onclick="closeModal('order-detail-modal')">✕</button>
+    </div>
+    <div class="modal-body" id="order-detail-body"></div>
+  </div>
 </div>
 
 <script>
@@ -684,10 +774,8 @@ let state = {
   products: [], orders: [], announcement: '',
   goCounter: 1001, cart: [],
   adminLoggedIn: false, currentMode: 'customer',
-  orderFilter: 'all', currentReceiptOrder: null,
-  activeCat: 'all', searchQ: '', catSearchQ: '',
-  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationId: null,
-  pdQty: 1 // quantity selected in product detail modal
+  orderFilter: 'all', batchFilter: 'all', currentReceiptOrder: null,
+  activeCat: 'all', searchQ: '', catSearchQ: ''
 };
 
 // ════════════════════════════════════════════
@@ -695,29 +783,12 @@ let state = {
 // ════════════════════════════════════════════
 function loadLocal() {
   try {
-    const r = localStorage.getItem('angelshop_v3');
-    if (r) {
-      const d = JSON.parse(r);
-      state.products = d.products||[];
-      state.orders = d.orders||[];
-      state.announcement = d.announcement||'';
-      state.goCounter = d.goCounter||1001;
-      state.reservations = d.reservations||[];
-      state.resCounter = d.resCounter||5001;
-    }
+    const r = localStorage.getItem('angelshop_v2');
+    if (r) { const d = JSON.parse(r); state.products = d.products||[]; state.orders = d.orders||[]; state.announcement = d.announcement||''; state.goCounter = d.goCounter||1001; }
   } catch(e) {}
 }
 function saveLocal() {
-  try {
-    localStorage.setItem('angelshop_v3', JSON.stringify({
-      products:state.products,
-      orders:state.orders,
-      announcement:state.announcement,
-      goCounter:state.goCounter,
-      reservations:state.reservations,
-      resCounter:state.resCounter
-    }));
-  } catch(e) {}
+  try { localStorage.setItem('angelshop_v2', JSON.stringify({ products:state.products, orders:state.orders, announcement:state.announcement, goCounter:state.goCounter })); } catch(e) {}
 }
 
 // ════════════════════════════════════════════
@@ -748,7 +819,7 @@ function startListeners() {
   db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snap => {
     state.orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     saveLocal();
-    if (state.currentMode === 'admin') renderAdminOrders();
+    if (state.currentMode === 'admin') { renderAdminOrders(); renderDashboard(); }
   }, () => {
     db.collection('orders').onSnapshot(s2 => {
       state.orders = s2.docs.map(d => ({ id: d.id, ...d.data() })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
@@ -756,15 +827,10 @@ function startListeners() {
       if (state.currentMode === 'admin') renderAdminOrders();
     });
   });
-  db.collection('reservations').orderBy('createdAt', 'desc').onSnapshot(snap => {
-    state.reservations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    saveLocal();
-    if (state.currentMode === 'admin') renderReservations();
-  }, () => {});
   db.collection('settings').doc('announcement').onSnapshot(snap => {
     if (snap.exists) { state.announcement = snap.data().text||''; updateAnnounceDisplay(); if(state.currentMode==='admin')document.getElementById('announce-input').value=state.announcement; }
   });
-  db.collection('settings').doc('meta').onSnapshot(snap => { if (snap.exists) { state.goCounter = snap.data().goCounter||state.goCounter; state.resCounter = snap.data().resCounter||state.resCounter; } });
+  db.collection('settings').doc('meta').onSnapshot(snap => { if (snap.exists) state.goCounter = snap.data().goCounter||state.goCounter; });
 }
 function fallbackToLocal() { loadLocal(); renderCustomerProducts(); renderCatSidebar(); updateAnnounceDisplay(); }
 async function fsSet(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).set(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
@@ -782,7 +848,7 @@ function switchMode(mode) {
   document.getElementById('admin-page').classList.toggle('active', mode==='admin');
   document.getElementById('cart-fab').style.display = mode==='customer' ? 'flex' : 'none';
   if (mode==='customer') { renderCustomerProducts(); renderCatSidebar(); }
-  if (mode==='admin') { renderAdminProducts(); renderAdminOrders(); renderReservations(); document.getElementById('announce-input').value = state.announcement; }
+  if (mode==='admin') { renderDashboard(); renderAdminProducts(); renderAdminOrders(); document.getElementById('announce-input').value = state.announcement; }
 }
 function onAdminClick() {
   if (state.adminLoggedIn) { switchMode('admin'); return; }
@@ -824,35 +890,80 @@ function catEmoji(cat) { return CAT_EMOJI[cat] || ''; }
 // ════════════════════════════════════════════
 // CATEGORY SEARCH
 // ════════════════════════════════════════════
-function onCatSearch(val) { state.catSearchQ = val; renderCatSidebar(); }
+function onCatSearch(val) {
+  state.catSearchQ = val;
+  renderCatSidebar();
+}
 
 // ════════════════════════════════════════════
 // CATEGORY SIDEBAR
 // ════════════════════════════════════════════
 function renderCatSidebar() {
   const sorted = [...state.products].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
   const cats = [];
-  sorted.forEach(p => { const c = (p.category||'').trim() || 'Others'; if (!cats.includes(c)) cats.push(c); });
+  sorted.forEach(p => {
+    const c = (p.category||'').trim() || 'Others';
+    if (!cats.includes(c)) cats.push(c);
+  });
+
+  // Filter by catSearchQ
   const cq = (state.catSearchQ||'').toLowerCase().trim();
   const filteredCats = cq ? cats.filter(c => c.toLowerCase().includes(cq)) : cats;
+
   const ul = document.getElementById('cat-list');
-  const allRow = !cq ? `<li class="cat-item"><button class="cat-btn ${state.activeCat==='all'?'active':''}" onclick="selectCat('all')" style="font-weight:600"><span class="cat-label">✿ All Items</span></button></li>` : '';
-  const catRows = filteredCats.map(c => { const em = catEmoji(c); return `<li class="cat-item"><button class="cat-btn ${state.activeCat===c?'active':''}" onclick="selectCat('${esc(c)}')">${em ? `<span class="cat-emoji">${em}</span>` : ''}<span class="cat-label">${esc(c)}</span></button></li>`; }).join('');
-  const noResults = cq && filteredCats.length === 0 ? `<li class="cat-item cat-no-results">No categories found</li>` : '';
+
+  // Build "All Items" row — hide if cat search is active
+  const allRow = !cq ? `
+    <li class="cat-item" style="grid-column:1/-1">
+      <button class="cat-btn ${state.activeCat==='all'?'active':''}" onclick="selectCat('all')" style="font-weight:600">
+        <span class="cat-label">✿ All Items</span>
+      </button>
+    </li>` : '';
+
+  const catRows = filteredCats.map(c => {
+    const em = catEmoji(c);
+    return `
+      <li class="cat-item">
+        <button class="cat-btn ${state.activeCat===c?'active':''}" onclick="selectCat('${esc(c)}')">
+          ${em ? `<span class="cat-emoji">${em}</span>` : ''}
+          <span class="cat-label">${esc(c)}</span>
+        </button>
+      </li>`;
+  }).join('');
+
+  const noResults = cq && filteredCats.length === 0
+    ? `<li class="cat-item cat-no-results" style="grid-column:1/-1">No categories found</li>`
+    : '';
+
   ul.innerHTML = allRow + catRows + noResults;
+
+  // Update datalist for product form
   const dl = document.getElementById('cat-suggestions');
   if (dl) dl.innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
 }
+
 function selectCat(cat) {
-  state.activeCat = cat; state.searchQ = ''; state.catSearchQ = '';
-  const s = document.querySelector('.search-bar'); if (s) s.value = '';
-  const cs = document.getElementById('cat-search-input'); if (cs) cs.value = '';
-  renderCatSidebar(); renderCustomerProducts();
+  state.activeCat = cat;
+  state.searchQ = '';
+  state.catSearchQ = '';
+  // Clear search inputs
+  const s = document.querySelector('.search-bar');
+  if (s) s.value = '';
+  const cs = document.getElementById('cat-search-input');
+  if (cs) cs.value = '';
+  renderCatSidebar();
+  renderCustomerProducts();
 }
+
 function onSearchInput(val) {
-  state.searchQ = val; state.activeCat = 'all'; state.catSearchQ = '';
-  const cs = document.getElementById('cat-search-input'); if (cs) cs.value = '';
-  renderCatSidebar(); renderCustomerProducts();
+  state.searchQ = val;
+  state.activeCat = 'all';
+  state.catSearchQ = '';
+  const cs = document.getElementById('cat-search-input');
+  if (cs) cs.value = '';
+  renderCatSidebar();
+  renderCustomerProducts();
 }
 
 // ════════════════════════════════════════════
@@ -860,20 +971,33 @@ function onSearchInput(val) {
 // ════════════════════════════════════════════
 function getVisibleProducts() {
   let items = [...state.products].sort((a, b) => (b.createdAt||0) - (a.createdAt||0));
-  if (state.activeCat !== 'all') items = items.filter(p => ((p.category||'').trim()||'Others') === state.activeCat);
+
+  if (state.activeCat !== 'all') {
+    items = items.filter(p => ((p.category||'').trim()||'Others') === state.activeCat);
+  }
+
   if (state.searchQ) {
     const q = state.searchQ.toLowerCase();
-    items = items.filter(p => (p.name||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || String(p.price||'').includes(q));
+    items = items.filter(p =>
+      (p.name||'').toLowerCase().includes(q) ||
+      (p.category||'').toLowerCase().includes(q) ||
+      (p.desc||'').toLowerCase().includes(q) ||
+      String(p.price||'').includes(q)
+    );
   }
+
   return items;
 }
+
 function isNewProduct(p) {
   if (!p.createdAt) return false;
-  return Date.now() - p.createdAt < 3 * 24 * 60 * 60 * 1000;
+  const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
+  return Date.now() - p.createdAt < THREE_DAYS;
 }
+
 function productCardHtml(p) {
   const isNew = isNewProduct(p);
-  return `<div class="product-card" onclick="openProductDetail('${p.id}')">
+  return `<div class="product-card">
     <div class="product-img-wrap">
       ${isNew ? '<span class="new-badge">New ✦</span>' : ''}
       <div class="product-img">
@@ -888,171 +1012,35 @@ function productCardHtml(p) {
         ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
       </div>
       ${p.desc ? `<div class="product-desc">${esc(p.desc)}</div>` : ''}
-      <div class="product-buttons" onclick="event.stopPropagation()">
-        <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
-          ${p.status==='soldout'?'Sold Out':'+ Order'}
-        </button>
-        <button class="reserve-btn" onclick="openReservationModal('${p.id}')">📌 Reserve</button>
-      </div>
-      <div class="view-details-hint">tap card to view details ✦</div>
+      <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
+        ${p.status==='soldout'?'Sold Out':'+ Add to Order'}
+      </button>
     </div>
   </div>`;
 }
+
 function renderCustomerProducts() {
   const grid = document.getElementById('customer-products');
   const titleEl = document.getElementById('products-area-title');
   const items = getVisibleProducts();
-  if (state.searchQ) titleEl.textContent = `🔍 "${state.searchQ}"`;
-  else if (state.activeCat === 'all') titleEl.textContent = '✿ All Items';
-  else { const emoji = catEmoji(state.activeCat); titleEl.textContent = emoji ? `${emoji} ${state.activeCat}` : `✿ ${state.activeCat}`; }
-  if (!items.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>'; return; }
+
+  if (state.searchQ) {
+    titleEl.textContent = `🔍 "${state.searchQ}"`;
+  } else if (state.activeCat === 'all') {
+    titleEl.textContent = '✿ All Items';
+  } else {
+    const emoji = catEmoji(state.activeCat);
+    titleEl.textContent = emoji ? `${emoji} ${state.activeCat}` : `✿ ${state.activeCat}`;
+  }
+
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';
+    return;
+  }
   grid.innerHTML = items.map(productCardHtml).join('');
 }
 
-// ════════════════════════════════════════════
-// PRODUCT DETAILS MODAL
-// ════════════════════════════════════════════
-function openProductDetail(productId) {
-  const p = state.products.find(x => x.id === productId);
-  if (!p) return;
-  state.pdQty = 1;
-  state.currentDetailProductId = productId;
-  document.getElementById('product-detail-body').innerHTML = buildProductDetailHtml(p, 1);
-  document.getElementById('product-detail-modal').classList.add('open');
-}
-
-function closeProductDetailModal() {
-  document.getElementById('product-detail-modal').classList.remove('open');
-  state.currentDetailProductId = null;
-}
-
-function buildProductDetailHtml(p, qty) {
-  const isNew = isNewProduct(p);
-  const stockClass = p.status === 'limited' ? 'pd-stock-limited' : p.status === 'soldout' ? 'pd-stock-soldout' : 'pd-stock-available';
-  const stockLabel = p.status === 'available' ? '✓ Available' : p.status === 'limited' ? '⚡ Limited Stock' : '✗ Sold Out';
-  const isSoldOut = p.status === 'soldout';
-  const catLabel = (p.category||'').trim() || 'Others';
-  const em = catEmoji(catLabel);
-
-  const infoChips = [];
-  if (p.stock) infoChips.push(`📦 Stock: ${p.stock}`);
-  if (em) infoChips.push(`${em} ${catLabel}`);
-
-  return `
-    <div>
-      <div class="pd-hero ${p.img ? 'pd-hero-clickable' : ''}" style="position:relative" ${p.img ? `onclick="openLightbox('${p.img.replace(/'/g,"\\'")}','${esc(p.name)}')"` : ''}>
-        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" />` : '<span>🛍</span>'}
-        ${isNew ? '<span class="pd-new-badge">✦ New Arrival</span>' : ''}
-      </div>
-
-      <div class="pd-cat-row">
-        ${em ? `<span style="font-size:1.1rem">${em}</span>` : ''}
-        <span class="pd-cat-tag">${esc(catLabel)}</span>
-        <span class="pd-stock-pill ${stockClass}">${stockLabel}</span>
-      </div>
-
-      <div class="pd-name">${esc(p.name)}</div>
-
-      <div class="pd-price-row">
-        <span class="pd-price">₱${parseFloat(p.price||0).toFixed(2)}</span>
-        ${p.stock ? `<span style="font-size:.78rem;color:#aaa">· ${p.stock} pcs available</span>` : ''}
-      </div>
-
-      ${p.desc ? `
-        <div class="pd-desc-label">Description</div>
-        <div class="pd-desc">${esc(p.desc)}</div>
-        <hr class="pd-divider">
-      ` : '<hr class="pd-divider">'}
-
-      ${!isSoldOut ? `
-        <div class="pd-qty-selector">
-          <span class="pd-qty-label">Qty:</span>
-          <button class="qty-btn pd-qty-btn" onclick="pdChangeQty(-1)">−</button>
-          <span class="pd-qty-val" id="pd-qty-display">${qty}</span>
-          <button class="qty-btn pd-qty-btn" onclick="pdChangeQty(1)">+</button>
-          <span style="font-size:.78rem;color:#c2426d;margin-left:.35rem;font-weight:600">= ₱<span id="pd-subtotal">${(p.price * qty).toFixed(2)}</span></span>
-        </div>
-      ` : ''}
-
-      <div class="pd-action-row">
-        <button class="add-btn" ${isSoldOut?'disabled':''} onclick="pdAddToCart()">
-          ${isSoldOut ? '✗ Sold Out' : '🛒 Add to Order'}
-        </button>
-        <button class="reserve-btn" onclick="pdOpenReserve()">📌 Reserve</button>
-      </div>
-
-      <div style="margin-top:.85rem;background:#fff8fc;border:1px solid #ffe0ec;border-radius:8px;padding:.55rem .85rem;font-size:.72rem;color:#c2426d;line-height:1.55;display:flex;align-items:flex-start;gap:.4rem">
-        <span>💡</span>
-        <span>Tap <strong>Add to Order</strong> to add this item to your cart, or <strong>Reserve</strong> if it's out of stock and you'd like to be notified.</span>
-      </div>
-    </div>
-  `;
-}
-
-function pdChangeQty(delta) {
-  const p = state.products.find(x => x.id === state.currentDetailProductId);
-  if (!p) return;
-  state.pdQty = Math.max(1, state.pdQty + delta);
-  const qtyEl = document.getElementById('pd-qty-display');
-  const subEl = document.getElementById('pd-subtotal');
-  if (qtyEl) qtyEl.textContent = state.pdQty;
-  if (subEl) subEl.textContent = (p.price * state.pdQty).toFixed(2);
-}
-
-function pdAddToCart() {
-  const productId = state.currentDetailProductId;
-  const p = state.products.find(x => x.id === productId);
-  if (!p || p.status === 'soldout') return;
-  const ex = state.cart.find(i => i.productId === productId);
-  if (ex) ex.qty += state.pdQty;
-  else state.cart.push({ productId, name: p.name, price: p.price, img: p.img||'', qty: state.pdQty });
-  updateCartUI();
-  closeProductDetailModal();
-  const fab = document.getElementById('cart-fab');
-  fab.style.transform = 'scale(1.3)';
-  setTimeout(() => fab.style.transform = '', 250);
-  // Brief toast confirmation
-  showToast(`✓ ${p.name} added to order!`);
-}
-
-function pdOpenReserve() {
-  const productId = state.currentDetailProductId;
-  closeProductDetailModal();
-  setTimeout(() => openReservationModal(productId), 180);
-}
-
-// ── Lightbox ──
-function openLightbox(src, name) {
-  const lb = document.getElementById('lightbox');
-  const img = document.getElementById('lightbox-img');
-  const cap = document.getElementById('lightbox-caption');
-  img.src = src;
-  img.alt = name || '';
-  cap.textContent = name || '';
-  lb.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-
-// ── Toast notification ──
-function showToast(msg) {
-  let t = document.getElementById('shop-toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'shop-toast';
-    t.style.cssText = 'position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:#3d1a28;color:#fff;padding:.55rem 1.2rem;border-radius:20px;font-size:.82rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(60,20,40,.3)';
-    document.body.appendChild(t);
-  }
-  t.textContent = msg;
-  t.style.opacity = '1';
-  t.style.transform = 'translateX(-50%) translateY(0)';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; }, 2200);
-}
+function filterProducts(val) { onSearchInput(val); }
 
 // ════════════════════════════════════════════
 // PRODUCTS — ADMIN
@@ -1083,6 +1071,7 @@ function renderAdminProducts() {
       </div></td>
     </tr>`).join('');
 }
+
 function openProductModal(id) {
   ['p-name','p-desc','p-category'].forEach(x => document.getElementById(x).value = '');
   ['p-price','p-stock'].forEach(x => document.getElementById(x).value = '');
@@ -1112,6 +1101,7 @@ function openProductModal(id) {
   document.getElementById('product-modal').classList.add('open');
 }
 function closeProductModal() { document.getElementById('product-modal').classList.remove('open'); }
+
 function previewImg(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
@@ -1128,6 +1118,7 @@ function previewImg(input) {
     }; img.src = e.target.result;
   }; reader.readAsDataURL(file);
 }
+
 async function saveProduct() {
   const name = document.getElementById('p-name').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
@@ -1152,6 +1143,7 @@ async function saveProduct() {
   }
   btn.disabled = false; closeProductModal(); showAlert('prod-alert', '✓ Product saved!', 'success');
 }
+
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
   state.products = state.products.filter(p => p.id !== id);
@@ -1206,233 +1198,38 @@ function closeCart() { document.getElementById('cart-overlay').classList.remove(
 // ════════════════════════════════════════════
 function openOrderForm() { if (!state.cart.length) { alert('Please add items to your cart first.'); return; } closeCart(); document.getElementById('order-modal').classList.add('open'); }
 function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
+
 async function submitOrder() {
   const name = document.getElementById('o-name').value.trim();
   const fb = document.getElementById('o-fb').value.trim();
   const contact = document.getElementById('o-contact').value.trim();
   const address = document.getElementById('o-address').value.trim();
+  const shipping = document.getElementById('o-shipping').value;
+  const notes = document.getElementById('o-notes').value.trim();
   const err = document.getElementById('order-err');
-  if (!name||!fb||!contact||!address) { err.textContent = '⚠ Please fill in all required fields.'; err.style.display = 'block'; return; }
+  if (!name||!fb||!contact||!address) { err.textContent = '⚠ Please fill in all required fields including your address.'; err.style.display = 'block'; return; }
   err.style.display = 'none';
   const btn = document.getElementById('submit-order-btn'); btn.disabled = true; btn.textContent = 'Saving…';
   const goNum = 'GO-' + state.goCounter++;
   const items = state.cart.map(i => ({...i}));
   const total = items.reduce((s,i) => s+i.price*i.qty, 0);
   const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit' });
-  const orderData = { goNum, name, fb, contact, address, items, total, status:'pending', date:dateStr, createdAt:Date.now() };
+  const currentBatch = getDefaultBatch();
+  const orderData = { goNum, name, fb, contact, address, shipping, notes, items, total, status:'pending', batch: currentBatch, date:dateStr, createdAt:Date.now() };
   let savedId = null;
-  if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); }
+  if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter }); }
   if (!savedId) { savedId = 'local_'+Date.now(); state.orders.unshift({ id:savedId,...orderData }); saveLocal(); }
   btn.disabled = false; state.cart = []; updateCartUI(); closeOrderModal();
-  showOrderReceipt({ id:savedId, ...orderData });
-  ['o-name','o-fb','o-contact','o-address'].forEach(id => document.getElementById(id).value = '');
-}
-
-// ════════════════════════════════════════════
-// RESERVATION FEATURE
-// ════════════════════════════════════════════
-function openReservationModal(productId) {
-  const p = state.products.find(x => x.id === productId);
-  if (!p) return;
-  ['res-name','res-contact','res-fb'].forEach(x => document.getElementById(x).value = '');
-  document.getElementById('res-product-name').textContent = p.name + ' (₱' + parseFloat(p.price||0).toFixed(2) + ')';
-  document.getElementById('res-err').style.display = 'none';
-  state.currentReservationId = productId;
-  document.getElementById('reservation-modal').classList.add('open');
-}
-function closeReservationModal() { document.getElementById('reservation-modal').classList.remove('open'); state.currentReservationId = null; }
-function closeResConfirmModal() { document.getElementById('res-confirm-modal').classList.remove('open'); }
-async function submitReservation() {
-  const name = document.getElementById('res-name').value.trim();
-  const contact = document.getElementById('res-contact').value.trim();
-  const fb = document.getElementById('res-fb').value.trim();
-  const err = document.getElementById('res-err');
-  const productId = state.currentReservationId;
-  const product = state.products.find(x => x.id === productId);
-  if (!name || !contact) { err.textContent = '⚠ Please fill in all required fields (Name, Contact).'; err.style.display = 'block'; return; }
-  err.style.display = 'none';
-  const btn = document.getElementById('submit-res-btn'); btn.disabled = true; btn.textContent = 'Saving…';
-  const resNum = 'RES-' + state.resCounter++;
-  const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit' });
-  const reservationData = { resNum, productId, productName: product.name, productPrice: product.price, name, contact, fb, status: 'pending', date: dateStr, createdAt: Date.now() };
-  let savedId = null;
-  if (firebaseReady) { savedId = await fsAdd('reservations', reservationData); await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); }
-  if (!savedId) { savedId = 'local_'+Date.now(); state.reservations.unshift({ id:savedId,...reservationData }); saveLocal(); }
-  btn.disabled = false; closeReservationModal(); showReservationConfirm({ id:savedId, ...reservationData });
-  ['res-name','res-contact','res-fb'].forEach(id => document.getElementById(id).value = '');
-}
-function showReservationConfirm(reservation) {
-  document.getElementById('res-confirm-content').innerHTML = buildReservationConfirmHtml(reservation);
-  document.getElementById('res-confirm-modal').classList.add('open');
-}
-function buildReservationConfirmHtml(r) {
-  return `<div class="receipt" id="res-confirm-printable" style="border-color:#90c4f0;background:#f0f7ff">
-    <div class="receipt-head" style="border-bottom-color:#90c4f0">
-      <div class="receipt-title" style="color:#1a3a5c">Angel Shop</div>
-      <div class="receipt-sub" style="color:#3a7abf">Group Orders · Reservation Confirmation</div>
-      <div class="receipt-go" style="color:#1a5fa8">${r.resNum}</div>
-      <div style="font-size:.72rem;color:#888;margin-top:.2rem">${r.date}</div>
-    </div>
-    <div style="background:#fff8f0;border-radius:8px;padding:.75rem 1rem;margin-bottom:.75rem;border-left:4px solid #e8679a">
-      <div style="font-weight:600;color:#8b1f42;margin-bottom:.3rem">📌 Reserved Item:</div>
-      <div style="color:#3d1a28;font-weight:500">${esc(r.productName)}</div>
-      <div style="color:#c2426d;font-size:.88rem;margin-top:.2rem">₱${r.productPrice.toFixed(2)}</div>
-    </div>
-    <div class="r-row"><span class="r-label">Name</span><span class="r-val">${esc(r.name)}</span></div>
-    <div class="r-row"><span class="r-label">Contact</span><span class="r-val">${esc(r.contact)}</span></div>
-    ${r.fb ? `<div class="r-row"><span class="r-label">FB Account</span><span class="r-val">${esc(r.fb)}</span></div>` : ''}
-    <div style="background:#fff0f5;border-radius:8px;padding:.6rem .85rem;margin-top:.75rem;font-size:.74rem;color:#8b1f42;line-height:1.6">
-      <div style="font-weight:600;margin-bottom:.3rem">📌 What happens next?</div>
-      <ul style="padding-left:1rem;list-style:none">
-        <li style="margin-bottom:.25rem">✓ We have received your reservation request</li>
-        <li style="margin-bottom:.25rem">✓ We will contact you via the provided fb account</li>
-        <li style="margin-bottom:.25rem">✓ Once the item is available, we will DM you</li>
-        <li>✓ You can then proceed with your order</li>
-      </ul>
-    </div>
-  </div>`;
-}
-async function saveResConfirmAsImage() {
-  const btn = document.getElementById('save-res-img-btn'); btn.disabled = true; btn.textContent = '⏳ Generating…';
-  try {
-    const canvas = await html2canvas(document.getElementById('res-confirm-printable'), { backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,windowWidth:420,windowHeight:document.getElementById('res-confirm-printable').scrollHeight+40 });
-    canvas.toBlob(async blob => {
-      const filename = 'AngelShop-Reservation.png';
-      const file = new File([blob], filename, { type:'image/png' });
-      if (navigator.canShare && navigator.canShare({ files:[file] })) {
-        try { await navigator.share({ files:[file], title:'Angel Shop Reservation Confirmation' }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; } catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
-      }
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=blobUrl; a.download=filename; a.style.display='none';
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 5000);
-      btn.disabled=false; btn.textContent='📥 Save as Image';
-    }, 'image/png');
-  } catch(e) { alert('Could not generate image.'); btn.disabled=false; btn.textContent='📥 Save as Image'; }
-}
-
-// ════════════════════════════════════════════
-// ADMIN — RESERVATIONS
-// ════════════════════════════════════════════
-function renderReservations() {
-  const tbody = document.getElementById('admin-reservations-tbody');
-  const q = (document.getElementById('reservation-search')?.value||'').toLowerCase().trim();
-  let list = state.reservationFilter==='all' ? [...state.reservations] : state.reservations.filter(r => r.status===state.reservationFilter);
-  if (q) list = list.filter(r => (r.resNum||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.productName||'').toLowerCase().includes(q) || (r.contact||'').toLowerCase().includes(q));
-  list = list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#c2426d;padding:2rem">No reservations found.</td></tr>'; return; }
-  tbody.innerHTML = list.map(r => `
-    <tr>
-      <td style="font-weight:600;color:#1a5fa8">${r.resNum}</td>
-      <td><div style="font-size:.83rem">${esc(r.productName)}</div><div style="font-size:.72rem;color:#888">₱${r.productPrice.toFixed(2)}</div></td>
-      <td>${esc(r.name)}</td>
-      <td style="font-size:.77rem">${esc(r.contact)}</td>
-      <td>
-        <select onchange="updateReservationStatus('${r.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #90c4f0;background:#fff">
-          <option value="pending" ${r.status==='pending'?'selected':''}>⏳ Pending</option>
-          <option value="approved" ${r.status==='approved'?'selected':''}>✅ Approved</option>
-          <option value="converted" ${r.status==='converted'?'selected':''}>🛒 Converted</option>
-          <option value="cancelled" ${r.status==='cancelled'?'selected':''}>❌ Cancelled</option>
-        </select>
-      </td>
-      <td style="font-size:.73rem;white-space:nowrap">${r.date}</td>
-      <td><div class="action-row">
-        <button class="btn btn-secondary btn-sm" onclick="viewReservationDetail('${r.id}')">View</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteReservation('${r.id}')">Del</button>
-      </div></td>
-    </tr>`).join('');
-}
-function filterReservations(status, el) {
-  state.reservationFilter = status;
-  document.querySelectorAll('#panel-reservations .filter-row .chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderReservations();
-}
-async function updateReservationStatus(id, status) {
-  const r = state.reservations.find(x => x.id===id);
-  if (r) { r.status=status; saveLocal(); if (firebaseReady) await fsUpdate('reservations',id,{status}); }
-}
-async function deleteReservation(id) {
-  if (!confirm('Delete this reservation permanently?')) return;
-  state.reservations = state.reservations.filter(r => r.id!==id);
-  saveLocal(); renderReservations();
-  if (firebaseReady) await fsDelete('reservations',id);
-}
-function viewReservationDetail(id) {
-  const r = state.reservations.find(x => x.id===id); if (!r) return;
-  document.getElementById('reservation-detail-body').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:.75rem">
-      <div style="background:#e0f0ff;border-radius:10px;padding:.85rem;border-left:4px solid #1a5fa8">
-        <div style="font-weight:600;color:#1a3a5c;margin-bottom:.5rem">📌 Reserved Product</div>
-        <div style="color:#3d1a28;font-weight:500;margin-bottom:.2rem">${esc(r.productName)}</div>
-        <div style="color:#1a5fa8;font-weight:700">₱${r.productPrice.toFixed(2)}</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.84rem">
-        <div><span style="color:#c2426d;font-weight:500">RES#:</span> ${r.resNum}</div>
-        <div><span style="color:#c2426d;font-weight:500">Status:</span> <span class="badge badge-${r.status==='pending'?'pending':r.status==='approved'?'confirmed':'shipped'}">${r.status.toUpperCase()}</span></div>
-        <div><span style="color:#c2426d;font-weight:500">Date:</span> ${r.date}</div>
-        <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(r.name)}</div>
-        <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(r.contact)}</div>
-        ${r.fb?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(r.fb)}</div>`:''}
-      </div>
-      <div style="display:flex;gap:.75rem">
-        <button class="btn btn-secondary btn-sm" onclick="closeModal('reservation-detail-modal')" style="flex:1">Close</button>
-      </div>
-    </div>`;
-  document.getElementById('reservation-detail-modal').classList.add('open');
-}
-
-// ════════════════════════════════════════════
-// ADMIN — ORDERS
-// ════════════════════════════════════════════
-function renderAdminOrders() {
-  const tbody = document.getElementById('admin-orders-tbody');
-  const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
-  let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
-  if (q) list = list.filter(o => (o.goNum||'').toLowerCase().includes(q) || (o.name||'').toLowerCase().includes(q) || (o.contact||'').toLowerCase().includes(q));
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; return; }
-  tbody.innerHTML = list.map(o => `
-    <tr>
-      <td style="font-weight:600;color:#c2426d">${o.goNum}</td>
-      <td>${esc(o.name)}</td>
-      <td>${esc(o.contact)}</td>
-      <td style="font-size:.77rem;max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.items.map(i=>i.name+'×'+i.qty).join(', ')}</td>
-      <td style="font-weight:600;white-space:nowrap">₱${o.total.toFixed(2)}</td>
-      <td>
-        <select onchange="updateOrderStatus('${o.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
-          <option value="pending" ${o.status==='pending'?'selected':''}>⏳ Pending</option>
-          <option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ Confirmed</option>
-          <option value="delivered" ${o.status==='delivered'?'selected':''}>🎉 Delivered</option>
-        </select>
-      </td>
-      <td style="font-size:.73rem;white-space:nowrap">${o.date}</td>
-      <td><div class="action-row">
-        <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">Del</button>
-      </div></td>
-    </tr>`).join('');
-}
-function filterOrders(f, el) {
-  state.orderFilter = f;
-  document.querySelectorAll('#panel-orders .filter-row .chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderAdminOrders();
-}
-async function updateOrderStatus(id, status) {
-  const o = state.orders.find(x => x.id===id);
-  if (o) { o.status=status; saveLocal(); if (firebaseReady) await fsUpdate('orders',id,{status}); }
-}
-async function deleteOrder(id) {
-  if (!confirm('Delete this order permanently?')) return;
-  state.orders = state.orders.filter(o => o.id!==id);
-  saveLocal(); renderAdminOrders();
-  if (firebaseReady) await fsDelete('orders',id);
+  showReceipt({ id:savedId, ...orderData });
+  ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id => document.getElementById(id).value = '');
 }
 
 // ════════════════════════════════════════════
 // RECEIPT
 // ════════════════════════════════════════════
-function showOrderReceipt(order) { state.currentReceiptOrder = order; document.getElementById('receipt-content').innerHTML = buildReceiptHtml(order); document.getElementById('receipt-modal').classList.add('open'); }
+function showReceipt(order) { state.currentReceiptOrder = order; document.getElementById('receipt-content').innerHTML = buildReceiptHtml(order); document.getElementById('receipt-modal').classList.add('open'); }
 function closeReceiptModal() { document.getElementById('receipt-modal').classList.remove('open'); }
+
 function buildReceiptHtml(o) {
   return `<div class="receipt" id="receipt-printable">
     <div class="receipt-head">
@@ -1445,6 +1242,7 @@ function buildReceiptHtml(o) {
     <div class="r-row"><span class="r-label">FB Account</span><span class="r-val">${esc(o.fb)}</span></div>
     <div class="r-row"><span class="r-label">Contact</span><span class="r-val">${esc(o.contact)}</span></div>
     <div class="r-row"><span class="r-label">Address</span><span class="r-val">${esc(o.address||'—')}</span></div>
+    <div class="r-row"><span class="r-label">Shipping Type</span><span class="r-val">${o.shipping}</span></div>
     <div style="margin:.5rem 0;font-size:.78rem;color:#8b1f42;font-weight:500">Order Items:</div>
     <div class="r-items">
       ${o.items.map(i=>`<div class="r-item"><span>${esc(i.name)} × ${i.qty}</span><span>₱${(i.price*i.qty).toFixed(2)}</span></div>`).join('')}
@@ -1453,11 +1251,13 @@ function buildReceiptHtml(o) {
     <div class="receipt-foot">
       ✿ Thank you for your purchase! ✿
       <div class="receipt-note">
-        📩 Please send this receipt through DM and I will send you the payment details.
+        📩 Please send this receipt through DM and I will send you the payment details.<br><br>
+        📦 ISF and LSF will be notified upon arrival of items in my address.
       </div>
     </div>
   </div>`;
 }
+
 async function saveReceiptAsImage() {
   const o = state.currentReceiptOrder; if (!o) return;
   const btn = document.getElementById('save-img-btn'); btn.disabled = true; btn.textContent = '⏳ Generating…';
@@ -1467,7 +1267,8 @@ async function saveReceiptAsImage() {
       const filename = 'AngelShop-'+o.goNum+'.png';
       const file = new File([blob], filename, { type:'image/png' });
       if (navigator.canShare && navigator.canShare({ files:[file] })) {
-        try { await navigator.share({ files:[file], title:'Angel Shop Receipt — '+o.goNum }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; } catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
+        try { await navigator.share({ files:[file], title:'Angel Shop Receipt — '+o.goNum }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; }
+        catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
       }
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href=blobUrl; a.download=filename; a.style.display='none';
@@ -1479,16 +1280,202 @@ async function saveReceiptAsImage() {
 }
 
 // ════════════════════════════════════════════
+// BATCH HELPERS
+// ════════════════════════════════════════════
+function batchNumFromName(name) {
+  const m = String(name||'').match(/(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+function getAllBatches() {
+  const set = new Set(['Batch 1']);
+  state.orders.forEach(o => set.add(o.batch || 'Batch 1'));
+  return [...set].sort((a,b) => {
+    const na = batchNumFromName(a), nb = batchNumFromName(b);
+    if (na !== nb) return na - nb;
+    return a.localeCompare(b);
+  });
+}
+function getDefaultBatch() {
+  // Newest (highest-numbered) existing batch becomes the default for new orders
+  const batches = getAllBatches();
+  return batches[batches.length - 1] || 'Batch 1';
+}
+function getBatchOptions(selected) {
+  const opts = getAllBatches().map(b => `<option value="${esc(b)}" ${b===selected?'selected':''}>${esc(b)}</option>`).join('');
+  return opts + `<option value="__new__">+ New Batch…</option>`;
+}
+function renderBatchFilterChips() {
+  const row = document.getElementById('batch-filter-row');
+  if (!row) return;
+  const batches = getAllBatches();
+  row.innerHTML = `<div class="chip ${state.batchFilter==='all'?'active':''}" onclick="filterBatch('all',this)">All Batches</div>`
+    + batches.map(b => `<div class="chip ${state.batchFilter===b?'active':''}" onclick="filterBatch('${esc(b)}',this)">${esc(b)}</div>`).join('');
+}
+function filterBatch(b, el) {
+  state.batchFilter = b;
+  document.querySelectorAll('#batch-filter-row .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderAdminOrders();
+}
+async function updateOrderBatch(id, value) {
+  if (value === '__new__') {
+    const name = prompt('Enter new batch name (e.g. Batch 4):');
+    if (!name || !name.trim()) { renderAdminOrders(); return; }
+    value = name.trim();
+  }
+  const o = state.orders.find(x => x.id===id);
+  if (o) { o.batch = value; saveLocal(); await fsUpdate('orders', id, { batch: value }); }
+  renderAdminOrders();
+}
+function addNewBatch() {
+  const batches = getAllBatches();
+  let nextNum = 1;
+  batches.forEach(b => { const n = batchNumFromName(b); if (n >= nextNum) nextNum = n + 1; });
+  const suggestion = 'Batch ' + nextNum;
+  const name = prompt('New batch name:', suggestion);
+  if (!name || !name.trim()) return;
+  const val = name.trim();
+  // Just switch the filter to it; it'll appear once an order is assigned,
+  // but also render it immediately as a selectable filter chip.
+  if (!batches.includes(val)) {
+    state.batchFilter = val;
+    // Temporarily inject so the chip shows even with zero orders yet
+    const row = document.getElementById('batch-filter-row');
+    renderBatchFilterChips();
+    const extra = document.createElement('div');
+    extra.className = 'chip active';
+    extra.textContent = val;
+    extra.onclick = function() { filterBatch(val, extra); };
+    document.querySelectorAll('#batch-filter-row .chip').forEach(c => c.classList.remove('active'));
+    row.appendChild(extra);
+    renderAdminOrdersTableOnly();
+  } else {
+    filterBatch(val, document.querySelector('#batch-filter-row .chip'));
+  }
+}
+function renderAdminOrdersTableOnly() {
+  // Re-render the table body without rebuilding the batch chip row (keeps the temp "new batch" chip visible)
+  const tbody = document.getElementById('admin-orders-tbody');
+  const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
+  let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
+  if (state.batchFilter !== 'all') list = list.filter(o => (o.batch||'Batch 1')===state.batchFilter);
+  if (q) list = list.filter(o =>
+    (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
+    (o.fb||'').toLowerCase().includes(q)||(o.contact||'').toLowerCase().includes(q)||
+    (o.address||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+    (o.batch||'').toLowerCase().includes(q)
+  );
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c2426d;padding:2rem">No orders in this batch yet.</td></tr>'; return; }
+  tbody.innerHTML = list.map(orderRowHtml).join('');
+}
+
+// ════════════════════════════════════════════
+// ADMIN ORDERS
+// ════════════════════════════════════════════
+function orderRowHtml(o) {
+  return `
+    <tr>
+      <td style="font-weight:600;color:#c2426d">${o.goNum}</td>
+      <td>
+        <select onchange="updateOrderBatch('${o.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
+          ${getBatchOptions(o.batch||'Batch 1')}
+        </select>
+      </td>
+      <td>${esc(o.name)}</td>
+      <td style="font-size:.77rem">${esc(o.fb)}</td>
+      <td>${esc(o.contact)}</td>
+      <td style="font-size:.77rem;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.items.map(i=>i.name+'×'+i.qty).join(', ')}</td>
+      <td style="font-weight:600;white-space:nowrap">₱${o.total.toFixed(2)}</td>
+      <td>
+        <select onchange="updateOrderStatus('${o.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
+          <option value="pending" ${o.status==='pending'?'selected':''}>⏳ Pending</option>
+          <option value="confirmed" ${o.status==='confirmed'?'selected':''}>✅ Confirmed</option>
+          <option value="order_placed" ${o.status==='order_placed'?'selected':''}>🛒 Order Placed</option>
+          <option value="cn_warehouse" ${o.status==='cn_warehouse'?'selected':''}>🏭 CN Warehouse</option>
+          <option value="in_transit" ${o.status==='in_transit'?'selected':''}>✈️ In Transit</option>
+          <option value="ph_arrived" ${o.status==='ph_arrived'?'selected':''}>📦 PH Arrived</option>
+          <option value="delivered" ${o.status==='delivered'?'selected':''}>🎉 Delivered</option>
+        </select>
+      </td>
+      <td style="font-size:.73rem;white-space:nowrap">${o.date}</td>
+      <td><div class="action-row">
+        <button class="btn btn-secondary btn-sm" onclick="viewOrder('${o.id}')">View</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')">Del</button>
+      </div></td>
+    </tr>`;
+}
+
+function renderAdminOrders() {
+  const tbody = document.getElementById('admin-orders-tbody');
+  const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
+  let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
+  if (state.batchFilter !== 'all') list = list.filter(o => (o.batch||'Batch 1')===state.batchFilter);
+  if (q) list = list.filter(o =>
+    (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
+    (o.fb||'').toLowerCase().includes(q)||(o.contact||'').toLowerCase().includes(q)||
+    (o.address||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+    (o.batch||'').toLowerCase().includes(q)
+  );
+  renderBatchFilterChips();
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; return; }
+  tbody.innerHTML = list.map(orderRowHtml).join('');
+}
+
+function filterOrders(f, el) {
+  state.orderFilter = f;
+  document.querySelectorAll('#panel-orders .filter-row:first-of-type .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active'); renderAdminOrders();
+}
+async function updateOrderStatus(id, status) {
+  const o = state.orders.find(x => x.id===id);
+  if (o) { o.status=status; saveLocal(); await fsUpdate('orders',id,{status}); }
+}
+async function deleteOrder(id) {
+  if (!confirm('Delete this order permanently?')) return;
+  state.orders = state.orders.filter(o => o.id!==id); saveLocal(); renderAdminOrders(); await fsDelete('orders',id);
+}
+function viewOrder(id) {
+  const o = state.orders.find(x => x.id===id); if (!o) return;
+  document.getElementById('order-detail-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:.75rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.84rem">
+        <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
+        <div><span style="color:#c2426d;font-weight:500">Batch:</span> <span class="batch-tag">${esc(o.batch||'Batch 1')}</span></div>
+        <div><span style="color:#c2426d;font-weight:500">Date:</span> ${o.date}</div>
+        <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(o.name)}</div>
+        <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
+        <div><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(o.fb)}</div>
+        <div><span style="color:#c2426d;font-weight:500">Shipping:</span> ${o.shipping}</div>
+        ${o.address?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Address:</span> ${esc(o.address)}</div>`:''}
+        ${o.notes?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Notes:</span> ${esc(o.notes)}</div>`:''}
+      </div>
+      <div style="background:#fff5f7;border-radius:8px;padding:.75rem">
+        ${o.items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:.83rem;padding:.2rem 0;border-bottom:1px solid #ffe0e8">
+          <span>${esc(i.name)} × ${i.qty}</span><span style="color:#c2426d;font-weight:600">₱${(i.price*i.qty).toFixed(2)}</span>
+        </div>`).join('')}
+        <div style="display:flex;justify-content:space-between;font-weight:700;color:#c2426d;margin-top:.5rem;font-size:.95rem">
+          <span>Total</span><span>₱${o.total.toFixed(2)}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:.75rem">
+        <button class="btn btn-primary btn-sm" onclick="closeModal('order-detail-modal');showReceipt(state.orders.find(x=>x.id==='${o.id}'))">View Receipt</button>
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('order-detail-modal')">Close</button>
+      </div>
+    </div>`;
+  document.getElementById('order-detail-modal').classList.add('open');
+}
+
+// ════════════════════════════════════════════
 // ADMIN TABS
 // ════════════════════════════════════════════
 function adminTab(tab) {
-  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', ['dashboard','products','reservations','orders','announcements'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', ['dashboard','products','orders','arrival','announcements'][i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   if (tab==='dashboard') renderDashboard();
-  if (tab==='products') renderAdminProducts();
-  if (tab==='reservations') renderReservations();
   if (tab==='orders') renderAdminOrders();
+  if (tab==='products') renderAdminProducts();
+  if (tab==='arrival') renderArrivalPanel();
   if (tab==='announcements') document.getElementById('announce-input').value = state.announcement;
 }
 
@@ -1496,27 +1483,250 @@ function adminTab(tab) {
 // DASHBOARD
 // ════════════════════════════════════════════
 function renderDashboard() {
-  const orders = state.orders, reservations = state.reservations, products = state.products;
+  const orders = state.orders, products = state.products;
+  const STATUSES = [
+    {key:'pending',label:'Pending',emoji:'⏳'},{key:'confirmed',label:'Confirmed',emoji:'✅'},
+    {key:'order_placed',label:'Order Placed',emoji:'🛒'},{key:'cn_warehouse',label:'CN Warehouse',emoji:'🏭'},
+    {key:'in_transit',label:'In Transit',emoji:'✈️'},{key:'ph_arrived',label:'PH Arrived',emoji:'📦'},
+    {key:'delivered',label:'Delivered',emoji:'🎉'},
+  ];
+  const total = orders.length;
   const grandTotal = orders.reduce((s,o) => s+(o.total||0), 0);
+  const totalISF = orders.reduce((s,o) => s+(parseFloat(o.arrivalISF)||0), 0);
+  const totalLSF = orders.reduce((s,o) => s+(parseFloat(o.arrivalLSF)||0), 0);
+  const totalSF = totalISF + totalLSF;
+  const grandRevenue = grandTotal + totalSF;
+  const prodMap = {};
+  orders.forEach(o => {
+    (o.items||[]).forEach(item => {
+      if (!prodMap[item.name]) prodMap[item.name] = { qty:0, revenue:0, orders:[], img:item.img||'' };
+      prodMap[item.name].qty += item.qty;
+      prodMap[item.name].revenue += item.price * item.qty;
+      if (!prodMap[item.name].img) { const f=state.products.find(p=>p.name===item.name); if(f&&f.img) prodMap[item.name].img=f.img; }
+      prodMap[item.name].orders.push({ customer:o.name, qty:item.qty, status:o.status, goNum:o.goNum, batch:o.batch||'Batch 1' });
+    });
+  });
+  const prodList = Object.entries(prodMap).sort((a,b) => b[1].qty - a[1].qty);
+  const statusPill = s => { const f=STATUSES.find(x=>x.key===s); const label=f?f.emoji+' '+f.label:s; return `<span class="status-pill sp-${s}">${label}</span>`; };
+
+  // Per-batch overview
+  const batchMap = {};
+  orders.forEach(o => {
+    const b = o.batch||'Batch 1';
+    if (!batchMap[b]) batchMap[b] = { count:0, revenue:0 };
+    batchMap[b].count++; batchMap[b].revenue += (o.total||0);
+  });
+  const batchEntries = Object.entries(batchMap).sort((a,b) => batchNumFromName(a[0]) - batchNumFromName(b[0]));
+
   document.getElementById('dashboard-content').innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.5rem">
-      <div class="dash-card"><div class="dc-val">${orders.length}</div><div class="dc-label">Total Orders</div></div>
-      <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='pending').length}</div><div class="dc-label">⏳ Pending</div></div>
-      <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='confirmed').length}</div><div class="dc-label">✅ Confirmed</div></div>
-      <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='delivered').length}</div><div class="dc-label">🎉 Delivered</div></div>
-      <div class="dash-card" style="border-color:#c0d8f0;background:#f0f7ff"><div class="dc-val" style="font-size:.95rem;color:#1a5fa8">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Revenue</div></div>
-      <div class="dash-card" style="border-color:#90c4f0;background:#e0f0ff"><div class="dc-val" style="font-size:1.3rem;color:#1a5fa8">${reservations.length}</div><div class="dc-label">📌 Reservations</div></div>
-      <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Overview</div>
+      <div class="dash-grid">
+        <div class="dash-card"><div class="dc-val">${total}</div><div class="dc-label">Total Orders</div></div>
+        ${STATUSES.map(s=>`<div class="dash-card"><div class="dc-val" style="font-size:1.3rem">${orders.filter(o=>o.status===s.key).length}</div><div class="dc-label">${s.emoji} ${s.label}</div></div>`).join('')}
+        <div class="dash-card" style="border-color:#c0d8f0;background:#f0f7ff"><div class="dc-val" style="font-size:.95rem;color:#1a5fa8">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Orders Revenue</div></div>
+        <div class="dash-card" style="border-color:#f4c97a;background:#fff8e6"><div class="dc-val" style="font-size:.95rem;color:#b87a00">₱${totalSF.toFixed(2)}</div><div class="dc-label">📬 Total SF Fees</div></div>
+        <div class="dash-card" style="border-color:#8b1f42;background:#fff0f5"><div class="dc-val" style="font-size:.9rem;color:#8b1f42">₱${grandRevenue.toFixed(2)}</div><div class="dc-label">🏆 Grand Total</div></div>
+        <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
+      </div>
     </div>
-    <div style="background:#e0f0ff;border-radius:10px;padding:1rem;margin-top:1rem;border-left:4px solid #1a5fa8">
-      <div style="font-weight:600;color:#1a3a5c;margin-bottom:.5rem">📌 Reservation Status</div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.75rem;font-size:.83rem">
-        <div><span style="color:#888">Pending:</span> <span style="font-weight:700;color:#1a5fa8">${reservations.filter(r=>r.status==='pending').length}</span></div>
-        <div><span style="color:#888">Approved:</span> <span style="font-weight:700;color:#1a5fa8">${reservations.filter(r=>r.status==='approved').length}</span></div>
-        <div><span style="color:#888">Converted:</span> <span style="font-weight:700;color:#1a5fa8">${reservations.filter(r=>r.status==='converted').length}</span></div>
-        <div><span style="color:#888">Cancelled:</span> <span style="font-weight:700;color:#1a5fa8">${reservations.filter(r=>r.status==='cancelled').length}</span></div>
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Orders by Batch</div>
+      ${batchEntries.length===0?'<p style="color:#c2426d;font-size:.83rem">No orders yet.</p>':`
+      <div class="dash-grid">
+        ${batchEntries.map(([b,d])=>`<div class="dash-card"><div class="dc-val" style="font-size:1.2rem">${d.count}</div><div class="dc-label">${esc(b)} · ₱${d.revenue.toFixed(2)}</div></div>`).join('')}
+      </div>`}
+    </div>
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Product Order Summary</div>
+      ${prodList.length===0?'<p style="color:#c2426d;font-size:.83rem">No orders yet.</p>':prodList.map(([name,data])=>`
+        <div style="margin-bottom:.9rem">
+          <div class="prod-summary-row">
+            <div style="width:40px;height:40px;border-radius:8px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">
+              ${data.img?`<img src="${data.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}
+            </div>
+            <div class="ps-name">${esc(name)}</div>
+            <div class="ps-orders">${data.qty} ordered</div>
+            <div class="ps-revenue">₱${data.revenue.toFixed(2)}</div>
+          </div>
+          <div style="padding:.2rem .5rem .1rem">
+            ${data.orders.map(r=>`<div style="display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:#555;padding:.25rem;border-bottom:1px solid #ffe0e8;gap:.5rem">
+              <span>${esc(r.customer)} <span style="color:#aaa">(${r.goNum})</span> <span class="batch-tag" style="font-size:.65rem;padding:0 6px">${esc(r.batch)}</span> × ${r.qty}</span>
+              ${statusPill(r.status)}
+            </div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div class="dash-section">
+      <div class="dash-section-title">✿ Needs Attention</div>
+      ${orders.filter(o=>o.status!=='delivered').length===0
+        ?'<p style="color:#1a7a4a;font-size:.83rem">🎉 All orders delivered!</p>'
+        :orders.filter(o=>o.status!=='delivered').map(o=>`
+          <div class="cust-row">
+            <div>
+              <div class="cr-name">${esc(o.name)} <span class="batch-tag" style="margin-left:4px">${esc(o.batch||'Batch 1')}</span></div>
+              <div class="cr-meta">${o.goNum} · ${o.date}</div>
+              <div class="cr-meta">${(o.items||[]).map(i=>i.name+'×'+i.qty).join(', ')}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-weight:700;color:#c2426d;font-size:.88rem">₱${(o.total||0).toFixed(2)}</div>
+              <div style="margin-top:.25rem">${statusPill(o.status)}</div>
+            </div>
+          </div>`).join('')}
+    </div>`;
+}
+
+// ════════════════════════════════════════════
+// ARRIVAL RECEIPT
+// ════════════════════════════════════════════
+let currentArrivalOrder = null;
+
+function renderArrivalPanel() {
+  const q = (document.getElementById('arrival-search')?.value||'').toLowerCase().trim();
+  const arrivedOrders = state.orders.filter(o => {
+    const ok = o.status==='ph_arrived'||o.status==='delivered';
+    if (!ok) return false;
+    if (!q) return true;
+    return (o.goNum||'').toLowerCase().includes(q)||(o.name||'').toLowerCase().includes(q)||
+           (o.fb||'').toLowerCase().includes(q)||(o.items||[]).some(i=>(i.name||'').toLowerCase().includes(q))||
+           (o.batch||'').toLowerCase().includes(q);
+  });
+  const wrap = document.getElementById('arrival-list');
+  if (!arrivedOrders.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📦</div><p>No orders marked "PH Arrived" yet.</p></div>'; return; }
+  wrap.innerHTML = arrivedOrders.map(o => `
+    <div style="background:#fff;border:1.5px solid #c0d8f0;border-radius:12px;padding:.85rem 1rem;margin-bottom:.65rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;color:#1a3a5c;font-size:.92rem">${esc(o.name)} <span style="color:#aaa;font-weight:400;font-size:.78rem">(${o.goNum})</span> <span class="batch-tag" style="margin-left:4px">${esc(o.batch||'Batch 1')}</span></div>
+        <div style="font-size:.76rem;color:#555;margin-top:.2rem">${esc(o.fb)} · ${esc(o.contact)}</div>
+        <div style="font-size:.76rem;color:#555;margin-top:.1rem">${(o.items||[]).map(i=>esc(i.name)+'×'+i.qty).join(', ')}</div>
+        <div style="font-size:.76rem;color:#c2426d;font-weight:600;margin-top:.2rem">Order Total: ₱${(o.total||0).toFixed(2)} · ${o.shipping}</div>
+        ${o.arrivalSF?`<div style="font-size:.73rem;color:#1a7a4a;margin-top:.15rem">✓ Receipt generated · SF: ₱${parseFloat(o.arrivalSF||0).toFixed(2)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:.4rem;flex-shrink:0">
+        <button class="btn btn-primary btn-sm" onclick="openArrivalModal('${o.id}')">${o.arrivalSF?'✏️ Edit Receipt':'📬 Generate Receipt'}</button>
+        ${o.arrivalSF?`<button class="btn btn-secondary btn-sm" onclick="previewArrivalReceipt('${o.id}')">👁 Preview</button>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function openArrivalModal(orderId) {
+  const o = state.orders.find(x => x.id===orderId); if (!o) return;
+  currentArrivalOrder = o;
+  document.getElementById('arrival-order-info').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem">
+      <div><span style="color:#c2426d;font-weight:500">GO#:</span> ${o.goNum}</div>
+      <div><span style="color:#c2426d;font-weight:500">Batch:</span> <span class="batch-tag">${esc(o.batch||'Batch 1')}</span></div>
+      <div><span style="color:#c2426d;font-weight:500">Date:</span> ${o.date}</div>
+      <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(o.name)}</div>
+      <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(o.contact)}</div>
+      <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(o.fb)}</div>
+      <div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">Address:</span> ${esc(o.address||'—')}</div>
+    </div>`;
+  const shType = o.arrivalShipType||(o.shipping==='ISF'?'ISF':o.shipping==='LSF'?'LSF':'ISF');
+  document.getElementById('ar-shipping-type').value = shType;
+  document.getElementById('ar-isf').value = o.arrivalISF||'';
+  document.getElementById('ar-lsf').value = o.arrivalLSF||'';
+  document.getElementById('ar-notes').value = o.arrivalNotes||'';
+  toggleSFFields(); calcArrivalTotal();
+  document.getElementById('arrival-modal').classList.add('open');
+}
+
+function toggleSFFields() {
+  const t = document.getElementById('ar-shipping-type').value;
+  document.getElementById('ar-isf-group').style.display = (t==='ISF'||t==='both') ? 'flex' : 'none';
+  document.getElementById('ar-lsf-group').style.display = (t==='LSF'||t==='both') ? 'flex' : 'none';
+  document.getElementById('ar-isf-row').style.display = (t==='ISF'||t==='both') ? 'flex' : 'none';
+  document.getElementById('ar-lsf-row').style.display = (t==='LSF'||t==='both') ? 'flex' : 'none';
+  calcArrivalTotal();
+}
+
+function calcArrivalTotal() {
+  const o = currentArrivalOrder; const orderTotal = o ? o.total||0 : 0;
+  const t = document.getElementById('ar-shipping-type').value;
+  const isf = (t==='ISF'||t==='both') ? parseFloat(document.getElementById('ar-isf').value)||0 : 0;
+  const lsf = (t==='LSF'||t==='both') ? parseFloat(document.getElementById('ar-lsf').value)||0 : 0;
+  const sfTotal = isf + lsf;
+  document.getElementById('ar-prev-order').textContent = '₱'+orderTotal.toFixed(2);
+  document.getElementById('ar-prev-isf').textContent = '₱'+isf.toFixed(2);
+  document.getElementById('ar-prev-lsf').textContent = '₱'+lsf.toFixed(2);
+  document.getElementById('ar-prev-sf').textContent = '₱'+sfTotal.toFixed(2);
+}
+
+async function generateArrivalReceipt() {
+  const o = currentArrivalOrder; if (!o) return;
+  const t = document.getElementById('ar-shipping-type').value;
+  const isf = (t==='ISF'||t==='both') ? parseFloat(document.getElementById('ar-isf').value)||0 : 0;
+  const lsf = (t==='LSF'||t==='both') ? parseFloat(document.getElementById('ar-lsf').value)||0 : 0;
+  const notes = document.getElementById('ar-notes').value.trim();
+  const sfTotal = isf + lsf;
+  const update = { arrivalISF:isf, arrivalLSF:lsf, arrivalSF:sfTotal, arrivalShipType:t, arrivalNotes:notes, arrivalDate:new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'}) };
+  const idx = state.orders.findIndex(x => x.id===o.id);
+  if (idx > -1) Object.assign(state.orders[idx], update);
+  saveLocal(); if (firebaseReady) await fsUpdate('orders', o.id, update);
+  closeModal('arrival-modal'); previewArrivalReceipt(o.id); renderArrivalPanel();
+}
+
+function previewArrivalReceipt(orderId) {
+  const o = state.orders.find(x => x.id===orderId); if (!o) return;
+  const t = o.arrivalShipType||'ISF';
+  const isf = parseFloat(o.arrivalISF||0), lsf = parseFloat(o.arrivalLSF||0), sfTotal = isf+lsf;
+  const now = o.arrivalDate||new Date().toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+  document.getElementById('arrival-receipt-content').innerHTML = `
+    <div class="arrival-receipt" id="arrival-receipt-printable">
+      <div class="ar-head">
+        <div class="ar-title">Angel Shop</div>
+        <div class="ar-sub">Group Orders · Arrival Notice</div>
+        <div class="ar-go">${o.goNum}</div>
+        <div style="font-size:.72rem;color:#888;margin-top:.2rem">${now}</div>
+      </div>
+      <div class="ar-row"><span class="ar-label">Name</span><span class="ar-val">${esc(o.name)}</span></div>
+      <div class="ar-row"><span class="ar-label">FB Account</span><span class="ar-val">${esc(o.fb)}</span></div>
+      <div class="ar-row"><span class="ar-label">Contact</span><span class="ar-val">${esc(o.contact)}</span></div>
+      <div class="ar-row"><span class="ar-label">Address</span><span class="ar-val">${esc(o.address||'—')}</span></div>
+      <div class="ar-row"><span class="ar-label">Shipping</span><span class="ar-val">${t==='both'?'ISF + LSF':t}</span></div>
+      <div style="margin:.5rem 0;font-size:.78rem;color:#1a3a5c;font-weight:500">Order Items:</div>
+      <div class="ar-items">
+        ${(o.items||[]).map(i=>`<div class="ar-item"><span>${esc(i.name)} × ${i.qty}</span><span>₱${(i.price*i.qty).toFixed(2)}</span></div>`).join('')}
+        <div class="ar-divider"></div>
+        <div class="ar-item" style="font-weight:700;color:#1a5fa8"><span>Order Total (Paid)</span><span>₱${(o.total||0).toFixed(2)}</span></div>
+      </div>
+      <div style="margin:.5rem 0;font-size:.78rem;color:#7a4f00;font-weight:500">Shipping Fee to Pay:</div>
+      <div class="ar-sf-block">
+        ${(t==='ISF'||t==='both')?`<div class="ar-sf-row"><span>ISF</span><span>₱${isf.toFixed(2)}</span></div>`:''}
+        ${(t==='LSF'||t==='both')?`<div class="ar-sf-row"><span>LSF</span><span>₱${lsf.toFixed(2)}</span></div>`:''}
+        <div class="ar-grand"><span>Total SF to Pay</span><span>₱${sfTotal.toFixed(2)}</span></div>
+      </div>
+      ${o.arrivalNotes?`<div class="ar-row"><span class="ar-label">Notes</span><span class="ar-val">${esc(o.arrivalNotes)}</span></div>`:''}
+      <div class="ar-foot">
+        ✦ Your items have arrived in the Philippines! ✦
+        <div class="ar-note">
+          📩 Please send payment for the SF fee to our account. We will send you the payment details via DM.<br><br>
+          ⏰ Please settle the SF fee within <strong>1 week</strong>. Failure to pay will result in your order being forfeited with no refund.<br><br>
+          📦 Items will be released once SF fee is confirmed paid.
+        </div>
       </div>
     </div>`;
+  document.getElementById('arrival-receipt-modal').classList.add('open');
+}
+
+async function saveArrivalReceiptImage() {
+  const btn = event.target; btn.disabled = true; btn.textContent = '⏳ Generating…';
+  try {
+    const el = document.getElementById('arrival-receipt-printable');
+    const canvas = await html2canvas(el, { backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,windowWidth:420,windowHeight:el.scrollHeight+40 });
+    canvas.toBlob(async blob => {
+      const file = new File([blob], 'AngelShop-Arrival-'+(currentArrivalOrder?.goNum)+'.png', { type:'image/png' });
+      if (navigator.canShare && navigator.canShare({ files:[file] })) {
+        try { await navigator.share({ files:[file], title:'Angel Shop Arrival Receipt' }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; }
+        catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=blobUrl; a.download='AngelShop-Arrival.png'; a.style.display='none';
+      document.body.appendChild(a); a.click();
+      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 5000);
+      btn.disabled=false; btn.textContent='📥 Save as Image';
+    }, 'image/png');
+  } catch(e) { alert('Could not generate image.'); btn.disabled=false; btn.textContent='📥 Save as Image'; }
 }
 
 // ════════════════════════════════════════════
@@ -1529,6 +1739,7 @@ function showAlert(id, msg, type) { const el=document.getElementById(id); el.cla
 // BOOT
 // ════════════════════════════════════════════
 loadLocal(); updateAnnounceDisplay(); renderCustomerProducts(); renderCatSidebar(); updateCartUI();
+
 function loadScript(src, cb) {
   const s = document.createElement('script'); s.src=src;
   s.onload = cb; s.onerror = () => { setSyncStatus('offline'); fallbackToLocal(); };
