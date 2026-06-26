@@ -70,7 +70,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.85rem}
 
 /* ── PRODUCT CARD ── */
-.product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
+.product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;cursor:pointer}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,103,154,.18)}
 .product-img{width:100%;height:148px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden;flex-shrink:0}
 .product-img img{width:100%;height:100%;object-fit:cover}
@@ -88,6 +88,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .add-btn:hover{background:#c2426d}
 .reserve-btn:hover{background:#5fa8d3}
 .add-btn:disabled,.reserve-btn:disabled{background:#e0e0e0;cursor:not-allowed;color:#aaa}
+
+/* ── VIEW DETAILS HINT ── */
+.view-details-hint{font-size:.68rem;color:#e8679a;text-align:center;padding:.3rem 0 .1rem;opacity:.8;letter-spacing:.02em}
 
 /* ── NEW BADGE ── */
 .new-badge{position:absolute;top:8px;left:8px;background:#e8679a;color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.04em;text-transform:uppercase;z-index:1}
@@ -165,6 +168,45 @@ tr:hover td{background:#fff5f7}
 .modal-head h3{font-family:'Playfair Display',serif;font-size:1.15rem}
 .modal-body{padding:1.5rem}
 
+/* ── PRODUCT DETAILS MODAL ── */
+.product-detail-modal .modal{width:560px}
+.pd-hero{width:100%;height:240px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:5rem;overflow:hidden;border-radius:12px;margin-bottom:1.25rem;position:relative}
+.pd-hero img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.pd-new-badge{position:absolute;top:12px;left:12px;background:#e8679a;color:#fff;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:10px;letter-spacing:.05em;text-transform:uppercase}
+.pd-cat-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;flex-wrap:wrap}
+.pd-cat-tag{font-size:.72rem;background:#ffd6e7;color:#8b1f42;padding:2px 10px;border-radius:10px;font-weight:500}
+.pd-name{font-family:'Playfair Display',serif;font-size:1.4rem;color:#3d1a28;font-weight:600;line-height:1.25;margin-bottom:.5rem}
+.pd-price-row{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.75rem}
+.pd-price{font-size:1.65rem;font-weight:700;color:#c2426d;font-family:'Playfair Display',serif}
+.pd-stock-pill{font-size:.72rem;padding:3px 10px;border-radius:10px;font-weight:600}
+.pd-stock-available{background:#d6f5e5;color:#1a7a4a}
+.pd-stock-limited{background:#fff0d6;color:#b87a00}
+.pd-stock-soldout{background:#f0f0f0;color:#999}
+.pd-divider{border:none;border-top:1.5px solid #ffe0e8;margin:.85rem 0}
+.pd-desc-label{font-size:.72rem;color:#c2426d;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.35rem}
+.pd-desc{font-size:.88rem;color:#555;line-height:1.65}
+.pd-stock-row{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#888}
+.pd-stock-row strong{color:#3d1a28}
+.pd-action-row{display:flex;gap:.65rem;margin-top:.25rem}
+.pd-action-row .add-btn,.pd-action-row .reserve-btn{flex:1;padding:.6rem;font-size:.85rem;border-radius:10px}
+.pd-qty-selector{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.pd-qty-selector .pd-qty-label{font-size:.78rem;color:#8b1f42;font-weight:500;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.pd-qty-selector .qty-btn{width:28px;height:28px;font-size:16px;border-radius:6px}
+.pd-qty-selector .pd-qty-val{font-size:.95rem;font-weight:600;min-width:24px;text-align:center;color:#3d1a28}
+.pd-info-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.85rem}
+.pd-info-chip{display:inline-flex;align-items:center;gap:.3rem;background:#fff0f5;border:1px solid #ffd6e7;border-radius:8px;padding:4px 10px;font-size:.74rem;color:#8b1f42}
+
+/* ── LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(20,5,15,.92);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem;cursor:zoom-out}
+.lightbox.open{display:flex}
+.lightbox-inner{position:relative;max-width:92vw;max-height:92vh;display:flex;align-items:center;justify-content:center}
+.lightbox img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:10px;box-shadow:0 8px 48px rgba(0,0,0,.6);cursor:default}
+.lightbox-close{position:fixed;top:16px;right:18px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:26px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;backdrop-filter:blur(4px)}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.lightbox-caption{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.8);font-size:.8rem;text-align:center;pointer-events:none;background:rgba(0,0,0,.4);padding:.35rem .9rem;border-radius:20px;backdrop-filter:blur(4px);white-space:nowrap}
+.pd-hero-clickable{cursor:zoom-in;position:relative}
+.pd-hero-clickable::after{content:'🔍 Tap to zoom';position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.45);color:#fff;font-size:.68rem;padding:3px 9px;border-radius:10px;pointer-events:none;backdrop-filter:blur(2px);letter-spacing:.02em}
+
 /* ── PASSWORD ── */
 .pw-modal{position:fixed;inset:0;background:rgba(60,20,40,.6);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
 .pw-modal.open{display:flex}
@@ -202,15 +244,6 @@ tr:hover td{background:#fff5f7}
 .status-pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.7rem;font-weight:600;white-space:nowrap}
 .sp-pending{background:#fff0d6;color:#b87a00}
 .sp-confirmed{background:#d6f5e5;color:#1a7a4a}
-.sp-order_placed{background:#e0f0ff;color:#1a5fa8}
-.sp-cn_warehouse{background:#fff0cc;color:#996600}
-.sp-in_transit{background:#ffe8d6;color:#b84a00}
-.sp-ph_arrived{background:#e8d6ff;color:#5a1ab8}
-.sp-delivered{background:#d6ffe8;color:#0a6640}
-.sp-reserved{background:#e0f0ff;color:#1a5fa8}
-
-/* ── BATCH TAG ── */
-.batch-tag{font-size:.7rem;background:#ffd6e7;color:#8b1f42;padding:1px 8px;border-radius:9px;font-weight:600;white-space:nowrap;display:inline-block}
 
 /* ── CHIPS / FILTER ── */
 .filter-row{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.75rem}
@@ -252,6 +285,7 @@ tr:hover td{background:#fff5f7}
   .hero{padding:1.4rem 1.5rem 1.1rem}
   .cat-sidebar{width:176px}
   .cat-list{max-height:520px}
+  .pd-hero{height:260px}
 }
 
 /* ── MOBILE ── */
@@ -281,6 +315,10 @@ tr:hover td{background:#fff5f7}
   .modal-body{padding:.95rem .9rem 1.1rem}
   .cart-fab{width:48px;height:48px;font-size:19px;bottom:16px;right:14px}
   th,td{padding:.38rem .5rem;font-size:.73rem}
+  .pd-hero{height:190px}
+  .pd-name{font-size:1.2rem}
+  .pd-price{font-size:1.35rem}
+  .pd-action-row{flex-direction:column}
 }
 </style>
 </head>
@@ -313,23 +351,17 @@ tr:hover td{background:#fff5f7}
     <span class="text" id="announce-text"></span>
   </div>
 
-  <!-- SHOP LAYOUT: sidebar + products -->
   <div class="shop-layout">
-
-    <!-- CATEGORY SIDEBAR -->
     <aside class="cat-sidebar">
       <div class="cat-sidebar-inner">
         <div class="cat-sidebar-title">✿ Categories</div>
         <div class="cat-search-wrap">
           <input class="cat-search" id="cat-search-input" placeholder="🔍 Search categories…" oninput="onCatSearch(this.value)" autocomplete="off" />
         </div>
-        <ul class="cat-list" id="cat-list">
-          <!-- populated by JS -->
-        </ul>
+        <ul class="cat-list" id="cat-list"></ul>
       </div>
     </aside>
 
-    <!-- PRODUCTS AREA -->
     <div class="products-area">
       <div class="products-topbar">
         <div class="section-title" id="products-area-title">✿ All Items</div>
@@ -339,7 +371,6 @@ tr:hover td{background:#fff5f7}
         <div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>Loading products…</p></div>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -359,12 +390,8 @@ tr:hover td{background:#fff5f7}
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
 
-  <!-- Dashboard -->
-  <div class="admin-panel active" id="panel-dashboard">
-    <div id="dashboard-content"></div>
-  </div>
+  <div class="admin-panel active" id="panel-dashboard"><div id="dashboard-content"></div></div>
 
-  <!-- Products -->
   <div class="admin-panel" id="panel-products">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Manage Products</div>
@@ -379,7 +406,6 @@ tr:hover td{background:#fff5f7}
     </div>
   </div>
 
-  <!-- Reservations -->
   <div class="admin-panel" id="panel-reservations">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Reservation Management</div>
@@ -400,7 +426,6 @@ tr:hover td{background:#fff5f7}
     </div>
   </div>
 
-  <!-- Orders -->
   <div class="admin-panel" id="panel-orders">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Order Summaries</div>
@@ -420,7 +445,6 @@ tr:hover td{background:#fff5f7}
     </div>
   </div>
 
-  <!-- Announcements -->
   <div class="admin-panel" id="panel-announcements">
     <div style="font-weight:600;color:#8b1f42;margin-bottom:1rem">Important Announcements</div>
     <div class="form-group" style="margin-bottom:.75rem">
@@ -463,6 +487,17 @@ tr:hover td{background:#fff5f7}
     <div class="pw-error" id="pw-error"></div>
     <button class="btn btn-primary" style="width:100%" onclick="checkPw()">Enter Admin</button>
     <span class="pw-logout" onclick="closePwModal()">Cancel</span>
+  </div>
+</div>
+
+<!-- ══════ PRODUCT DETAILS MODAL ══════ -->
+<div class="modal-wrap product-detail-modal" id="product-detail-modal">
+  <div class="modal" style="width:560px">
+    <div class="modal-head">
+      <h3>✿ Product Details</h3>
+      <button class="close-btn" onclick="closeProductDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="product-detail-body"></div>
   </div>
 </div>
 
@@ -617,6 +652,15 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
 <script>
 // ════════════════════════════════════════════
 // CONFIG
@@ -642,7 +686,8 @@ let state = {
   adminLoggedIn: false, currentMode: 'customer',
   orderFilter: 'all', currentReceiptOrder: null,
   activeCat: 'all', searchQ: '', catSearchQ: '',
-  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationId: null
+  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationId: null,
+  pdQty: 1 // quantity selected in product detail modal
 };
 
 // ════════════════════════════════════════════
@@ -651,11 +696,11 @@ let state = {
 function loadLocal() {
   try {
     const r = localStorage.getItem('angelshop_v3');
-    if (r) { 
-      const d = JSON.parse(r); 
-      state.products = d.products||[]; 
-      state.orders = d.orders||[]; 
-      state.announcement = d.announcement||''; 
+    if (r) {
+      const d = JSON.parse(r);
+      state.products = d.products||[];
+      state.orders = d.orders||[];
+      state.announcement = d.announcement||'';
       state.goCounter = d.goCounter||1001;
       state.reservations = d.reservations||[];
       state.resCounter = d.resCounter||5001;
@@ -663,15 +708,15 @@ function loadLocal() {
   } catch(e) {}
 }
 function saveLocal() {
-  try { 
-    localStorage.setItem('angelshop_v3', JSON.stringify({ 
-      products:state.products, 
-      orders:state.orders, 
-      announcement:state.announcement, 
+  try {
+    localStorage.setItem('angelshop_v3', JSON.stringify({
+      products:state.products,
+      orders:state.orders,
+      announcement:state.announcement,
       goCounter:state.goCounter,
       reservations:state.reservations,
       resCounter:state.resCounter
-    })); 
+    }));
   } catch(e) {}
 }
 
@@ -779,76 +824,35 @@ function catEmoji(cat) { return CAT_EMOJI[cat] || ''; }
 // ════════════════════════════════════════════
 // CATEGORY SEARCH
 // ════════════════════════════════════════════
-function onCatSearch(val) {
-  state.catSearchQ = val;
-  renderCatSidebar();
-}
+function onCatSearch(val) { state.catSearchQ = val; renderCatSidebar(); }
 
 // ════════════════════════════════════════════
 // CATEGORY SIDEBAR
 // ════════════════════════════════════════════
 function renderCatSidebar() {
   const sorted = [...state.products].sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-
   const cats = [];
-  sorted.forEach(p => {
-    const c = (p.category||'').trim() || 'Others';
-    if (!cats.includes(c)) cats.push(c);
-  });
-
+  sorted.forEach(p => { const c = (p.category||'').trim() || 'Others'; if (!cats.includes(c)) cats.push(c); });
   const cq = (state.catSearchQ||'').toLowerCase().trim();
   const filteredCats = cq ? cats.filter(c => c.toLowerCase().includes(cq)) : cats;
-
   const ul = document.getElementById('cat-list');
-
-  const allRow = !cq ? `
-    <li class="cat-item" style="grid-column:1/-1">
-      <button class="cat-btn ${state.activeCat==='all'?'active':''}" onclick="selectCat('all')" style="font-weight:600">
-        <span class="cat-label">✿ All Items</span>
-      </button>
-    </li>` : '';
-
-  const catRows = filteredCats.map(c => {
-    const em = catEmoji(c);
-    return `
-      <li class="cat-item">
-        <button class="cat-btn ${state.activeCat===c?'active':''}" onclick="selectCat('${esc(c)}')">
-          ${em ? `<span class="cat-emoji">${em}</span>` : ''}
-          <span class="cat-label">${esc(c)}</span>
-        </button>
-      </li>`;
-  }).join('');
-
-  const noResults = cq && filteredCats.length === 0
-    ? `<li class="cat-item cat-no-results" style="grid-column:1/-1">No categories found</li>`
-    : '';
-
+  const allRow = !cq ? `<li class="cat-item"><button class="cat-btn ${state.activeCat==='all'?'active':''}" onclick="selectCat('all')" style="font-weight:600"><span class="cat-label">✿ All Items</span></button></li>` : '';
+  const catRows = filteredCats.map(c => { const em = catEmoji(c); return `<li class="cat-item"><button class="cat-btn ${state.activeCat===c?'active':''}" onclick="selectCat('${esc(c)}')">${em ? `<span class="cat-emoji">${em}</span>` : ''}<span class="cat-label">${esc(c)}</span></button></li>`; }).join('');
+  const noResults = cq && filteredCats.length === 0 ? `<li class="cat-item cat-no-results">No categories found</li>` : '';
   ul.innerHTML = allRow + catRows + noResults;
-
   const dl = document.getElementById('cat-suggestions');
   if (dl) dl.innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
 }
-
 function selectCat(cat) {
-  state.activeCat = cat;
-  state.searchQ = '';
-  state.catSearchQ = '';
-  const s = document.querySelector('.search-bar');
-  if (s) s.value = '';
-  const cs = document.getElementById('cat-search-input');
-  if (cs) cs.value = '';
-  renderCatSidebar();
-  renderCustomerProducts();
+  state.activeCat = cat; state.searchQ = ''; state.catSearchQ = '';
+  const s = document.querySelector('.search-bar'); if (s) s.value = '';
+  const cs = document.getElementById('cat-search-input'); if (cs) cs.value = '';
+  renderCatSidebar(); renderCustomerProducts();
 }
-
 function onSearchInput(val) {
-  state.searchQ = val;
-  state.activeCat = 'all';
-  state.catSearchQ = '';
-  const cs = document.getElementById('cat-search-input');
-  if (cs) cs.value = '';
-  renderCatSidebar();
-  renderCustomerProducts();
+  state.searchQ = val; state.activeCat = 'all'; state.catSearchQ = '';
+  const cs = document.getElementById('cat-search-input'); if (cs) cs.value = '';
+  renderCatSidebar(); renderCustomerProducts();
 }
 
 // ════════════════════════════════════════════
@@ -856,33 +860,20 @@ function onSearchInput(val) {
 // ════════════════════════════════════════════
 function getVisibleProducts() {
   let items = [...state.products].sort((a, b) => (b.createdAt||0) - (a.createdAt||0));
-
-  if (state.activeCat !== 'all') {
-    items = items.filter(p => ((p.category||'').trim()||'Others') === state.activeCat);
-  }
-
+  if (state.activeCat !== 'all') items = items.filter(p => ((p.category||'').trim()||'Others') === state.activeCat);
   if (state.searchQ) {
     const q = state.searchQ.toLowerCase();
-    items = items.filter(p =>
-      (p.name||'').toLowerCase().includes(q) ||
-      (p.category||'').toLowerCase().includes(q) ||
-      (p.desc||'').toLowerCase().includes(q) ||
-      String(p.price||'').includes(q)
-    );
+    items = items.filter(p => (p.name||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q) || (p.desc||'').toLowerCase().includes(q) || String(p.price||'').includes(q));
   }
-
   return items;
 }
-
 function isNewProduct(p) {
   if (!p.createdAt) return false;
-  const THREE_DAYS = 3 * 24 * 60 * 60 * 1000;
-  return Date.now() - p.createdAt < THREE_DAYS;
+  return Date.now() - p.createdAt < 3 * 24 * 60 * 60 * 1000;
 }
-
 function productCardHtml(p) {
   const isNew = isNewProduct(p);
-  return `<div class="product-card">
+  return `<div class="product-card" onclick="openProductDetail('${p.id}')">
     <div class="product-img-wrap">
       ${isNew ? '<span class="new-badge">New ✦</span>' : ''}
       <div class="product-img">
@@ -897,35 +888,170 @@ function productCardHtml(p) {
         ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
       </div>
       ${p.desc ? `<div class="product-desc">${esc(p.desc)}</div>` : ''}
-      <div class="product-buttons">
+      <div class="product-buttons" onclick="event.stopPropagation()">
         <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
           ${p.status==='soldout'?'Sold Out':'+ Order'}
         </button>
         <button class="reserve-btn" onclick="openReservationModal('${p.id}')">📌 Reserve</button>
       </div>
+      <div class="view-details-hint">tap card to view details ✦</div>
     </div>
   </div>`;
 }
-
 function renderCustomerProducts() {
   const grid = document.getElementById('customer-products');
   const titleEl = document.getElementById('products-area-title');
   const items = getVisibleProducts();
-
-  if (state.searchQ) {
-    titleEl.textContent = `🔍 "${state.searchQ}"`;
-  } else if (state.activeCat === 'all') {
-    titleEl.textContent = '✿ All Items';
-  } else {
-    const emoji = catEmoji(state.activeCat);
-    titleEl.textContent = emoji ? `${emoji} ${state.activeCat}` : `✿ ${state.activeCat}`;
-  }
-
-  if (!items.length) {
-    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>';
-    return;
-  }
+  if (state.searchQ) titleEl.textContent = `🔍 "${state.searchQ}"`;
+  else if (state.activeCat === 'all') titleEl.textContent = '✿ All Items';
+  else { const emoji = catEmoji(state.activeCat); titleEl.textContent = emoji ? `${emoji} ${state.activeCat}` : `✿ ${state.activeCat}`; }
+  if (!items.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>'; return; }
   grid.innerHTML = items.map(productCardHtml).join('');
+}
+
+// ════════════════════════════════════════════
+// PRODUCT DETAILS MODAL
+// ════════════════════════════════════════════
+function openProductDetail(productId) {
+  const p = state.products.find(x => x.id === productId);
+  if (!p) return;
+  state.pdQty = 1;
+  state.currentDetailProductId = productId;
+  document.getElementById('product-detail-body').innerHTML = buildProductDetailHtml(p, 1);
+  document.getElementById('product-detail-modal').classList.add('open');
+}
+
+function closeProductDetailModal() {
+  document.getElementById('product-detail-modal').classList.remove('open');
+  state.currentDetailProductId = null;
+}
+
+function buildProductDetailHtml(p, qty) {
+  const isNew = isNewProduct(p);
+  const stockClass = p.status === 'limited' ? 'pd-stock-limited' : p.status === 'soldout' ? 'pd-stock-soldout' : 'pd-stock-available';
+  const stockLabel = p.status === 'available' ? '✓ Available' : p.status === 'limited' ? '⚡ Limited Stock' : '✗ Sold Out';
+  const isSoldOut = p.status === 'soldout';
+  const catLabel = (p.category||'').trim() || 'Others';
+  const em = catEmoji(catLabel);
+
+  const infoChips = [];
+  if (p.stock) infoChips.push(`📦 Stock: ${p.stock}`);
+  if (em) infoChips.push(`${em} ${catLabel}`);
+
+  return `
+    <div>
+      <div class="pd-hero ${p.img ? 'pd-hero-clickable' : ''}" style="position:relative" ${p.img ? `onclick="openLightbox('${p.img.replace(/'/g,"\\'")}','${esc(p.name)}')"` : ''}>
+        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" />` : '<span>🛍</span>'}
+        ${isNew ? '<span class="pd-new-badge">✦ New Arrival</span>' : ''}
+      </div>
+
+      <div class="pd-cat-row">
+        ${em ? `<span style="font-size:1.1rem">${em}</span>` : ''}
+        <span class="pd-cat-tag">${esc(catLabel)}</span>
+        <span class="pd-stock-pill ${stockClass}">${stockLabel}</span>
+      </div>
+
+      <div class="pd-name">${esc(p.name)}</div>
+
+      <div class="pd-price-row">
+        <span class="pd-price">₱${parseFloat(p.price||0).toFixed(2)}</span>
+        ${p.stock ? `<span style="font-size:.78rem;color:#aaa">· ${p.stock} pcs available</span>` : ''}
+      </div>
+
+      ${p.desc ? `
+        <div class="pd-desc-label">Description</div>
+        <div class="pd-desc">${esc(p.desc)}</div>
+        <hr class="pd-divider">
+      ` : '<hr class="pd-divider">'}
+
+      ${!isSoldOut ? `
+        <div class="pd-qty-selector">
+          <span class="pd-qty-label">Qty:</span>
+          <button class="qty-btn pd-qty-btn" onclick="pdChangeQty(-1)">−</button>
+          <span class="pd-qty-val" id="pd-qty-display">${qty}</span>
+          <button class="qty-btn pd-qty-btn" onclick="pdChangeQty(1)">+</button>
+          <span style="font-size:.78rem;color:#c2426d;margin-left:.35rem;font-weight:600">= ₱<span id="pd-subtotal">${(p.price * qty).toFixed(2)}</span></span>
+        </div>
+      ` : ''}
+
+      <div class="pd-action-row">
+        <button class="add-btn" ${isSoldOut?'disabled':''} onclick="pdAddToCart()">
+          ${isSoldOut ? '✗ Sold Out' : '🛒 Add to Order'}
+        </button>
+        <button class="reserve-btn" onclick="pdOpenReserve()">📌 Reserve</button>
+      </div>
+
+      <div style="margin-top:.85rem;background:#fff8fc;border:1px solid #ffe0ec;border-radius:8px;padding:.55rem .85rem;font-size:.72rem;color:#c2426d;line-height:1.55;display:flex;align-items:flex-start;gap:.4rem">
+        <span>💡</span>
+        <span>Tap <strong>Add to Order</strong> to add this item to your cart, or <strong>Reserve</strong> if it's out of stock and you'd like to be notified.</span>
+      </div>
+    </div>
+  `;
+}
+
+function pdChangeQty(delta) {
+  const p = state.products.find(x => x.id === state.currentDetailProductId);
+  if (!p) return;
+  state.pdQty = Math.max(1, state.pdQty + delta);
+  const qtyEl = document.getElementById('pd-qty-display');
+  const subEl = document.getElementById('pd-subtotal');
+  if (qtyEl) qtyEl.textContent = state.pdQty;
+  if (subEl) subEl.textContent = (p.price * state.pdQty).toFixed(2);
+}
+
+function pdAddToCart() {
+  const productId = state.currentDetailProductId;
+  const p = state.products.find(x => x.id === productId);
+  if (!p || p.status === 'soldout') return;
+  const ex = state.cart.find(i => i.productId === productId);
+  if (ex) ex.qty += state.pdQty;
+  else state.cart.push({ productId, name: p.name, price: p.price, img: p.img||'', qty: state.pdQty });
+  updateCartUI();
+  closeProductDetailModal();
+  const fab = document.getElementById('cart-fab');
+  fab.style.transform = 'scale(1.3)';
+  setTimeout(() => fab.style.transform = '', 250);
+  // Brief toast confirmation
+  showToast(`✓ ${p.name} added to order!`);
+}
+
+function pdOpenReserve() {
+  const productId = state.currentDetailProductId;
+  closeProductDetailModal();
+  setTimeout(() => openReservationModal(productId), 180);
+}
+
+// ── Lightbox ──
+function openLightbox(src, name) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  const cap = document.getElementById('lightbox-caption');
+  img.src = src;
+  img.alt = name || '';
+  cap.textContent = name || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+// ── Toast notification ──
+function showToast(msg) {
+  let t = document.getElementById('shop-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'shop-toast';
+    t.style.cssText = 'position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(10px);background:#3d1a28;color:#fff;padding:.55rem 1.2rem;border-radius:20px;font-size:.82rem;font-weight:500;z-index:9999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(60,20,40,.3)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; }, 2200);
 }
 
 // ════════════════════════════════════════════
@@ -957,7 +1083,6 @@ function renderAdminProducts() {
       </div></td>
     </tr>`).join('');
 }
-
 function openProductModal(id) {
   ['p-name','p-desc','p-category'].forEach(x => document.getElementById(x).value = '');
   ['p-price','p-stock'].forEach(x => document.getElementById(x).value = '');
@@ -987,7 +1112,6 @@ function openProductModal(id) {
   document.getElementById('product-modal').classList.add('open');
 }
 function closeProductModal() { document.getElementById('product-modal').classList.remove('open'); }
-
 function previewImg(input) {
   const file = input.files[0]; if (!file) return;
   const reader = new FileReader();
@@ -1004,7 +1128,6 @@ function previewImg(input) {
     }; img.src = e.target.result;
   }; reader.readAsDataURL(file);
 }
-
 async function saveProduct() {
   const name = document.getElementById('p-name').value.trim();
   const price = parseFloat(document.getElementById('p-price').value);
@@ -1029,7 +1152,6 @@ async function saveProduct() {
   }
   btn.disabled = false; closeProductModal(); showAlert('prod-alert', '✓ Product saved!', 'success');
 }
-
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
   state.products = state.products.filter(p => p.id !== id);
@@ -1084,7 +1206,6 @@ function closeCart() { document.getElementById('cart-overlay').classList.remove(
 // ════════════════════════════════════════════
 function openOrderForm() { if (!state.cart.length) { alert('Please add items to your cart first.'); return; } closeCart(); document.getElementById('order-modal').classList.add('open'); }
 function closeOrderModal() { document.getElementById('order-modal').classList.remove('open'); }
-
 async function submitOrder() {
   const name = document.getElementById('o-name').value.trim();
   const fb = document.getElementById('o-fb').value.trim();
@@ -1114,22 +1235,13 @@ function openReservationModal(productId) {
   const p = state.products.find(x => x.id === productId);
   if (!p) return;
   ['res-name','res-contact','res-fb'].forEach(x => document.getElementById(x).value = '');
-  document.getElementById('res-note').value = '';
-  document.getElementById('res-product-name').textContent = p.name + ' (₱' + p.price.toFixed(2) + ')';
+  document.getElementById('res-product-name').textContent = p.name + ' (₱' + parseFloat(p.price||0).toFixed(2) + ')';
   document.getElementById('res-err').style.display = 'none';
   state.currentReservationId = productId;
   document.getElementById('reservation-modal').classList.add('open');
 }
-
-function closeReservationModal() { 
-  document.getElementById('reservation-modal').classList.remove('open');
-  state.currentReservationId = null;
-}
-
-function closeResConfirmModal() {
-  document.getElementById('res-confirm-modal').classList.remove('open');
-}
-
+function closeReservationModal() { document.getElementById('reservation-modal').classList.remove('open'); state.currentReservationId = null; }
+function closeResConfirmModal() { document.getElementById('res-confirm-modal').classList.remove('open'); }
 async function submitReservation() {
   const name = document.getElementById('res-name').value.trim();
   const contact = document.getElementById('res-contact').value.trim();
@@ -1137,45 +1249,22 @@ async function submitReservation() {
   const err = document.getElementById('res-err');
   const productId = state.currentReservationId;
   const product = state.products.find(x => x.id === productId);
-  
-  if (!name || !contact) { 
-    err.textContent = '⚠ Please fill in all required fields (Name, Contact).'; 
-    err.style.display = 'block'; 
-    return; 
-  }
-  
+  if (!name || !contact) { err.textContent = '⚠ Please fill in all required fields (Name, Contact).'; err.style.display = 'block'; return; }
   err.style.display = 'none';
-  const btn = document.getElementById('submit-res-btn'); 
-  btn.disabled = true; 
-  btn.textContent = 'Saving…';
-  
+  const btn = document.getElementById('submit-res-btn'); btn.disabled = true; btn.textContent = 'Saving…';
   const resNum = 'RES-' + state.resCounter++;
   const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit' });
   const reservationData = { resNum, productId, productName: product.name, productPrice: product.price, name, contact, fb, status: 'pending', date: dateStr, createdAt: Date.now() };
-  
   let savedId = null;
-  if (firebaseReady) { 
-    savedId = await fsAdd('reservations', reservationData); 
-    await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); 
-  }
-  if (!savedId) { 
-    savedId = 'local_'+Date.now(); 
-    state.reservations.unshift({ id:savedId,...reservationData }); 
-    saveLocal(); 
-  }
-  
-  btn.disabled = false;
-  closeReservationModal();
-  showReservationConfirm({ id:savedId, ...reservationData });
-  
+  if (firebaseReady) { savedId = await fsAdd('reservations', reservationData); await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); }
+  if (!savedId) { savedId = 'local_'+Date.now(); state.reservations.unshift({ id:savedId,...reservationData }); saveLocal(); }
+  btn.disabled = false; closeReservationModal(); showReservationConfirm({ id:savedId, ...reservationData });
   ['res-name','res-contact','res-fb'].forEach(id => document.getElementById(id).value = '');
 }
-
 function showReservationConfirm(reservation) {
   document.getElementById('res-confirm-content').innerHTML = buildReservationConfirmHtml(reservation);
   document.getElementById('res-confirm-modal').classList.add('open');
 }
-
 function buildReservationConfirmHtml(r) {
   return `<div class="receipt" id="res-confirm-printable" style="border-color:#90c4f0;background:#f0f7ff">
     <div class="receipt-head" style="border-bottom-color:#90c4f0">
@@ -1203,19 +1292,15 @@ function buildReservationConfirmHtml(r) {
     </div>
   </div>`;
 }
-
 async function saveResConfirmAsImage() {
-  const btn = document.getElementById('save-res-img-btn'); 
-  btn.disabled = true; 
-  btn.textContent = '⏳ Generating…';
+  const btn = document.getElementById('save-res-img-btn'); btn.disabled = true; btn.textContent = '⏳ Generating…';
   try {
     const canvas = await html2canvas(document.getElementById('res-confirm-printable'), { backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,windowWidth:420,windowHeight:document.getElementById('res-confirm-printable').scrollHeight+40 });
     canvas.toBlob(async blob => {
       const filename = 'AngelShop-Reservation.png';
       const file = new File([blob], filename, { type:'image/png' });
       if (navigator.canShare && navigator.canShare({ files:[file] })) {
-        try { await navigator.share({ files:[file], title:'Angel Shop Reservation Confirmation' }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; }
-        catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
+        try { await navigator.share({ files:[file], title:'Angel Shop Reservation Confirmation' }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; } catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
       }
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href=blobUrl; a.download=filename; a.style.display='none';
@@ -1233,23 +1318,9 @@ function renderReservations() {
   const tbody = document.getElementById('admin-reservations-tbody');
   const q = (document.getElementById('reservation-search')?.value||'').toLowerCase().trim();
   let list = state.reservationFilter==='all' ? [...state.reservations] : state.reservations.filter(r => r.status===state.reservationFilter);
-  
-  if (q) {
-    list = list.filter(r =>
-      (r.resNum||'').toLowerCase().includes(q) ||
-      (r.name||'').toLowerCase().includes(q) ||
-      (r.productName||'').toLowerCase().includes(q) ||
-      (r.contact||'').toLowerCase().includes(q)
-    );
-  }
-  
+  if (q) list = list.filter(r => (r.resNum||'').toLowerCase().includes(q) || (r.name||'').toLowerCase().includes(q) || (r.productName||'').toLowerCase().includes(q) || (r.contact||'').toLowerCase().includes(q));
   list = list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-  
-  if (!list.length) { 
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#c2426d;padding:2rem">No reservations found.</td></tr>'; 
-    return; 
-  }
-  
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#c2426d;padding:2rem">No reservations found.</td></tr>'; return; }
   tbody.innerHTML = list.map(r => `
     <tr>
       <td style="font-weight:600;color:#1a5fa8">${r.resNum}</td>
@@ -1271,34 +1342,24 @@ function renderReservations() {
       </div></td>
     </tr>`).join('');
 }
-
 function filterReservations(status, el) {
   state.reservationFilter = status;
   document.querySelectorAll('#panel-reservations .filter-row .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   renderReservations();
 }
-
 async function updateReservationStatus(id, status) {
   const r = state.reservations.find(x => x.id===id);
-  if (r) { 
-    r.status=status; 
-    saveLocal(); 
-    if (firebaseReady) await fsUpdate('reservations',id,{status}); 
-  }
+  if (r) { r.status=status; saveLocal(); if (firebaseReady) await fsUpdate('reservations',id,{status}); }
 }
-
 async function deleteReservation(id) {
   if (!confirm('Delete this reservation permanently?')) return;
   state.reservations = state.reservations.filter(r => r.id!==id);
-  saveLocal();
-  renderReservations();
+  saveLocal(); renderReservations();
   if (firebaseReady) await fsDelete('reservations',id);
 }
-
 function viewReservationDetail(id) {
-  const r = state.reservations.find(x => x.id===id);
-  if (!r) return;
+  const r = state.reservations.find(x => x.id===id); if (!r) return;
   document.getElementById('reservation-detail-body').innerHTML = `
     <div style="display:flex;flex-direction:column;gap:.75rem">
       <div style="background:#e0f0ff;border-radius:10px;padding:.85rem;border-left:4px solid #1a5fa8">
@@ -1322,26 +1383,14 @@ function viewReservationDetail(id) {
 }
 
 // ════════════════════════════════════════════
-// ADMIN — ORDERS (simplified)
+// ADMIN — ORDERS
 // ════════════════════════════════════════════
 function renderAdminOrders() {
   const tbody = document.getElementById('admin-orders-tbody');
   const q = (document.getElementById('order-search')?.value||'').toLowerCase().trim();
   let list = state.orderFilter==='all' ? [...state.orders] : state.orders.filter(o => o.status===state.orderFilter);
-  
-  if (q) {
-    list = list.filter(o =>
-      (o.goNum||'').toLowerCase().includes(q) ||
-      (o.name||'').toLowerCase().includes(q) ||
-      (o.contact||'').toLowerCase().includes(q)
-    );
-  }
-  
-  if (!list.length) { 
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; 
-    return; 
-  }
-  
+  if (q) list = list.filter(o => (o.goNum||'').toLowerCase().includes(q) || (o.name||'').toLowerCase().includes(q) || (o.contact||'').toLowerCase().includes(q));
+  if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c2426d;padding:2rem">No orders found.</td></tr>'; return; }
   tbody.innerHTML = list.map(o => `
     <tr>
       <td style="font-weight:600;color:#c2426d">${o.goNum}</td>
@@ -1362,41 +1411,28 @@ function renderAdminOrders() {
       </div></td>
     </tr>`).join('');
 }
-
 function filterOrders(f, el) {
   state.orderFilter = f;
   document.querySelectorAll('#panel-orders .filter-row .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   renderAdminOrders();
 }
-
 async function updateOrderStatus(id, status) {
   const o = state.orders.find(x => x.id===id);
-  if (o) { 
-    o.status=status; 
-    saveLocal(); 
-    if (firebaseReady) await fsUpdate('orders',id,{status}); 
-  }
+  if (o) { o.status=status; saveLocal(); if (firebaseReady) await fsUpdate('orders',id,{status}); }
 }
-
 async function deleteOrder(id) {
   if (!confirm('Delete this order permanently?')) return;
   state.orders = state.orders.filter(o => o.id!==id);
-  saveLocal();
-  renderAdminOrders();
+  saveLocal(); renderAdminOrders();
   if (firebaseReady) await fsDelete('orders',id);
 }
 
 // ════════════════════════════════════════════
 // RECEIPT
 // ════════════════════════════════════════════
-function showOrderReceipt(order) { 
-  state.currentReceiptOrder = order; 
-  document.getElementById('receipt-content').innerHTML = buildReceiptHtml(order); 
-  document.getElementById('receipt-modal').classList.add('open'); 
-}
+function showOrderReceipt(order) { state.currentReceiptOrder = order; document.getElementById('receipt-content').innerHTML = buildReceiptHtml(order); document.getElementById('receipt-modal').classList.add('open'); }
 function closeReceiptModal() { document.getElementById('receipt-modal').classList.remove('open'); }
-
 function buildReceiptHtml(o) {
   return `<div class="receipt" id="receipt-printable">
     <div class="receipt-head">
@@ -1422,7 +1458,6 @@ function buildReceiptHtml(o) {
     </div>
   </div>`;
 }
-
 async function saveReceiptAsImage() {
   const o = state.currentReceiptOrder; if (!o) return;
   const btn = document.getElementById('save-img-btn'); btn.disabled = true; btn.textContent = '⏳ Generating…';
@@ -1432,8 +1467,7 @@ async function saveReceiptAsImage() {
       const filename = 'AngelShop-'+o.goNum+'.png';
       const file = new File([blob], filename, { type:'image/png' });
       if (navigator.canShare && navigator.canShare({ files:[file] })) {
-        try { await navigator.share({ files:[file], title:'Angel Shop Receipt — '+o.goNum }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; }
-        catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
+        try { await navigator.share({ files:[file], title:'Angel Shop Receipt — '+o.goNum }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; } catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
       }
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href=blobUrl; a.download=filename; a.style.display='none';
@@ -1462,21 +1496,16 @@ function adminTab(tab) {
 // DASHBOARD
 // ════════════════════════════════════════════
 function renderDashboard() {
-  const orders = state.orders;
-  const reservations = state.reservations;
-  const products = state.products;
-  const total = orders.length;
-  const totalRES = reservations.length;
+  const orders = state.orders, reservations = state.reservations, products = state.products;
   const grandTotal = orders.reduce((s,o) => s+(o.total||0), 0);
-  
   document.getElementById('dashboard-content').innerHTML = `
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1.5rem">
-      <div class="dash-card"><div class="dc-val">${total}</div><div class="dc-label">Total Orders</div></div>
+      <div class="dash-card"><div class="dc-val">${orders.length}</div><div class="dc-label">Total Orders</div></div>
       <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='pending').length}</div><div class="dc-label">⏳ Pending</div></div>
       <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='confirmed').length}</div><div class="dc-label">✅ Confirmed</div></div>
       <div class="dash-card"><div class="dc-val">${orders.filter(o=>o.status==='delivered').length}</div><div class="dc-label">🎉 Delivered</div></div>
       <div class="dash-card" style="border-color:#c0d8f0;background:#f0f7ff"><div class="dc-val" style="font-size:.95rem;color:#1a5fa8">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Revenue</div></div>
-      <div class="dash-card" style="border-color:#90c4f0;background:#e0f0ff"><div class="dc-val" style="font-size:1.3rem;color:#1a5fa8">${totalRES}</div><div class="dc-label">📌 Reservations</div></div>
+      <div class="dash-card" style="border-color:#90c4f0;background:#e0f0ff"><div class="dc-val" style="font-size:1.3rem;color:#1a5fa8">${reservations.length}</div><div class="dc-label">📌 Reservations</div></div>
       <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
     </div>
     <div style="background:#e0f0ff;border-radius:10px;padding:1rem;margin-top:1rem;border-left:4px solid #1a5fa8">
@@ -1500,7 +1529,6 @@ function showAlert(id, msg, type) { const el=document.getElementById(id); el.cla
 // BOOT
 // ════════════════════════════════════════════
 loadLocal(); updateAnnounceDisplay(); renderCustomerProducts(); renderCatSidebar(); updateCartUI();
-
 function loadScript(src, cb) {
   const s = document.createElement('script'); s.src=src;
   s.onload = cb; s.onerror = () => { setSyncStatus('offline'); fallbackToLocal(); };
