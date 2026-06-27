@@ -82,7 +82,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .product-stock{font-size:.72rem;color:#888;margin-bottom:.45rem}
 .product-stock.low{color:#c2426d}
 .product-stock.out{color:#bbb}
-.product-desc{font-size:.71rem;color:#999;margin-bottom:.5rem;line-height:1.35;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-desc{font-size:.74rem;color:#888;margin-bottom:.5rem;line-height:1.4;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .product-buttons{display:flex;gap:.4rem;margin-top:auto}
 .add-btn{flex:1;background:#e8679a;color:#fff;border:none;padding:.44rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:background .2s}
 .add-btn:hover{background:#c2426d}
@@ -171,18 +171,47 @@ tr:hover td{background:#fff5f7}
 .modal-body{padding:1.5rem}
 
 /* ── PRODUCT DETAIL MODAL ── */
-.pd-modal-img{width:100%;height:280px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;margin-bottom:1rem}
+.pd-modal{width:640px}
+.pd-modal-head{position:relative;padding:0}
+.pd-close-float{position:absolute;top:12px;right:12px;background:rgba(60,20,40,.5);color:#fff;border:none;width:32px;height:32px;border-radius:50%;font-size:17px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.pd-close-float:hover{background:rgba(60,20,40,.75)}
+.pd-modal-img{width:100%;height:320px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);border-radius:16px 16px 0 0;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;position:relative;cursor:zoom-in}
 .pd-modal-img img{width:100%;height:100%;object-fit:cover}
-.pd-cat-tag{font-size:.72rem;background:#ffd6e7;color:#8b1f42;padding:2px 10px;border-radius:9px;display:inline-block;margin-bottom:.5rem}
-.pd-name{font-family:'Playfair Display',serif;font-size:1.3rem;color:#3d1a28;margin-bottom:.3rem;line-height:1.3}
-.pd-price{color:#c2426d;font-weight:700;font-size:1.3rem;margin-bottom:.4rem}
-.pd-stock{font-size:.82rem;color:#888;margin-bottom:.75rem;font-weight:500}
-.pd-stock.low{color:#c2426d}
-.pd-stock.out{color:#bbb}
-.pd-desc{font-size:.86rem;color:#666;line-height:1.6;margin-bottom:1.1rem;white-space:pre-wrap}
-.pd-qty-row{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
-.pd-qty-row .qty-btn{width:30px;height:30px;font-size:16px;background:#ffd6e7}
-.pd-qty-val{font-size:1rem;font-weight:600;min-width:28px;text-align:center}
+.pd-zoom-hint{position:absolute;bottom:10px;right:10px;background:rgba(60,20,40,.55);color:#fff;font-size:.7rem;padding:3px 9px;border-radius:9px;z-index:1;display:flex;align-items:center;gap:3px;pointer-events:none}
+
+/* ── IMAGE LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(20,8,14,.92);z-index:700;display:none;align-items:center;justify-content:center;padding:2rem;cursor:zoom-out}
+.lightbox.open{display:flex}
+.lightbox-content{display:flex;flex-direction:column;align-items:center;gap:.85rem;max-width:90vw;max-height:90vh;cursor:default}
+.lightbox img{max-width:100%;max-height:72vh;object-fit:contain;border-radius:8px;box-shadow:0 10px 50px rgba(0,0,0,.5)}
+.lightbox-caption{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:.75rem 1.1rem;max-width:480px;text-align:center}
+.lightbox-caption .lc-name{font-family:'Playfair Display',serif;color:#fff;font-size:1.05rem;margin-bottom:.25rem}
+.lightbox-caption .lc-desc{color:rgba(255,255,255,.78);font-size:.83rem;line-height:1.55}
+.lightbox-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.4);color:#fff;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.pd-new-badge{position:absolute;top:12px;left:12px;background:#e8679a;color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:9px;letter-spacing:.04em;text-transform:uppercase;z-index:1}
+.pd-body{padding:1.35rem 1.5rem 1.5rem}
+.pd-cat-tag{font-size:.72rem;background:#ffd6e7;color:#8b1f42;padding:2px 10px;border-radius:9px;display:inline-block;margin-bottom:.5rem;font-weight:500}
+.pd-name{font-family:'Playfair Display',serif;font-size:1.4rem;color:#3d1a28;margin-bottom:.35rem;line-height:1.3}
+.pd-price-row{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem;flex-wrap:wrap}
+.pd-price{color:#c2426d;font-weight:700;font-size:1.35rem}
+.pd-stock{font-size:.8rem;color:#888;font-weight:600;padding:3px 10px;border-radius:9px;background:#f3f3f3}
+.pd-stock.ok{color:#1a7a4a;background:#d6f5e5}
+.pd-stock.low{color:#b87a00;background:#fff0d6}
+.pd-stock.out{color:#999;background:#eee}
+.pd-desc{font-size:.87rem;color:#666;line-height:1.65;margin:.9rem 0 1.1rem;white-space:pre-wrap}
+.pd-divider{border-top:1px solid #ffe0e8;margin:0 0 1.1rem}
+.pd-qty-card{background:#fff5f8;border:1.5px solid #ffd6e7;border-radius:12px;padding:.85rem 1rem;margin-bottom:1.1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.pd-qty-label{font-size:.74rem;color:#8b1f42;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.4rem}
+.pd-qty-row{display:flex;align-items:center;gap:.65rem}
+.pd-qty-row .qty-btn{width:32px;height:32px;font-size:17px;background:#ffd6e7;border-radius:8px}
+.pd-qty-row .qty-btn:disabled{opacity:.4;cursor:not-allowed}
+.pd-qty-val{font-size:1.05rem;font-weight:700;min-width:30px;text-align:center;color:#3d1a28}
+.pd-qty-max{font-size:.7rem;color:#aaa;margin-top:.3rem}
+.pd-total-block{text-align:right}
+.pd-total-label{font-size:.7rem;color:#aaa;text-transform:uppercase;letter-spacing:.04em;font-weight:600}
+.pd-total-val{font-family:'Playfair Display',serif;font-size:1.55rem;font-weight:700;color:#8b1f42;line-height:1.15;transition:transform .15s}
+.pd-total-val.bump{transform:scale(1.12)}
 .pd-buttons{display:flex;gap:.75rem}
 
 /* ── PASSWORD ── */
@@ -351,7 +380,7 @@ tr:hover td{background:#fff5f7}
   .product-name{font-size:.77rem}
   .product-price{font-size:.86rem;margin-bottom:.22rem}
   .product-stock{font-size:.65rem;margin-bottom:.3rem}
-  .product-desc{font-size:.64rem;margin-bottom:.3rem}
+  .product-desc{font-size:.68rem;margin-bottom:.3rem;-webkit-line-clamp:2}
   .product-buttons{flex-direction:column;gap:.3rem}
   .add-btn,.reserve-btn{font-size:.72rem;padding:.36rem}
   .new-badge{font-size:.57rem;padding:2px 5px}
@@ -371,9 +400,18 @@ tr:hover td{background:#fff5f7}
   th,td{padding:.38rem .5rem;font-size:.73rem}
   .receipt{padding:1rem;font-size:.77rem}
   .receipt-title{font-size:1.15rem}
-  .pd-modal-img{height:200px}
-  .pd-name{font-size:1.1rem}
-  .pd-price{font-size:1.1rem}
+  .pd-modal{width:100%}
+  .pd-modal-img{height:220px;border-radius:0}
+  .lightbox{padding:.75rem}
+  .lightbox-close{top:12px;right:14px;width:34px;height:34px;font-size:18px}
+  .lightbox-caption{padding:.6rem .85rem;max-width:92vw}
+  .lightbox-caption .lc-name{font-size:.95rem}
+  .lightbox-caption .lc-desc{font-size:.78rem}
+  .pd-body{padding:1.1rem .9rem 1.2rem}
+  .pd-name{font-size:1.15rem}
+  .pd-price{font-size:1.15rem}
+  .pd-total-val{font-size:1.3rem}
+  .pd-qty-card{padding:.7rem .85rem}
 }
 @media(max-width:400px){
   .products-grid{gap:.38rem}
@@ -584,12 +622,23 @@ tr:hover td{background:#fff5f7}
 
 <!-- ── PRODUCT DETAIL MODAL (customer) ── -->
 <div class="modal-wrap" id="product-detail-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>🌸 Product Details</h3>
-      <button class="close-btn" onclick="closeProductDetailModal()">✕</button>
+  <div class="modal pd-modal">
+    <div class="pd-modal-head">
+      <button class="pd-close-float" onclick="closeProductDetailModal()">✕</button>
+      <div id="product-detail-body"></div>
     </div>
-    <div class="modal-body" id="product-detail-body"></div>
+  </div>
+</div>
+
+<!-- ── IMAGE LIGHTBOX ── -->
+<div class="lightbox" id="img-lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="event.stopPropagation();closeLightbox()">✕</button>
+  <div class="lightbox-content" onclick="event.stopPropagation()">
+    <img id="lightbox-img" src="" alt="" />
+    <div class="lightbox-caption" id="lightbox-caption">
+      <div class="lc-name" id="lightbox-name"></div>
+      <div class="lc-desc" id="lightbox-desc"></div>
+    </div>
   </div>
 </div>
 
@@ -1088,40 +1137,84 @@ function renderCustomerProducts() {
 function openProductDetailModal(productId) {
   const p = state.products.find(x => x.id === productId); if (!p) return;
   state.productDetailQty = 1;
+  state._pdCurrent = p;
   renderProductDetailBody(p);
   document.getElementById('product-detail-modal').classList.add('open');
 }
 function closeProductDetailModal() { document.getElementById('product-detail-modal').classList.remove('open'); }
 
+function openLightbox(src, name, desc) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = name||'';
+  document.getElementById('lightbox-name').textContent = name||'';
+  const descEl = document.getElementById('lightbox-desc');
+  descEl.textContent = desc||'';
+  document.getElementById('lightbox-caption').style.display = (name||desc) ? 'block' : 'none';
+  document.getElementById('img-lightbox').classList.add('open');
+}
+function openLightboxFromEl(el) { openLightbox(el.dataset.img, el.dataset.name, el.dataset.desc); }
+function closeLightbox() { document.getElementById('img-lightbox').classList.remove('open'); }
+
 function renderProductDetailBody(p) {
-  const stockClass = p.status==='limited'?'low':p.status==='soldout'?'out':'';
+  const stockClass = p.status==='limited'?'low':p.status==='soldout'?'out':'ok';
   const stockText = p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out';
+  const isNew = isNewProduct(p);
+  const hasStockLimit = p.stock && p.stock > 0;
   document.getElementById('product-detail-body').innerHTML = `
-    <div class="pd-modal-img">
-      ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}"/>` : '<span style="font-size:4rem">🛍</span>'}
+    <div class="pd-modal-img" ${p.img ? `onclick="openLightboxFromEl(this)" data-img="${esc(p.img)}" data-name="${esc(p.name)}" data-desc="${esc(p.desc||'')}"` : ''}>
+      ${isNew ? '<span class="pd-new-badge">New ✦</span>' : ''}
+      ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}"/><span class="pd-zoom-hint">🔍 Tap to zoom</span>` : '<span style="font-size:4rem">🛍</span>'}
     </div>
-    ${p.category ? `<span class="pd-cat-tag">${esc((p.category||'').trim()||'Others')}</span>` : ''}
-    <div class="pd-name">${esc(p.name)}</div>
-    <div class="pd-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
-    <div class="pd-stock ${stockClass}">${stockText}${p.stock?` · ${p.stock} in stock`:''}</div>
-    ${p.desc ? `<div class="pd-desc">${esc(p.desc)}</div>` : `<div class="pd-desc" style="color:#bbb">No description available.</div>`}
-    ${p.status!=='soldout' ? `
-      <div class="pd-qty-row">
-        <button class="qty-btn" onclick="changeProductDetailQty(-1)">−</button>
-        <span class="pd-qty-val" id="pd-qty-val">${state.productDetailQty}</span>
-        <button class="qty-btn" onclick="changeProductDetailQty(1)">+</button>
+    <div class="pd-body">
+      ${p.category ? `<span class="pd-cat-tag">${esc((p.category||'').trim()||'Others')}</span>` : ''}
+      <div class="pd-name">${esc(p.name)}</div>
+      <div class="pd-price-row">
+        <span class="pd-price">₱${parseFloat(p.price||0).toFixed(2)}</span>
+        <span class="pd-stock ${stockClass}">${stockText}${hasStockLimit?` · ${p.stock} left`:''}</span>
+      </div>
+      ${p.desc ? `<div class="pd-desc">${esc(p.desc)}</div>` : `<div class="pd-desc" style="color:#bbb">No description available.</div>`}
+      <div class="pd-divider"></div>
+      ${p.status!=='soldout' ? `
+      <div class="pd-qty-card">
+        <div>
+          <div class="pd-qty-label">Quantity</div>
+          <div class="pd-qty-row">
+            <button class="qty-btn" onclick="changeProductDetailQty(-1)">−</button>
+            <span class="pd-qty-val" id="pd-qty-val">${state.productDetailQty}</span>
+            <button class="qty-btn" id="pd-qty-plus" onclick="changeProductDetailQty(1)" ${hasStockLimit && state.productDetailQty>=p.stock?'disabled':''}>+</button>
+          </div>
+          ${hasStockLimit ? `<div class="pd-qty-max">Max ${p.stock} available</div>` : ''}
+        </div>
+        <div class="pd-total-block">
+          <div class="pd-total-label">Total</div>
+          <div class="pd-total-val" id="pd-total-val">₱${(parseFloat(p.price||0)*state.productDetailQty).toFixed(2)}</div>
+        </div>
       </div>` : ''}
-    <div class="pd-buttons">
-      <button class="add-btn" ${p.status==='soldout'?'disabled':''} style="flex:1;padding:.6rem" onclick="addToCartFromDetail('${p.id}')">
-        ${p.status==='soldout'?'Sold Out':'+ Add to Cart'}
-      </button>
-      <button class="reserve-btn" style="flex:1;padding:.6rem" onclick="closeProductDetailModal();openReservationModal('${p.id}')">📌 Reserve</button>
+      <div class="pd-buttons">
+        <button class="add-btn" ${p.status==='soldout'?'disabled':''} style="flex:1;padding:.65rem" onclick="addToCartFromDetail('${p.id}')">
+          ${p.status==='soldout'?'Sold Out':'+ Add to Cart'}
+        </button>
+        <button class="reserve-btn" style="flex:1;padding:.65rem" onclick="closeProductDetailModal();openReservationModal('${p.id}')">📌 Reserve</button>
+      </div>
     </div>`;
 }
 
 function changeProductDetailQty(delta) {
-  state.productDetailQty = Math.max(1, state.productDetailQty + delta);
+  const product = state._pdCurrent;
+  const maxQty = (product && product.stock && product.stock > 0) ? product.stock : Infinity;
+  state.productDetailQty = Math.max(1, Math.min(maxQty, state.productDetailQty + delta));
   document.getElementById('pd-qty-val').textContent = state.productDetailQty;
+  const plusBtn = document.getElementById('pd-qty-plus');
+  if (plusBtn) plusBtn.disabled = state.productDetailQty >= maxQty;
+  const price = product ? parseFloat(product.price||0) : 0;
+  const totalEl = document.getElementById('pd-total-val');
+  if (totalEl) {
+    totalEl.textContent = '₱'+(price*state.productDetailQty).toFixed(2);
+    totalEl.classList.remove('bump');
+    void totalEl.offsetWidth;
+    totalEl.classList.add('bump');
+    setTimeout(() => totalEl.classList.remove('bump'), 160);
+  }
 }
 
 function addToCartFromDetail(productId) {
