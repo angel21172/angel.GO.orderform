@@ -72,11 +72,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 /* ── PRODUCT CARD ── */
 .product-card{background:#fff;border-radius:14px;border:1px solid #ffc0d5;overflow:hidden;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column}
 .product-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(232,103,154,.18)}
-.product-img{width:100%;height:148px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden;flex-shrink:0}
+.product-img{width:100%;height:148px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);display:flex;align-items:center;justify-content:center;font-size:3rem;overflow:hidden;flex-shrink:0;cursor:pointer}
 .product-img img{width:100%;height:100%;object-fit:cover}
 .product-info{padding:.8rem;display:flex;flex-direction:column;flex:1}
 .product-cat-tag{font-size:.68rem;background:#ffd6e7;color:#8b1f42;padding:1px 7px;border-radius:8px;display:inline-block;margin-bottom:.3rem;align-self:flex-start}
-.product-name{font-weight:600;font-size:.86rem;color:#3d1a28;margin-bottom:2px;line-height:1.3}
+.product-name{font-weight:600;font-size:.86rem;color:#3d1a28;margin-bottom:2px;line-height:1.3;cursor:pointer}
+.product-name:hover{color:#c2426d}
 .product-price{color:#c2426d;font-weight:700;font-size:.95rem;margin-bottom:.3rem}
 .product-stock{font-size:.72rem;color:#888;margin-bottom:.45rem}
 .product-stock.low{color:#c2426d}
@@ -92,6 +93,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 /* ── NEW BADGE ── */
 .new-badge{position:absolute;top:8px;left:8px;background:#e8679a;color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.04em;text-transform:uppercase;z-index:1}
 .product-img-wrap{position:relative}
+
+/* ── ZOOM HINT ── */
+.zoom-hint{position:absolute;bottom:6px;right:6px;background:rgba(60,20,40,.55);color:#fff;font-size:.68rem;padding:2px 7px;border-radius:8px;z-index:1;display:flex;align-items:center;gap:3px;opacity:0;transition:opacity .15s;pointer-events:none}
+.product-img-wrap:hover .zoom-hint{opacity:1}
 
 /* ── EMPTY / LOADING ── */
 .empty-state{text-align:center;padding:3rem 1rem;color:#c2426d;opacity:.6}
@@ -164,6 +169,21 @@ tr:hover td{background:#fff5f7}
 .modal-head{background:linear-gradient(135deg,#e8679a,#c2426d);color:#fff;padding:1.25rem 1.5rem;border-radius:16px 16px 0 0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1}
 .modal-head h3{font-family:'Playfair Display',serif;font-size:1.15rem}
 .modal-body{padding:1.5rem}
+
+/* ── PRODUCT DETAIL MODAL ── */
+.pd-modal-img{width:100%;height:280px;background:linear-gradient(135deg,#ffd6e7,#ffadd0);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:4rem;overflow:hidden;margin-bottom:1rem}
+.pd-modal-img img{width:100%;height:100%;object-fit:cover}
+.pd-cat-tag{font-size:.72rem;background:#ffd6e7;color:#8b1f42;padding:2px 10px;border-radius:9px;display:inline-block;margin-bottom:.5rem}
+.pd-name{font-family:'Playfair Display',serif;font-size:1.3rem;color:#3d1a28;margin-bottom:.3rem;line-height:1.3}
+.pd-price{color:#c2426d;font-weight:700;font-size:1.3rem;margin-bottom:.4rem}
+.pd-stock{font-size:.82rem;color:#888;margin-bottom:.75rem;font-weight:500}
+.pd-stock.low{color:#c2426d}
+.pd-stock.out{color:#bbb}
+.pd-desc{font-size:.86rem;color:#666;line-height:1.6;margin-bottom:1.1rem;white-space:pre-wrap}
+.pd-qty-row{display:flex;align-items:center;gap:.6rem;margin-bottom:1rem}
+.pd-qty-row .qty-btn{width:30px;height:30px;font-size:16px;background:#ffd6e7}
+.pd-qty-val{font-size:1rem;font-weight:600;min-width:28px;text-align:center}
+.pd-buttons{display:flex;gap:.75rem}
 
 /* ── PASSWORD ── */
 .pw-modal{position:fixed;inset:0;background:rgba(60,20,40,.6);z-index:600;display:none;align-items:center;justify-content:center;padding:1rem}
@@ -351,6 +371,9 @@ tr:hover td{background:#fff5f7}
   th,td{padding:.38rem .5rem;font-size:.73rem}
   .receipt{padding:1rem;font-size:.77rem}
   .receipt-title{font-size:1.15rem}
+  .pd-modal-img{height:200px}
+  .pd-name{font-size:1.1rem}
+  .pd-price{font-size:1.1rem}
 }
 @media(max-width:400px){
   .products-grid{gap:.38rem}
@@ -556,6 +579,17 @@ tr:hover td{background:#fff5f7}
     <div class="pw-error" id="pw-error"></div>
     <button class="btn btn-primary" style="width:100%" onclick="checkPw()">Enter Admin</button>
     <span class="pw-logout" onclick="closePwModal()">Cancel</span>
+  </div>
+</div>
+
+<!-- ── PRODUCT DETAIL MODAL (customer) ── -->
+<div class="modal-wrap" id="product-detail-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>🌸 Product Details</h3>
+      <button class="close-btn" onclick="closeProductDetailModal()">✕</button>
+    </div>
+    <div class="modal-body" id="product-detail-body"></div>
   </div>
 </div>
 
@@ -817,7 +851,8 @@ let state = {
   adminLoggedIn: false, currentMode: 'customer',
   orderFilter: 'all', batchFilter: 'all', currentReceiptOrder: null,
   activeCat: 'all', searchQ: '', catSearchQ: '',
-  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationProductId: null
+  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationProductId: null,
+  productDetailQty: 1
 };
 
 // ════════════════════════════════════════════
@@ -1011,15 +1046,16 @@ function isNewProduct(p) {
 function productCardHtml(p) {
   const isNew = isNewProduct(p);
   return `<div class="product-card">
-    <div class="product-img-wrap">
+    <div class="product-img-wrap" onclick="openProductDetailModal('${p.id}')">
       ${isNew ? '<span class="new-badge">New ✦</span>' : ''}
       <div class="product-img">
         ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>` : '<span style="font-size:2.5rem">🛍</span>'}
       </div>
+      <span class="zoom-hint">🔍 View</span>
     </div>
     <div class="product-info">
       ${p.category ? `<span class="product-cat-tag">${esc((p.category||'').trim()||'Others')}</span>` : ''}
-      <div class="product-name">${esc(p.name)}</div>
+      <div class="product-name" onclick="openProductDetailModal('${p.id}')">${esc(p.name)}</div>
       <div class="product-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
       <div class="product-stock ${p.status==='limited'?'low':p.status==='soldout'?'out':''}">
         ${p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out'}
@@ -1044,6 +1080,58 @@ function renderCustomerProducts() {
   else { const emoji = catEmoji(state.activeCat); titleEl.textContent = emoji ? `${emoji} ${state.activeCat}` : `✿ ${state.activeCat}`; }
   if (!items.length) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="ei">🌸</div><p>No products found.</p></div>'; return; }
   grid.innerHTML = items.map(productCardHtml).join('');
+}
+
+// ════════════════════════════════════════════
+// PRODUCT DETAIL MODAL (customer zoom view)
+// ════════════════════════════════════════════
+function openProductDetailModal(productId) {
+  const p = state.products.find(x => x.id === productId); if (!p) return;
+  state.productDetailQty = 1;
+  renderProductDetailBody(p);
+  document.getElementById('product-detail-modal').classList.add('open');
+}
+function closeProductDetailModal() { document.getElementById('product-detail-modal').classList.remove('open'); }
+
+function renderProductDetailBody(p) {
+  const stockClass = p.status==='limited'?'low':p.status==='soldout'?'out':'';
+  const stockText = p.status==='available'?'✓ Available':p.status==='limited'?'⚡ Limited Stock':'✗ Sold Out';
+  document.getElementById('product-detail-body').innerHTML = `
+    <div class="pd-modal-img">
+      ${p.img ? `<img src="${esc(p.img)}" alt="${esc(p.name)}"/>` : '<span style="font-size:4rem">🛍</span>'}
+    </div>
+    ${p.category ? `<span class="pd-cat-tag">${esc((p.category||'').trim()||'Others')}</span>` : ''}
+    <div class="pd-name">${esc(p.name)}</div>
+    <div class="pd-price">₱${parseFloat(p.price||0).toFixed(2)}</div>
+    <div class="pd-stock ${stockClass}">${stockText}${p.stock?` · ${p.stock} in stock`:''}</div>
+    ${p.desc ? `<div class="pd-desc">${esc(p.desc)}</div>` : `<div class="pd-desc" style="color:#bbb">No description available.</div>`}
+    ${p.status!=='soldout' ? `
+      <div class="pd-qty-row">
+        <button class="qty-btn" onclick="changeProductDetailQty(-1)">−</button>
+        <span class="pd-qty-val" id="pd-qty-val">${state.productDetailQty}</span>
+        <button class="qty-btn" onclick="changeProductDetailQty(1)">+</button>
+      </div>` : ''}
+    <div class="pd-buttons">
+      <button class="add-btn" ${p.status==='soldout'?'disabled':''} style="flex:1;padding:.6rem" onclick="addToCartFromDetail('${p.id}')">
+        ${p.status==='soldout'?'Sold Out':'+ Add to Cart'}
+      </button>
+      <button class="reserve-btn" style="flex:1;padding:.6rem" onclick="closeProductDetailModal();openReservationModal('${p.id}')">📌 Reserve</button>
+    </div>`;
+}
+
+function changeProductDetailQty(delta) {
+  state.productDetailQty = Math.max(1, state.productDetailQty + delta);
+  document.getElementById('pd-qty-val').textContent = state.productDetailQty;
+}
+
+function addToCartFromDetail(productId) {
+  const p = state.products.find(x => x.id === productId); if (!p || p.status==='soldout') return;
+  const qty = state.productDetailQty || 1;
+  const ex = state.cart.find(i => i.productId === productId);
+  if (ex) ex.qty += qty; else state.cart.push({ productId, name: p.name, price: p.price, img: p.img||'', qty });
+  updateCartUI();
+  closeProductDetailModal();
+  openCart();
 }
 
 // ════════════════════════════════════════════
