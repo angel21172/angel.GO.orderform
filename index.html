@@ -10,6 +10,7 @@
 :root{--pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;--pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27}
 body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh;color:#3d1a28}
 
+/* ── NAV ── */
 .topnav{background:linear-gradient(135deg,#e8679a 0%,#c2426d 100%);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(194,66,109,.3)}
 .topnav .brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;letter-spacing:.03em}
 .topnav .brand span{font-style:normal;font-weight:600}
@@ -474,6 +475,9 @@ tr:hover td{background:#fff5f7}
     <h1 style="font-size:1.7rem">📋 Masterlist</h1>
     <p>✦ track item status per batch ✦</p>
   </div>
+  <div style="padding:1rem 1.5rem 0;max-width:900px;margin:0 auto">
+    <div class="admin-tabs" id="masterlist-cust-batch-tabs" style="padding:0;border-bottom:2px solid #ffc0d5;margin-bottom:0"></div>
+  </div>
   <div style="padding:1rem 1.5rem 2rem;max-width:900px;margin:0 auto" id="masterlist-view-content">
     <div class="empty-state"><div class="ei">📋</div><p>Loading masterlist…</p></div>
   </div>
@@ -829,6 +833,12 @@ tr:hover td{background:#fff5f7}
         </div>
         <div class="form-group full"><label>ETA</label><input id="ml-eta" placeholder="To follow" /></div>
         <div class="form-group full">
+          <label>Picture (optional — auto-matches your product photo if left blank)</label>
+          <label class="img-upload-label">📷 Upload Image<input type="file" accept="image/*" id="ml-img-input" onchange="previewMlImg(this)" /></label>
+          <img id="ml-img-prev" class="img-prev" alt="preview" />
+          <input type="hidden" id="ml-img-data" />
+        </div>
+        <div class="form-group full">
           <label>Status</label>
           <select id="ml-status">
             <option value="order_placed">🛒 Order Placed</option>
@@ -985,7 +995,7 @@ let state = {
   activeCat: 'all', searchQ: '', catSearchQ: '',
   reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationProductId: null,
   productDetailQty: 1,
-  masterlist: [], masterlistBatchFilter: 'all'
+  masterlist: [], masterlistBatchFilter: 'all', custMlBatch: null
 };
 
 // ════════════════════════════════════════════
@@ -1765,30 +1775,44 @@ function viewOrder(id) {
 // ════════════════════════════════════════════
 function renderMasterlistView() {
   const wrap = document.getElementById('masterlist-view-content'); if (!wrap) return;
-  if (!state.masterlist.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>'; return; }
+  const tabsEl = document.getElementById('masterlist-cust-batch-tabs');
+  if (!state.masterlist.length) {
+    if (tabsEl) tabsEl.innerHTML = '';
+    wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>';
+    return;
+  }
   const allBatches = getAllBatches();
   const batches = allBatches.filter(b => state.masterlist.some(m => (m.batch||'Batch 1')===b));
-  let html = '';
-  batches.forEach(b => {
-    const items = state.masterlist.filter(m => (m.batch||'Batch 1')===b).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
-    if (!items.length) return;
-    html += `<div style="margin-bottom:1.5rem">
-      <div class="dash-section-title">${esc(b)}</div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Status</th></tr></thead>
-        <tbody>${items.map(m => `
-          <tr>
-            <td style="font-weight:500">${esc(m.itemName)}</td>
-            <td>${m.category ? `<span class="product-cat-tag">${esc(m.category)}</span>` : '—'}</td>
-            <td>${esc(m.eta||'To follow')}</td>
-            <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
-          </tr>`).join('')}
-        </tbody>
-      </table></div>
-    </div>`;
-  });
-  wrap.innerHTML = html || '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>';
+  if (!batches.length) {
+    if (tabsEl) tabsEl.innerHTML = '';
+    wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>';
+    return;
+  }
+  // Default to the most recent batch (last in sorted order) if nothing selected yet, or if the previous selection no longer has items
+  if (!state.custMlBatch || !batches.includes(state.custMlBatch)) state.custMlBatch = batches[batches.length-1];
+
+  if (tabsEl) {
+    tabsEl.innerHTML = batches.map(b => `<div class="admin-tab ${state.custMlBatch===b?'active':''}" onclick="selectCustMlBatch('${esc(b)}')">${esc(b)}</div>`).join('');
+  }
+
+  const items = state.masterlist.filter(m => (m.batch||'Batch 1')===state.custMlBatch).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
+  if (!items.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch yet.</p></div>'; return; }
+  wrap.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Status</th></tr></thead>
+    <tbody>${items.map(m => `
+      <tr>
+        <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
+          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${m.img?`<img src="${m.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+          <span>${esc(m.itemName)}</span>
+        </div></td>
+        <td style="max-width:140px">${m.category ? `<span class="product-cat-tag" style="display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
+        <td>${esc(m.eta||'To follow')}</td>
+        <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
+      </tr>`).join('')}
+    </tbody>
+  </table></div>`;
 }
+function selectCustMlBatch(b) { state.custMlBatch = b; renderMasterlistView(); }
 
 // ════════════════════════════════════════════
 // MASTERLIST — ADMIN (editable)
@@ -1806,8 +1830,11 @@ function filterMlBatch(b, el) {
 
 function mlRowHtml(m) {
   return `<tr>
-    <td style="font-weight:500">${esc(m.itemName)}</td>
-    <td>${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;white-space:nowrap">${esc(m.category)}</span>` : '—'}</td>
+    <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
+      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${m.img?`<img src="${m.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+      <span>${esc(m.itemName)}</span>
+    </div></td>
+    <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
     <td><input value="${esc(m.eta||'To follow')}" style="width:130px;font-size:.8rem;padding:5px 8px" placeholder="To follow" onchange="updateMlEta('${m.id}',this.value)" /></td>
     <td><select onchange="updateMlStatus('${m.id}',this.value)" style="font-size:.77rem;padding:4px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
       ${MASTERLIST_STATUSES.map(s => `<option value="${s.key}" ${m.status===s.key?'selected':''}>${s.emoji} ${s.label}</option>`).join('')}
@@ -1840,12 +1867,33 @@ function renderMasterlistAdmin() {
   wrap.innerHTML = html || '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch.</p></div>';
 }
 
+function previewMlImg(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 400; let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      document.getElementById('ml-img-data').value = dataUrl;
+      const pr = document.getElementById('ml-img-prev'); pr.src = dataUrl; pr.style.display = 'block';
+    }; img.src = e.target.result;
+  }; reader.readAsDataURL(file);
+}
+
 function openMasterlistModal(id) {
   document.getElementById('ml-name').value = '';
   document.getElementById('ml-category').value = '';
   document.getElementById('ml-eta').value = '';
   document.getElementById('ml-status').value = 'order_placed';
   document.getElementById('ml-edit-id').value = '';
+  document.getElementById('ml-img-data').value = '';
+  document.getElementById('ml-img-prev').style.display = 'none';
+  document.getElementById('ml-img-prev').src = '';
+  document.getElementById('ml-img-input').value = '';
   document.getElementById('ml-batch').innerHTML = getBatchOptions(getDefaultBatch());
   document.getElementById('masterlist-modal-title').textContent = 'Add Masterlist Item';
   document.getElementById('save-ml-btn').textContent = 'Add Item';
@@ -1856,6 +1904,7 @@ function openMasterlistModal(id) {
       document.getElementById('ml-category').value = m.category||'';
       document.getElementById('ml-eta').value = m.eta||'';
       document.getElementById('ml-status').value = m.status||'order_placed';
+      if (m.img) { const pr = document.getElementById('ml-img-prev'); pr.src = m.img; pr.style.display = 'block'; document.getElementById('ml-img-data').value = m.img; }
       document.getElementById('ml-batch').innerHTML = getBatchOptions(m.batch||'Batch 1');
       document.getElementById('ml-edit-id').value = id;
       document.getElementById('masterlist-modal-title').textContent = 'Edit Masterlist Item';
@@ -1871,9 +1920,15 @@ async function saveMasterlistItem() {
   if (!itemName) { alert('Please enter the item name.'); return; }
   let batch = document.getElementById('ml-batch').value;
   if (batch === '__new__') { const n = prompt('Enter new batch name:'); if (!n||!n.trim()) return; batch = n.trim(); }
+  let img = document.getElementById('ml-img-data').value;
+  if (!img) {
+    const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === itemName.toLowerCase());
+    if (matchedProduct && matchedProduct.img) img = matchedProduct.img;
+  }
   const data = {
     itemName,
     category: document.getElementById('ml-category').value.trim(),
+    img,
     eta: document.getElementById('ml-eta').value.trim() || 'To follow',
     status: document.getElementById('ml-status').value,
     batch
@@ -1963,7 +2018,8 @@ async function autoAddOrderItemsToMasterlist(items, batch) {
     if (exists) continue;
     const product = state.products.find(p => p.id === item.productId);
     const category = product ? (product.category||'').trim() : '';
-    const data = { itemName: item.name, category, eta: 'To follow', status: 'order_placed', batch };
+    const img = (product && product.img) ? product.img : (item.img||'');
+    const data = { itemName: item.name, category, img, eta: 'To follow', status: 'order_placed', batch };
     const ts = Date.now();
     if (firebaseReady) {
       const id = await fsAdd('masterlist', { ...data, createdAt: ts });
