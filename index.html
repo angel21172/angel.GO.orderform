@@ -10,6 +10,7 @@
 :root{--pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;--pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27}
 body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh;color:#3d1a28}
 
+/* ── NAV ── */
 .topnav{background:linear-gradient(135deg,#e8679a 0%,#c2426d 100%);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(194,66,109,.3)}
 .topnav .brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;letter-spacing:.03em}
 .topnav .brand span{font-style:normal;font-weight:600}
@@ -1814,11 +1815,11 @@ function renderMasterlistView() {
   if (!items.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch yet.</p></div>'; return; }
   wrap.innerHTML = `<div class="table-wrap"><table>
     <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Status</th></tr></thead>
-    <tbody>${items.map(m => { const mImg = getMlDisplayImg(m); return `
+    <tbody>${items.map(m => { const mImg = getMlDisplayImg(m); const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase()); return `
       <tr>
         <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
-          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
-          <span>${esc(m.itemName)}</span>
+          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+          <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
         </div></td>
         <td style="max-width:140px">${m.category ? `<span class="product-cat-tag" style="display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
         <td>${esc(m.eta||'To follow')}</td>
@@ -1845,10 +1846,11 @@ function filterMlBatch(b, el) {
 
 function mlRowHtml(m) {
   const mImg = getMlDisplayImg(m);
+  const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase());
   return `<tr>
     <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
-      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
-      <span>${esc(m.itemName)}</span>
+      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+      <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
     </div></td>
     <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
     <td><input value="${esc(m.eta||'To follow')}" style="width:130px;font-size:.8rem;padding:5px 8px" placeholder="To follow" onchange="updateMlEta('${m.id}',this.value)" /></td>
