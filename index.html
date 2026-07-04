@@ -10,6 +10,7 @@
 :root{--pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;--pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27}
 body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh;color:#3d1a28}
 
+/* ── NAV ── */
 .topnav{background:linear-gradient(135deg,#e8679a 0%,#c2426d 100%);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(194,66,109,.3)}
 .topnav .brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;letter-spacing:.03em}
 .topnav .brand span{font-style:normal;font-weight:600}
@@ -1937,9 +1938,41 @@ async function submitOrder() {
   let savedId = null;
   if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); }
   if (!savedId) { savedId = 'local_'+Date.now(); state.orders.unshift({ id:savedId, ...orderData }); saveLocal(); }
+  await autoAddOrderItemsToMasterlist(items, currentBatch);
   btn.disabled = false; state.cart = []; updateCartUI(); closeOrderModal();
   showReceipt({ id:savedId, ...orderData });
   ['o-name','o-fb','o-contact','o-address','o-notes'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ════════════════════════════════════════════
+// AUTO MASTERLIST FROM ORDERS
+// ════════════════════════════════════════════
+// When an order is placed, automatically add each item's name + category
+// to the Masterlist (if it isn't already there for that batch) so the admin
+// doesn't have to type it in manually. Status defaults to "Order Placed",
+// ETA defaults to "To follow" — the admin can still edit/update these later.
+async function autoAddOrderItemsToMasterlist(items, batch) {
+  const seen = new Set();
+  for (const item of items) {
+    const key = (item.name||'').trim().toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    const exists = state.masterlist.some(m => (m.itemName||'').trim().toLowerCase()===key && (m.batch||'Batch 1')===batch);
+    if (exists) continue;
+    const product = state.products.find(p => p.id === item.productId);
+    const category = product ? (product.category||'').trim() : '';
+    const data = { itemName: item.name, category, eta: 'To follow', status: 'order_placed', batch };
+    const ts = Date.now();
+    if (firebaseReady) {
+      const id = await fsAdd('masterlist', { ...data, createdAt: ts });
+      if (!id) { state.masterlist.push({ id:'local_'+ts+'_'+Math.random().toString(36).slice(2), ...data, createdAt: ts }); saveLocal(); }
+    } else {
+      state.masterlist.push({ id:'local_'+ts+'_'+Math.random().toString(36).slice(2), ...data, createdAt: ts });
+      saveLocal();
+    }
+  }
+  renderMasterlistView();
+  if (state.currentMode === 'admin') renderMasterlistAdmin();
 }
 
 // ════════════════════════════════════════════
