@@ -573,7 +573,10 @@ tr:hover td{background:#fff5f7}
   <div class="admin-panel" id="panel-masterlist">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem">
       <div style="font-weight:600;color:#8b1f42">Manage Masterlist</div>
-      <button class="btn btn-primary btn-sm" onclick="openMasterlistModal()">+ Add Item</button>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+        <button class="btn btn-secondary btn-sm" onclick="syncAllOrdersToMasterlist()">🔄 Sync from Existing Orders</button>
+        <button class="btn btn-primary btn-sm" onclick="openMasterlistModal()">+ Add Item</button>
+      </div>
     </div>
     <div style="font-size:.78rem;color:#c2426d;margin-bottom:.85rem;background:#fff0f5;border-radius:8px;padding:.55rem .85rem;line-height:1.5">
       This list is visible to all customers under the "📋 Masterlist" tab. Only admins can add, edit, or delete entries here.
@@ -1973,6 +1976,22 @@ async function autoAddOrderItemsToMasterlist(items, batch) {
   }
   renderMasterlistView();
   if (state.currentMode === 'admin') renderMasterlistAdmin();
+}
+
+// One-time (or repeatable) backfill: scans ALL existing orders and adds any
+// item name + category to the Masterlist that isn't there yet, per batch.
+// Safe to run multiple times — it skips anything already in the list.
+async function syncAllOrdersToMasterlist() {
+  if (!state.orders.length) { alert('No orders yet to sync.'); return; }
+  if (!confirm('This will scan all existing orders and add any missing items to the Masterlist (name + category only, per batch). Already-listed items are skipped. Continue?')) return;
+  let addedCount = 0;
+  const beforeCount = state.masterlist.length;
+  for (const o of state.orders) {
+    await autoAddOrderItemsToMasterlist(o.items||[], o.batch||'Batch 1');
+  }
+  addedCount = state.masterlist.length - beforeCount;
+  renderMasterlistAdmin(); renderMasterlistView();
+  alert(addedCount > 0 ? `✓ Added ${addedCount} new item(s) to the Masterlist!` : 'Everything was already in the Masterlist — nothing new to add.');
 }
 
 // ════════════════════════════════════════════
