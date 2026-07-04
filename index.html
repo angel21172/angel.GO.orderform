@@ -1068,7 +1068,16 @@ function startListeners() {
     saveLocal();
     renderMasterlistView();
     if (state.currentMode === 'admin') renderMasterlistAdmin();
-  }, err => console.warn(err));
+  }, err => {
+    console.warn('masterlist listener error:', err);
+    // Don't leave the page stuck on "Loading…" — fall back to whatever we have locally
+    renderMasterlistView();
+    if (state.currentMode === 'admin') renderMasterlistAdmin();
+    const wrap = document.getElementById('masterlist-view-content');
+    if (wrap && (!state.masterlist || !state.masterlist.length)) {
+      wrap.innerHTML = '<div class="empty-state"><div class="ei">⚠️</div><p>Couldn\'t load the masterlist right now (permission or connection issue). Please refresh or try again shortly.</p></div>';
+    }
+  });
 
   db.collection('settings').doc('announcement').onSnapshot(snap => {
     if (snap.exists) {
