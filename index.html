@@ -1054,7 +1054,8 @@ function startListeners() {
   db.collection('products').onSnapshot(snap => {
     state.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     saveLocal(); renderCustomerProducts(); renderCatSidebar();
-    if (state.currentMode === 'admin') renderAdminProducts();
+    renderMasterlistView();
+    if (state.currentMode === 'admin') { renderAdminProducts(); renderMasterlistAdmin(); }
   }, err => console.warn(err));
 
   db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snap => {
@@ -1422,12 +1423,14 @@ async function saveProduct() {
     const idx = state.products.findIndex(p => p.id === editId);
     if (idx > -1) state.products[idx] = { id: editId, ...state.products[idx], ...data };
     if (firebaseReady) await fsUpdate('products', editId, data);
-    else { saveLocal(); renderAdminProducts(); renderCustomerProducts(); renderCatSidebar(); }
+    else saveLocal();
   } else {
     const ts = Date.now();
     if (firebaseReady) await fsAdd('products', { ...data, createdAt: ts });
-    else { state.products.unshift({ id:'local_'+ts, ...data, createdAt: ts }); saveLocal(); renderAdminProducts(); renderCustomerProducts(); renderCatSidebar(); }
+    else { state.products.unshift({ id:'local_'+ts, ...data, createdAt: ts }); saveLocal(); }
   }
+  renderAdminProducts(); renderCustomerProducts(); renderCatSidebar();
+  renderMasterlistView(); renderMasterlistAdmin();
   btn.disabled = false; closeProductModal(); showAlert('prod-alert', '✓ Product saved!', 'success');
 }
 
@@ -1435,6 +1438,7 @@ async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
   state.products = state.products.filter(p => p.id !== id);
   saveLocal(); renderAdminProducts(); renderCustomerProducts(); renderCatSidebar();
+  renderMasterlistView(); renderMasterlistAdmin();
   await fsDelete('products', id);
 }
 
@@ -1773,6 +1777,18 @@ function viewOrder(id) {
 // ════════════════════════════════════════════
 // MASTERLIST — CUSTOMER VIEW (read-only)
 // ════════════════════════════════════════════
+// Resolve the picture to show for a masterlist item: prefer the LIVE photo
+// from the matching product in the shop (so editing a product's image keeps
+// the masterlist in sync automatically), falling back to whatever image was
+// stored directly on the masterlist item (e.g. manually uploaded), then none.
+function getMlDisplayImg(m) {
+  const nameKey = (m.itemName||'').trim().toLowerCase();
+  if (nameKey) {
+    const product = state.products.find(p => (p.name||'').trim().toLowerCase() === nameKey);
+    if (product && product.img) return product.img;
+  }
+  return m.img || '';
+}
 function renderMasterlistView() {
   const wrap = document.getElementById('masterlist-view-content'); if (!wrap) return;
   const tabsEl = document.getElementById('masterlist-cust-batch-tabs');
@@ -1799,16 +1815,16 @@ function renderMasterlistView() {
   if (!items.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch yet.</p></div>'; return; }
   wrap.innerHTML = `<div class="table-wrap"><table>
     <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Status</th></tr></thead>
-    <tbody>${items.map(m => `
+    <tbody>${items.map(m => { const mImg = getMlDisplayImg(m); return `
       <tr>
         <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
-          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${m.img?`<img src="${m.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
           <span>${esc(m.itemName)}</span>
         </div></td>
         <td style="max-width:140px">${m.category ? `<span class="product-cat-tag" style="display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
         <td>${esc(m.eta||'To follow')}</td>
         <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
-      </tr>`).join('')}
+      </tr>`; }).join('')}
     </tbody>
   </table></div>`;
 }
@@ -1829,9 +1845,10 @@ function filterMlBatch(b, el) {
 }
 
 function mlRowHtml(m) {
+  const mImg = getMlDisplayImg(m);
   return `<tr>
     <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
-      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${m.img?`<img src="${m.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
       <span>${esc(m.itemName)}</span>
     </div></td>
     <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
