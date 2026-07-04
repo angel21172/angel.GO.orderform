@@ -247,6 +247,8 @@ tr:hover td{background:#fff5f7}
 .sp-pending{background:#fff0d6;color:#b87a00}
 .sp-confirmed{background:#d6f5e5;color:#1a7a4a}
 .sp-order_placed{background:#e0f0ff;color:#1a5fa8}
+.sp-not_shipped{background:#f0e0d6;color:#8b5a2b}
+.sp-shipped_cn{background:#e0d6f5;color:#5a3a8b}
 .sp-cn_warehouse{background:#fff0cc;color:#996600}
 .sp-in_transit{background:#ffe8d6;color:#b84a00}
 .sp-ph_arrived{background:#e8d6ff;color:#5a1ab8}
@@ -425,8 +427,9 @@ tr:hover td{background:#fff5f7}
       <span id="sync-label">Connecting…</span>
     </div>
     <div class="mode-btns">
-      <button class="mode-btn active" onclick="switchMode('customer')">🛍 Shop</button>
-      <button class="mode-btn" id="admin-mode-btn" onclick="onAdminClick()">⚙ Admin</button>
+      <button class="mode-btn active" data-mode="customer" onclick="switchMode('customer')">🛍 Shop</button>
+      <button class="mode-btn" data-mode="masterlist" onclick="switchMode('masterlist')">📋 Masterlist</button>
+      <button class="mode-btn" id="admin-mode-btn" data-mode="admin" onclick="onAdminClick()">⚙ Admin</button>
     </div>
   </div>
 </nav>
@@ -466,6 +469,17 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
+<!-- ══════ MASTERLIST PAGE (public, read-only) ══════ -->
+<div class="page" id="masterlist-page">
+  <div class="hero" style="padding:1.5rem 1.5rem 1.1rem">
+    <h1 style="font-size:1.7rem">📋 Masterlist</h1>
+    <p>✦ track item status per batch ✦</p>
+  </div>
+  <div style="padding:1rem 1.5rem 2rem;max-width:900px;margin:0 auto" id="masterlist-view-content">
+    <div class="empty-state"><div class="ei">📋</div><p>Loading masterlist…</p></div>
+  </div>
+</div>
+
 <!-- ══════ ADMIN PAGE ══════ -->
 <div class="page" id="admin-page">
   <div class="admin-header">
@@ -479,6 +493,7 @@ tr:hover td{background:#fff5f7}
     <div class="admin-tab" onclick="adminTab('products')">Products</div>
     <div class="admin-tab" onclick="adminTab('reservations')">📌 Reservations</div>
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
+    <div class="admin-tab" onclick="adminTab('masterlist')">📋 Masterlist</div>
     <div class="admin-tab" onclick="adminTab('arrival')">📬 Arrival Receipt</div>
     <div class="admin-tab" onclick="adminTab('announcements')">Announcements</div>
   </div>
@@ -552,6 +567,19 @@ tr:hover td{background:#fff5f7}
         <tbody id="admin-orders-tbody"><tr><td colspan="10" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
       </table>
     </div>
+  </div>
+
+  <!-- Masterlist (admin edit) -->
+  <div class="admin-panel" id="panel-masterlist">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem;flex-wrap:wrap;gap:.5rem">
+      <div style="font-weight:600;color:#8b1f42">Manage Masterlist</div>
+      <button class="btn btn-primary btn-sm" onclick="openMasterlistModal()">+ Add Item</button>
+    </div>
+    <div style="font-size:.78rem;color:#c2426d;margin-bottom:.85rem;background:#fff0f5;border-radius:8px;padding:.55rem .85rem;line-height:1.5">
+      This list is visible to all customers under the "📋 Masterlist" tab. Only admins can add, edit, or delete entries here.
+    </div>
+    <div class="filter-row" id="masterlist-batch-filter-row"></div>
+    <div id="masterlist-admin-content"></div>
   </div>
 
   <!-- Arrival Receipt -->
@@ -779,6 +807,46 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
+<!-- ── MASTERLIST MODAL (admin) ── -->
+<div class="modal-wrap" id="masterlist-modal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="masterlist-modal-title">Add Masterlist Item</h3>
+      <button class="close-btn" onclick="closeMasterlistModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Item Name *</label><input id="ml-name" placeholder="e.g. Sanrio Tumbler" /></div>
+        <div class="form-group">
+          <label>Category</label>
+          <input id="ml-category" placeholder="e.g. Plushies" list="cat-suggestions" />
+        </div>
+        <div class="form-group">
+          <label>Batch</label>
+          <select id="ml-batch" onchange="handleMlBatchSelectChange(this)"></select>
+        </div>
+        <div class="form-group full"><label>ETA</label><input id="ml-eta" placeholder="To follow" /></div>
+        <div class="form-group full">
+          <label>Status</label>
+          <select id="ml-status">
+            <option value="order_placed">🛒 Order Placed</option>
+            <option value="not_shipped">📋 Not Yet Shipped</option>
+            <option value="shipped_cn">📤 Shipped by CN Seller</option>
+            <option value="cn_warehouse">🏭 Arrived at CN Warehouse</option>
+            <option value="in_transit">✈️ In Transit to PH</option>
+            <option value="ph_arrived">📦 Arrived at PH Address</option>
+          </select>
+        </div>
+      </div>
+      <input type="hidden" id="ml-edit-id" />
+      <div style="margin-top:1rem;display:flex;gap:.75rem">
+        <button class="btn btn-secondary" onclick="closeMasterlistModal()" style="flex:1">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMasterlistItem()" style="flex:1" id="save-ml-btn">Add Item</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── ARRIVAL MODALS ── -->
 <div class="modal-wrap" id="arrival-modal">
   <div class="modal">
@@ -894,6 +962,16 @@ const ADMIN_PASSWORD = "angelshop2025";
 const CONFIG_FILLED = firebaseConfig.apiKey !== "PASTE_YOUR_apiKey_HERE";
 let db = null, firebaseReady = false;
 
+const MASTERLIST_STATUSES = [
+  {key:'order_placed',label:'Order Placed',emoji:'🛒'},
+  {key:'not_shipped',label:'Not Yet Shipped',emoji:'📋'},
+  {key:'shipped_cn',label:'Shipped by CN Seller',emoji:'📤'},
+  {key:'cn_warehouse',label:'Arrived at CN Warehouse',emoji:'🏭'},
+  {key:'in_transit',label:'In Transit to PH',emoji:'✈️'},
+  {key:'ph_arrived',label:'Arrived at PH Address',emoji:'📦'},
+];
+function mlStatusLabel(key) { const f = MASTERLIST_STATUSES.find(x => x.key===key); return f ? f.emoji+' '+f.label : (key||'—'); }
+
 // ════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════
@@ -904,7 +982,8 @@ let state = {
   orderFilter: 'all', batchFilter: 'all', currentReceiptOrder: null,
   activeCat: 'all', searchQ: '', catSearchQ: '',
   reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationProductId: null,
-  productDetailQty: 1
+  productDetailQty: 1,
+  masterlist: [], masterlistBatchFilter: 'all'
 };
 
 // ════════════════════════════════════════════
@@ -921,6 +1000,7 @@ function loadLocal() {
       state.goCounter = d.goCounter||1001;
       state.reservations = d.reservations||[];
       state.resCounter = d.resCounter||5001;
+      state.masterlist = d.masterlist||[];
     }
   } catch(e) {}
 }
@@ -929,7 +1009,8 @@ function saveLocal() {
     localStorage.setItem('angelshop_v3', JSON.stringify({
       products: state.products, orders: state.orders,
       announcement: state.announcement, goCounter: state.goCounter,
-      reservations: state.reservations, resCounter: state.resCounter
+      reservations: state.reservations, resCounter: state.resCounter,
+      masterlist: state.masterlist
     }));
   } catch(e) {}
 }
@@ -982,6 +1063,13 @@ function startListeners() {
     if (state.currentMode === 'admin') renderReservations();
   }, () => {});
 
+  db.collection('masterlist').onSnapshot(snap => {
+    state.masterlist = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    saveLocal();
+    renderMasterlistView();
+    if (state.currentMode === 'admin') renderMasterlistAdmin();
+  }, err => console.warn(err));
+
   db.collection('settings').doc('announcement').onSnapshot(snap => {
     if (snap.exists) {
       state.announcement = snap.data().text||'';
@@ -996,7 +1084,7 @@ function startListeners() {
     }
   });
 }
-function fallbackToLocal() { loadLocal(); renderCustomerProducts(); renderCatSidebar(); updateAnnounceDisplay(); }
+function fallbackToLocal() { loadLocal(); renderCustomerProducts(); renderCatSidebar(); updateAnnounceDisplay(); renderMasterlistView(); }
 async function fsSet(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).set(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
 async function fsAdd(c,d){if(!firebaseReady)return null;setSyncStatus('syncing');try{const r=await db.collection(c).add(d);setSyncStatus('online');return r.id;}catch(e){console.warn(e);setSyncStatus('offline');return null;}}
 async function fsUpdate(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).update(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
@@ -1007,12 +1095,14 @@ async function fsDelete(c,id){if(!firebaseReady)return;setSyncStatus('syncing');
 // ════════════════════════════════════════════
 function switchMode(mode) {
   state.currentMode = mode;
-  document.querySelectorAll('.mode-btn').forEach((b,i) => b.classList.toggle('active', (i===0&&mode==='customer')||(i===1&&mode==='admin')));
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode===mode));
   document.getElementById('customer-page').classList.toggle('active', mode==='customer');
+  document.getElementById('masterlist-page').classList.toggle('active', mode==='masterlist');
   document.getElementById('admin-page').classList.toggle('active', mode==='admin');
   document.getElementById('cart-fab').style.display = mode==='customer' ? 'flex' : 'none';
   if (mode==='customer') { renderCustomerProducts(); renderCatSidebar(); }
-  if (mode==='admin') { renderDashboard(); renderAdminProducts(); renderAdminOrders(); renderReservations(); document.getElementById('announce-input').value = state.announcement; }
+  if (mode==='masterlist') { renderMasterlistView(); }
+  if (mode==='admin') { renderDashboard(); renderAdminProducts(); renderAdminOrders(); renderReservations(); renderMasterlistAdmin(); document.getElementById('announce-input').value = state.announcement; }
 }
 function onAdminClick() {
   if (state.adminLoggedIn) { switchMode('admin'); return; }
@@ -1530,6 +1620,7 @@ function batchNumFromName(name) { const m = String(name||'').match(/(\d+)/); ret
 function getAllBatches() {
   const set = new Set(['Batch 1']);
   state.orders.forEach(o => set.add(o.batch || 'Batch 1'));
+  state.masterlist.forEach(m => set.add(m.batch || 'Batch 1'));
   return [...set].sort((a,b) => { const na=batchNumFromName(a),nb=batchNumFromName(b); if(na!==nb)return na-nb; return a.localeCompare(b); });
 }
 function getDefaultBatch() { const b = getAllBatches(); return b[b.length-1] || 'Batch 1'; }
@@ -1561,6 +1652,20 @@ function addNewBatch() {
   state.batchFilter = val;
   renderBatchFilterChips();
   renderAdminOrders();
+}
+function handleMlBatchSelectChange(sel) {
+  if (sel.value === '__new__') {
+    const name = prompt('Enter new batch name (e.g. Batch 4):');
+    if (name && name.trim()) {
+      const val = name.trim();
+      const opt = document.createElement('option');
+      opt.value = val; opt.textContent = val;
+      sel.insertBefore(opt, sel.lastElementChild);
+      sel.value = val;
+    } else {
+      sel.value = getDefaultBatch();
+    }
+  }
 }
 
 // ════════════════════════════════════════════
@@ -1642,6 +1747,160 @@ function viewOrder(id) {
       </div>
     </div>`;
   document.getElementById('order-detail-modal').classList.add('open');
+}
+
+// ════════════════════════════════════════════
+// MASTERLIST — CUSTOMER VIEW (read-only)
+// ════════════════════════════════════════════
+function renderMasterlistView() {
+  const wrap = document.getElementById('masterlist-view-content'); if (!wrap) return;
+  if (!state.masterlist.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>'; return; }
+  const allBatches = getAllBatches();
+  const batches = allBatches.filter(b => state.masterlist.some(m => (m.batch||'Batch 1')===b));
+  let html = '';
+  batches.forEach(b => {
+    const items = state.masterlist.filter(m => (m.batch||'Batch 1')===b).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
+    if (!items.length) return;
+    html += `<div style="margin-bottom:1.5rem">
+      <div class="dash-section-title">${esc(b)}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Status</th></tr></thead>
+        <tbody>${items.map(m => `
+          <tr>
+            <td style="font-weight:500">${esc(m.itemName)}</td>
+            <td>${m.category ? `<span class="product-cat-tag">${esc(m.category)}</span>` : '—'}</td>
+            <td>${esc(m.eta||'To follow')}</td>
+            <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  });
+  wrap.innerHTML = html || '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Check back soon!</p></div>';
+}
+
+// ════════════════════════════════════════════
+// MASTERLIST — ADMIN (editable)
+// ════════════════════════════════════════════
+function renderMlBatchFilterChips() {
+  const row = document.getElementById('masterlist-batch-filter-row'); if (!row) return;
+  const batches = getAllBatches();
+  row.innerHTML = `<div class="chip ${state.masterlistBatchFilter==='all'?'active':''}" onclick="filterMlBatch('all',this)">All Batches</div>` + batches.map(b => `<div class="chip ${state.masterlistBatchFilter===b?'active':''}" onclick="filterMlBatch('${esc(b)}',this)">${esc(b)}</div>`).join('');
+}
+function filterMlBatch(b, el) {
+  state.masterlistBatchFilter = b;
+  document.querySelectorAll('#masterlist-batch-filter-row .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active'); renderMasterlistAdmin();
+}
+
+function mlRowHtml(m) {
+  return `<tr>
+    <td style="font-weight:500">${esc(m.itemName)}</td>
+    <td>${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;white-space:nowrap">${esc(m.category)}</span>` : '—'}</td>
+    <td><input value="${esc(m.eta||'To follow')}" style="width:130px;font-size:.8rem;padding:5px 8px" placeholder="To follow" onchange="updateMlEta('${m.id}',this.value)" /></td>
+    <td><select onchange="updateMlStatus('${m.id}',this.value)" style="font-size:.77rem;padding:4px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
+      ${MASTERLIST_STATUSES.map(s => `<option value="${s.key}" ${m.status===s.key?'selected':''}>${s.emoji} ${s.label}</option>`).join('')}
+    </select></td>
+    <td><div class="action-row">
+      <button class="btn btn-secondary btn-sm" onclick="openMasterlistModal('${m.id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteMasterlistItem('${m.id}')">Del</button>
+    </div></td>
+  </tr>`;
+}
+
+function renderMasterlistAdmin() {
+  renderMlBatchFilterChips();
+  const wrap = document.getElementById('masterlist-admin-content'); if (!wrap) return;
+  if (!state.masterlist.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No masterlist items yet. Click "+ Add Item" to start.</p></div>'; return; }
+  let batches = getAllBatches();
+  if (state.masterlistBatchFilter !== 'all') batches = batches.filter(b => b===state.masterlistBatchFilter);
+  let html = '';
+  batches.forEach(b => {
+    const items = state.masterlist.filter(m => (m.batch||'Batch 1')===b).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
+    if (!items.length) return;
+    html += `<div style="margin-bottom:1.5rem">
+      <div class="dash-section-title">${esc(b)}</div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody>${items.map(mlRowHtml).join('')}</tbody>
+      </table></div>
+    </div>`;
+  });
+  wrap.innerHTML = html || '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch.</p></div>';
+}
+
+function openMasterlistModal(id) {
+  document.getElementById('ml-name').value = '';
+  document.getElementById('ml-category').value = '';
+  document.getElementById('ml-eta').value = '';
+  document.getElementById('ml-status').value = 'order_placed';
+  document.getElementById('ml-edit-id').value = '';
+  document.getElementById('ml-batch').innerHTML = getBatchOptions(getDefaultBatch());
+  document.getElementById('masterlist-modal-title').textContent = 'Add Masterlist Item';
+  document.getElementById('save-ml-btn').textContent = 'Add Item';
+  if (id) {
+    const m = state.masterlist.find(x => x.id===id);
+    if (m) {
+      document.getElementById('ml-name').value = m.itemName||'';
+      document.getElementById('ml-category').value = m.category||'';
+      document.getElementById('ml-eta').value = m.eta||'';
+      document.getElementById('ml-status').value = m.status||'order_placed';
+      document.getElementById('ml-batch').innerHTML = getBatchOptions(m.batch||'Batch 1');
+      document.getElementById('ml-edit-id').value = id;
+      document.getElementById('masterlist-modal-title').textContent = 'Edit Masterlist Item';
+      document.getElementById('save-ml-btn').textContent = 'Save Changes';
+    }
+  }
+  document.getElementById('masterlist-modal').classList.add('open');
+}
+function closeMasterlistModal() { document.getElementById('masterlist-modal').classList.remove('open'); }
+
+async function saveMasterlistItem() {
+  const itemName = document.getElementById('ml-name').value.trim();
+  if (!itemName) { alert('Please enter the item name.'); return; }
+  let batch = document.getElementById('ml-batch').value;
+  if (batch === '__new__') { const n = prompt('Enter new batch name:'); if (!n||!n.trim()) return; batch = n.trim(); }
+  const data = {
+    itemName,
+    category: document.getElementById('ml-category').value.trim(),
+    eta: document.getElementById('ml-eta').value.trim() || 'To follow',
+    status: document.getElementById('ml-status').value,
+    batch
+  };
+  const btn = document.getElementById('save-ml-btn'); btn.disabled = true; btn.textContent = 'Saving…';
+  const editId = document.getElementById('ml-edit-id').value;
+  if (editId) {
+    const idx = state.masterlist.findIndex(x => x.id===editId);
+    if (idx > -1) state.masterlist[idx] = { ...state.masterlist[idx], ...data };
+    if (firebaseReady) await fsUpdate('masterlist', editId, data);
+    else saveLocal();
+  } else {
+    const ts = Date.now();
+    if (firebaseReady) await fsAdd('masterlist', { ...data, createdAt: ts });
+    else { state.masterlist.push({ id:'local_'+ts, ...data, createdAt: ts }); saveLocal(); }
+  }
+  btn.disabled = false; closeMasterlistModal();
+  renderMasterlistAdmin(); renderMasterlistView();
+}
+
+async function updateMlEta(id, val) {
+  const m = state.masterlist.find(x => x.id===id); if (!m) return;
+  m.eta = val.trim() || 'To follow'; saveLocal();
+  if (firebaseReady) await fsUpdate('masterlist', id, { eta: m.eta });
+  renderMasterlistView();
+}
+async function updateMlStatus(id, val) {
+  const m = state.masterlist.find(x => x.id===id); if (!m) return;
+  m.status = val; saveLocal();
+  if (firebaseReady) await fsUpdate('masterlist', id, { status: val });
+  renderMasterlistView();
+}
+
+async function deleteMasterlistItem(id) {
+  if (!confirm('Delete this masterlist item?')) return;
+  state.masterlist = state.masterlist.filter(m => m.id!==id);
+  saveLocal(); renderMasterlistAdmin(); renderMasterlistView();
+  if (firebaseReady) await fsDelete('masterlist', id);
 }
 
 // ════════════════════════════════════════════
@@ -1886,7 +2145,7 @@ async function saveArrivalReceiptImage() {
 // ADMIN TABS
 // ════════════════════════════════════════════
 function adminTab(tab) {
-  const tabs = ['dashboard','products','reservations','orders','arrival','announcements'];
+  const tabs = ['dashboard','products','reservations','orders','masterlist','arrival','announcements'];
   document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
@@ -1894,6 +2153,7 @@ function adminTab(tab) {
   if (tab==='products') renderAdminProducts();
   if (tab==='reservations') renderReservations();
   if (tab==='orders') renderAdminOrders();
+  if (tab==='masterlist') renderMasterlistAdmin();
   if (tab==='arrival') renderArrivalPanel();
   if (tab==='announcements') document.getElementById('announce-input').value = state.announcement;
 }
@@ -2001,7 +2261,7 @@ function showAlert(id, msg, type) { const el=document.getElementById(id); el.cla
 // ════════════════════════════════════════════
 // BOOT
 // ════════════════════════════════════════════
-loadLocal(); updateAnnounceDisplay(); renderCustomerProducts(); renderCatSidebar(); updateCartUI();
+loadLocal(); updateAnnounceDisplay(); renderCustomerProducts(); renderCatSidebar(); updateCartUI(); renderMasterlistView();
 
 function loadScript(src, cb) {
   const s = document.createElement('script'); s.src=src;
