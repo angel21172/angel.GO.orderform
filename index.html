@@ -19,6 +19,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .mode-btn.active{background:#fff;color:#c2426d;font-weight:600}
 .mode-btn:hover:not(.active){background:rgba(255,255,255,.35)}
 
+/* ── PAGES ── */
 .page{display:none;min-height:calc(100vh - 56px)}
 .page.active{display:block}
 
@@ -831,6 +832,7 @@ tr:hover td{background:#fff5f7}
           <select id="ml-batch" onchange="handleMlBatchSelectChange(this)"></select>
         </div>
         <div class="form-group full"><label>ETA</label><input id="ml-eta" placeholder="To follow" /></div>
+        <div class="form-group full"><label>Estimated Shipment Date</label><input type="date" id="ml-shipdate" /></div>
         <div class="form-group full">
           <label>Picture (optional — auto-matches your product photo if left blank)</label>
           <label class="img-upload-label">📷 Upload Image<input type="file" accept="image/*" id="ml-img-input" onchange="previewMlImg(this)" /></label>
@@ -982,6 +984,12 @@ const MASTERLIST_STATUSES = [
   {key:'ph_arrived',label:'Arrived at PH Address',emoji:'📦'},
 ];
 function mlStatusLabel(key) { const f = MASTERLIST_STATUSES.find(x => x.key===key); return f ? f.emoji+' '+f.label : (key||'—'); }
+function formatMlShipDate(dateStr) {
+  if (!dateStr) return 'To follow';
+  const d = new Date(dateStr + 'T00:00:00');
+  if (isNaN(d.getTime())) return 'To follow';
+  return d.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
+}
 
 // ════════════════════════════════════════════
 // STATE
@@ -1813,7 +1821,7 @@ function renderMasterlistView() {
   const items = state.masterlist.filter(m => (m.batch||'Batch 1')===state.custMlBatch).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
   if (!items.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch yet.</p></div>'; return; }
   wrap.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Status</th></tr></thead>
+    <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th></tr></thead>
     <tbody>${items.map(m => { const mImg = getMlDisplayImg(m); const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase()); return `
       <tr>
         <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
@@ -1822,6 +1830,7 @@ function renderMasterlistView() {
         </div></td>
         <td style="max-width:140px">${m.category ? `<span class="product-cat-tag" style="display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
         <td>${esc(m.eta||'To follow')}</td>
+        <td>${formatMlShipDate(m.shipDate)}</td>
         <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
       </tr>`; }).join('')}
     </tbody>
@@ -1853,6 +1862,7 @@ function mlRowHtml(m) {
     </div></td>
     <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
     <td><input value="${esc(m.eta||'To follow')}" style="width:130px;font-size:.8rem;padding:5px 8px" placeholder="To follow" onchange="updateMlEta('${m.id}',this.value)" /></td>
+    <td><input type="date" value="${esc(m.shipDate||'')}" style="width:140px;font-size:.8rem;padding:5px 8px" onchange="updateMlShipDate('${m.id}',this.value)" /></td>
     <td><select onchange="updateMlStatus('${m.id}',this.value)" style="font-size:.77rem;padding:4px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
       ${MASTERLIST_STATUSES.map(s => `<option value="${s.key}" ${m.status===s.key?'selected':''}>${s.emoji} ${s.label}</option>`).join('')}
     </select></td>
@@ -1876,7 +1886,7 @@ function renderMasterlistAdmin() {
     html += `<div style="margin-bottom:1.5rem">
       <div class="dash-section-title">${esc(b)}</div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>${items.map(mlRowHtml).join('')}</tbody>
       </table></div>
     </div>`;
@@ -1905,6 +1915,7 @@ function openMasterlistModal(id) {
   document.getElementById('ml-name').value = '';
   document.getElementById('ml-category').value = '';
   document.getElementById('ml-eta').value = '';
+  document.getElementById('ml-shipdate').value = '';
   document.getElementById('ml-status').value = 'order_placed';
   document.getElementById('ml-edit-id').value = '';
   document.getElementById('ml-img-data').value = '';
@@ -1920,6 +1931,7 @@ function openMasterlistModal(id) {
       document.getElementById('ml-name').value = m.itemName||'';
       document.getElementById('ml-category').value = m.category||'';
       document.getElementById('ml-eta').value = m.eta||'';
+      document.getElementById('ml-shipdate').value = m.shipDate||'';
       document.getElementById('ml-status').value = m.status||'order_placed';
       if (m.img) { const pr = document.getElementById('ml-img-prev'); pr.src = m.img; pr.style.display = 'block'; document.getElementById('ml-img-data').value = m.img; }
       document.getElementById('ml-batch').innerHTML = getBatchOptions(m.batch||'Batch 1');
@@ -1947,6 +1959,7 @@ async function saveMasterlistItem() {
     category: document.getElementById('ml-category').value.trim(),
     img,
     eta: document.getElementById('ml-eta').value.trim() || 'To follow',
+    shipDate: document.getElementById('ml-shipdate').value || '',
     status: document.getElementById('ml-status').value,
     batch
   };
@@ -1970,6 +1983,12 @@ async function updateMlEta(id, val) {
   const m = state.masterlist.find(x => x.id===id); if (!m) return;
   m.eta = val.trim() || 'To follow'; saveLocal();
   if (firebaseReady) await fsUpdate('masterlist', id, { eta: m.eta });
+  renderMasterlistView();
+}
+async function updateMlShipDate(id, val) {
+  const m = state.masterlist.find(x => x.id===id); if (!m) return;
+  m.shipDate = val || ''; saveLocal();
+  if (firebaseReady) await fsUpdate('masterlist', id, { shipDate: m.shipDate });
   renderMasterlistView();
 }
 async function updateMlStatus(id, val) {
@@ -2036,7 +2055,7 @@ async function autoAddOrderItemsToMasterlist(items, batch) {
     const product = state.products.find(p => p.id === item.productId);
     const category = product ? (product.category||'').trim() : '';
     const img = (product && product.img) ? product.img : (item.img||'');
-    const data = { itemName: item.name, category, img, eta: 'To follow', status: 'order_placed', batch };
+    const data = { itemName: item.name, category, img, eta: 'To follow', shipDate: '', status: 'order_placed', batch };
     const ts = Date.now();
     if (firebaseReady) {
       const id = await fsAdd('masterlist', { ...data, createdAt: ts });
