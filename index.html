@@ -10,6 +10,7 @@
 :root{--pink-50:#fff0f5;--pink-100:#ffd6e7;--pink-200:#ffadd0;--pink-400:#e8679a;--pink-600:#c2426d;--pink-800:#8b1f42;--pink-900:#5c0e27}
 body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh;color:#3d1a28}
 
+/* ── NAV ── */
 .topnav{background:linear-gradient(135deg,#e8679a 0%,#c2426d 100%);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(194,66,109,.3)}
 .topnav .brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#fff;font-style:italic;letter-spacing:.03em}
 .topnav .brand span{font-style:normal;font-weight:600}
@@ -300,6 +301,21 @@ tr:hover td{background:#fff5f7}
 .notes-box ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem}
 .notes-box li{list-style:none;padding-left:.2rem;position:relative}
 .notes-box li::before{content:'•';color:#e8679a;position:absolute;left:-.9rem;font-weight:700}
+
+/* ── MASTERLIST CARD (customer view) ── */
+.ml-card{background:#fff;border:1.5px solid #ffc0d5;border-radius:14px;padding:.9rem 1rem;margin-bottom:.75rem;width:100%}
+.ml-card-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem}
+.ml-card-thumb{width:44px;height:44px;border-radius:9px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ml-card-thumb img{width:100%;height:100%;object-fit:cover}
+.ml-card-name{font-weight:600;font-size:.98rem;color:#3d1a28;line-height:1.3}
+.ml-card-meta{display:grid;grid-template-columns:1fr 1fr;gap:.6rem .8rem}
+.ml-meta-label{font-size:.66rem;color:#c2426d;text-transform:uppercase;letter-spacing:.04em;font-weight:600;display:block;margin-bottom:2px}
+.ml-meta-val{font-size:.85rem;color:#3d1a28;line-height:1.35}
+.ml-card-status{margin-top:.75rem;padding-top:.7rem;border-top:1px solid #ffe0e8;display:flex;justify-content:flex-end}
+@media(max-width:480px){
+  .ml-card-meta{grid-template-columns:1fr 1fr}
+  .ml-card-name{font-size:.92rem}
+}
 
 /* ── BATCH TAG ── */
 .batch-tag{font-size:.7rem;background:#ffd6e7;color:#8b1f42;padding:1px 8px;border-radius:9px;font-weight:600;white-space:nowrap;display:inline-block}
@@ -831,7 +847,14 @@ tr:hover td{background:#fff5f7}
           <select id="ml-batch" onchange="handleMlBatchSelectChange(this)"></select>
         </div>
         <div class="form-group full"><label>ETA</label><input id="ml-eta" placeholder="To follow" /></div>
-        <div class="form-group full"><label>Estimated Shipment Date</label><input type="date" id="ml-shipdate" /></div>
+        <div class="form-group full">
+          <label>Estimated Shipment Date</label>
+          <input type="date" id="ml-shipdate" />
+          <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.82rem;color:#8b1f42;text-transform:none;font-weight:400;cursor:pointer">
+            <input type="checkbox" id="ml-already-shipped" onchange="toggleMlShipDateInput(this)" style="width:auto;padding:0" />
+            ✅ Already shipped (no date needed)
+          </label>
+        </div>
         <div class="form-group full">
           <label>Picture (optional — auto-matches your product photo if left blank)</label>
           <label class="img-upload-label">📷 Upload Image<input type="file" accept="image/*" id="ml-img-input" onchange="previewMlImg(this)" /></label>
@@ -984,10 +1007,15 @@ const MASTERLIST_STATUSES = [
 ];
 function mlStatusLabel(key) { const f = MASTERLIST_STATUSES.find(x => x.key===key); return f ? f.emoji+' '+f.label : (key||'—'); }
 function formatMlShipDate(dateStr) {
+  if (dateStr === 'shipped') return '✅ Already Shipped';
   if (!dateStr) return 'To follow';
   const d = new Date(dateStr + 'T00:00:00');
   if (isNaN(d.getTime())) return 'To follow';
   return d.toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
+}
+function formatMlDateAdded(ts) {
+  if (!ts) return '—';
+  return new Date(ts).toLocaleDateString('en-PH', { year:'numeric', month:'short', day:'numeric' });
 }
 
 // ════════════════════════════════════════════
@@ -1819,20 +1847,23 @@ function renderMasterlistView() {
 
   const items = state.masterlist.filter(m => (m.batch||'Batch 1')===state.custMlBatch).sort((a,c) => (a.createdAt||0) - (c.createdAt||0));
   if (!items.length) { wrap.innerHTML = '<div class="empty-state"><div class="ei">📋</div><p>No items in this batch yet.</p></div>'; return; }
-  wrap.innerHTML = `<div class="table-wrap"><table>
-    <thead><tr><th>Item Name</th><th style="width:140px">Category</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th></tr></thead>
-    <tbody>${items.map(m => { const mImg = getMlDisplayImg(m); const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase()); return `
-      <tr>
-        <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
+  wrap.innerHTML = `<div class="table-wrap"><table style="min-width:640px">
+    <thead><tr><th>Item Name</th><th>Category</th><th>Date Added</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th></tr></thead>
+    <tbody>${items.map(m => {
+      const mImg = getMlDisplayImg(m);
+      const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase());
+      return `<tr>
+        <td style="font-weight:500;white-space:nowrap"><div style="display:flex;align-items:center;gap:.5rem">
           <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
           <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
         </div></td>
-        <td style="max-width:140px">${m.category ? `<span class="product-cat-tag" style="display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
-        <td>${esc(m.eta||'To follow')}</td>
-        <td>${formatMlShipDate(m.shipDate)}</td>
-        <td><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
-      </tr>`; }).join('')}
-    </tbody>
+        <td style="white-space:nowrap">${m.category ? `<span class="product-cat-tag" style="white-space:nowrap">${esc(m.category)}</span>` : '—'}</td>
+        <td style="white-space:nowrap;font-size:.8rem;color:#888">${formatMlDateAdded(m.createdAt)}</td>
+        <td style="white-space:nowrap">${esc(m.eta||'To follow')}</td>
+        <td style="white-space:nowrap">${formatMlShipDate(m.shipDate)}</td>
+        <td style="white-space:nowrap"><span class="status-pill sp-${m.status}">${mlStatusLabel(m.status)}</span></td>
+      </tr>`;
+    }).join('')}</tbody>
   </table></div>`;
 }
 function selectCustMlBatch(b) { state.custMlBatch = b; renderMasterlistView(); }
@@ -1860,8 +1891,19 @@ function mlRowHtml(m) {
       <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
     </div></td>
     <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
+    <td style="white-space:nowrap;font-size:.8rem;color:#888">${formatMlDateAdded(m.createdAt)}</td>
     <td><input value="${esc(m.eta||'To follow')}" style="width:130px;font-size:.8rem;padding:5px 8px" placeholder="To follow" onchange="updateMlEta('${m.id}',this.value)" /></td>
-    <td><input type="date" value="${esc(m.shipDate||'')}" style="width:140px;font-size:.8rem;padding:5px 8px" onchange="updateMlShipDate('${m.id}',this.value)" /></td>
+    <td>
+      ${m.shipDate==='shipped'
+        ? `<div style="display:flex;align-items:center;gap:6px;font-size:.78rem;color:#1a7a4a;font-weight:600">✅ Shipped <button class="btn btn-secondary btn-sm" style="padding:2px 8px;font-size:.7rem" onclick="updateMlShipDate('${m.id}','')">Undo</button></div>`
+        : `<div style="display:flex;flex-direction:column;gap:3px">
+            <input type="date" value="${esc(m.shipDate||'')}" style="width:140px;font-size:.8rem;padding:5px 8px" onchange="updateMlShipDate('${m.id}',this.value)" />
+            <label style="display:flex;align-items:center;gap:4px;font-size:.7rem;color:#888;cursor:pointer;text-transform:none">
+              <input type="checkbox" style="width:auto" onchange="if(this.checked) updateMlShipDate('${m.id}','shipped')" />
+              Already shipped
+            </label>
+          </div>`}
+    </td>
     <td><select onchange="updateMlStatus('${m.id}',this.value)" style="font-size:.77rem;padding:4px 6px;border-radius:6px;border:1px solid #ffc0d5;background:#fff">
       ${MASTERLIST_STATUSES.map(s => `<option value="${s.key}" ${m.status===s.key?'selected':''}>${s.emoji} ${s.label}</option>`).join('')}
     </select></td>
@@ -1885,7 +1927,7 @@ function renderMasterlistAdmin() {
     html += `<div style="margin-bottom:1.5rem">
       <div class="dash-section-title">${esc(b)}</div>
       <div class="table-wrap"><table>
-        <thead><tr><th>Item Name</th><th>Category</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th><th>Actions</th></tr></thead>
+        <thead><tr><th>Item Name</th><th>Category</th><th>Date Added</th><th>ETA</th><th>Est. Ship Date</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody>${items.map(mlRowHtml).join('')}</tbody>
       </table></div>
     </div>`;
@@ -1910,11 +1952,19 @@ function previewMlImg(input) {
   }; reader.readAsDataURL(file);
 }
 
+function toggleMlShipDateInput(checkbox) {
+  const dateInput = document.getElementById('ml-shipdate');
+  dateInput.disabled = checkbox.checked;
+  if (checkbox.checked) dateInput.value = '';
+}
+
 function openMasterlistModal(id) {
   document.getElementById('ml-name').value = '';
   document.getElementById('ml-category').value = '';
   document.getElementById('ml-eta').value = '';
   document.getElementById('ml-shipdate').value = '';
+  document.getElementById('ml-already-shipped').checked = false;
+  document.getElementById('ml-shipdate').disabled = false;
   document.getElementById('ml-status').value = 'order_placed';
   document.getElementById('ml-edit-id').value = '';
   document.getElementById('ml-img-data').value = '';
@@ -1930,7 +1980,9 @@ function openMasterlistModal(id) {
       document.getElementById('ml-name').value = m.itemName||'';
       document.getElementById('ml-category').value = m.category||'';
       document.getElementById('ml-eta').value = m.eta||'';
-      document.getElementById('ml-shipdate').value = m.shipDate||'';
+      document.getElementById('ml-shipdate').value = (m.shipDate==='shipped') ? '' : (m.shipDate||'');
+      document.getElementById('ml-already-shipped').checked = (m.shipDate==='shipped');
+      document.getElementById('ml-shipdate').disabled = (m.shipDate==='shipped');
       document.getElementById('ml-status').value = m.status||'order_placed';
       if (m.img) { const pr = document.getElementById('ml-img-prev'); pr.src = m.img; pr.style.display = 'block'; document.getElementById('ml-img-data').value = m.img; }
       document.getElementById('ml-batch').innerHTML = getBatchOptions(m.batch||'Batch 1');
@@ -1958,7 +2010,7 @@ async function saveMasterlistItem() {
     category: document.getElementById('ml-category').value.trim(),
     img,
     eta: document.getElementById('ml-eta').value.trim() || 'To follow',
-    shipDate: document.getElementById('ml-shipdate').value || '',
+    shipDate: document.getElementById('ml-already-shipped').checked ? 'shipped' : (document.getElementById('ml-shipdate').value || ''),
     status: document.getElementById('ml-status').value,
     batch
   };
