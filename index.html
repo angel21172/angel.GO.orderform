@@ -83,8 +83,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--pink-50);min-height:100vh
 .add-btn{flex:1;background:#e8679a;color:#fff;border:none;padding:.44rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:background .2s}
 .add-btn:hover{background:#c2426d}
 .add-btn:disabled{background:#e0e0e0;cursor:not-allowed;color:#aaa}
-.reserve-btn{flex:1;background:#90c4f0;color:#fff;border:none;padding:.44rem;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;cursor:pointer;transition:background .2s}
-.reserve-btn:hover{background:#5fa8d3}
 
 /* ── NEW BADGE ── */
 .new-badge{position:absolute;top:8px;left:8px;background:#e8679a;color:#fff;font-size:.62rem;font-weight:700;padding:2px 7px;border-radius:8px;letter-spacing:.04em;text-transform:uppercase;z-index:1}
@@ -239,7 +237,6 @@ tr:hover td{background:#fff5f7}
 .badge-confirmed{background:#d6f5e5;color:#1a7a4a}
 .badge-shipped{background:#d6e8ff;color:#1a4a8b}
 .badge-delivered{background:#e8d6ff;color:#5a1ab8}
-.badge-reserved{background:#e0f0ff;color:#1a5fa8}
 .status-pill{display:inline-block;padding:2px 9px;border-radius:10px;font-size:.7rem;font-weight:600;white-space:nowrap}
 .sp-pending{background:#fff0d6;color:#b87a00}
 .sp-confirmed{background:#d6f5e5;color:#1a7a4a}
@@ -250,7 +247,6 @@ tr:hover td{background:#fff5f7}
 .sp-in_transit{background:#ffe8d6;color:#b84a00}
 .sp-ph_arrived{background:#e8d6ff;color:#5a1ab8}
 .sp-delivered{background:#d6ffe8;color:#0a6640}
-.sp-reserved{background:#e0f0ff;color:#1a5fa8}
 
 /* ── IMG UPLOAD ── */
 .img-upload-label{display:flex;align-items:center;gap:.5rem;background:#fff0f5;border:2px dashed #e8679a;border-radius:8px;padding:.6rem 1rem;cursor:pointer;font-size:.82rem;color:#c2426d;font-weight:500;transition:background .2s}
@@ -342,7 +338,7 @@ tr:hover td{background:#fff5f7}
   .product-info{padding:.7rem .75rem}
   .product-name{font-size:.83rem}
   .product-price{font-size:.9rem}
-  .add-btn,.reserve-btn{font-size:.73rem;padding:.38rem}
+  .add-btn{font-size:.73rem;padding:.38rem}
   .hero h1{font-size:1.6rem}
   .hero{padding:1.4rem 1.5rem 1.1rem}
   .cat-sidebar{width:176px}
@@ -391,7 +387,7 @@ tr:hover td{background:#fff5f7}
   .product-stock{font-size:.65rem;margin-bottom:.3rem}
   .product-desc{font-size:.64rem;margin-bottom:.3rem}
   .product-buttons{flex-direction:column;gap:.3rem}
-  .add-btn,.reserve-btn{font-size:.72rem;padding:.36rem}
+  .add-btn{font-size:.72rem;padding:.36rem}
   .new-badge{font-size:.57rem;padding:2px 5px}
   .admin-panel{padding:.85rem .85rem}
   .admin-header{padding:.85rem .85rem}
@@ -506,7 +502,6 @@ tr:hover td{background:#fff5f7}
   <div class="admin-tabs">
     <div class="admin-tab active" onclick="adminTab('dashboard')">📊 Dashboard</div>
     <div class="admin-tab" onclick="adminTab('products')">Products</div>
-    <div class="admin-tab" onclick="adminTab('reservations')">📌 Reservations</div>
     <div class="admin-tab" onclick="adminTab('orders')">Orders</div>
     <div class="admin-tab" onclick="adminTab('masterlist')">📋 Masterlist</div>
     <div class="admin-tab" onclick="adminTab('arrival')">📬 Arrival Receipt</div>
@@ -529,27 +524,6 @@ tr:hover td{background:#fff5f7}
       <table>
         <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
         <tbody id="admin-prod-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Reservations -->
-  <div class="admin-panel" id="panel-reservations">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
-      <div style="font-weight:600;color:#8b1f42">Reservation Management</div>
-      <input class="search-bar" id="reservation-search" placeholder="🔍 Search name, RES#…" oninput="renderReservations()" style="width:210px" />
-    </div>
-    <div class="filter-row">
-      <div class="chip active" onclick="filterReservations('all',this)">All</div>
-      <div class="chip" onclick="filterReservations('pending',this)">⏳ Pending</div>
-      <div class="chip" onclick="filterReservations('approved',this)">✅ Approved</div>
-      <div class="chip" onclick="filterReservations('converted',this)">🛒 Converted</div>
-      <div class="chip" onclick="filterReservations('cancelled',this)">❌ Cancelled</div>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>RES#</th><th>Product</th><th>Name</th><th>FB</th><th>Contact</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-        <tbody id="admin-reservations-tbody"><tr><td colspan="8" style="text-align:center;padding:2rem;color:#c2426d">Loading…</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -672,52 +646,6 @@ tr:hover td{background:#fff5f7}
 <div class="lightbox" id="img-lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="event.stopPropagation();closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
-</div>
-
-<!-- ── RESERVATION MODAL ── -->
-<div class="modal-wrap" id="reservation-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📌 Reserve Item</h3>
-      <button class="close-btn" onclick="closeReservationModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div style="background:#e0f0ff;border-radius:10px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.82rem;color:#1a3a5c;line-height:1.6;border-left:4px solid #1a5fa8">
-        💙 Reserve this item and we'll notify you when it's available or when the batch opens!
-      </div>
-      <div style="background:#fff0f5;border-radius:8px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.8rem;color:#8b1f42">
-        <div style="font-weight:600;margin-bottom:.3rem">📦 Product to Reserve:</div>
-        <div id="res-product-name" style="font-weight:500">Product Name</div>
-      </div>
-      <div class="form-grid">
-        <div class="form-group full"><label>Full Name *</label><input id="res-name" placeholder="Your full name" /></div>
-        <div class="form-group full"><label>Contact Number *</label><input id="res-contact" placeholder="09XXXXXXXXX" /></div>
-        <div class="form-group full"><label>Facebook Account (Optional)</label><input id="res-fb" placeholder="Your FB name or profile link" /></div>
-      </div>
-      <div id="res-err" style="color:#e05252;font-size:.82rem;margin:.5rem 0;display:none"></div>
-      <div style="margin-top:1rem;display:flex;gap:.75rem">
-        <button class="btn btn-secondary" onclick="closeReservationModal()" style="flex:1">Cancel</button>
-        <button class="btn btn-primary" id="submit-res-btn" onclick="submitReservation()" style="flex:1">Submit Reservation ✿</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ── RESERVATION CONFIRMATION MODAL ── -->
-<div class="modal-wrap" id="res-confirm-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📌 Reservation Confirmed</h3>
-      <button class="close-btn" onclick="closeModal('res-confirm-modal')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="res-confirm-content"></div>
-      <div style="margin-top:1rem;display:flex;gap:.75rem;flex-wrap:wrap">
-        <button class="btn btn-secondary btn-sm" onclick="closeModal('res-confirm-modal')">Close</button>
-        <button class="btn btn-primary btn-sm" id="save-res-img-btn" onclick="saveResConfirmAsImage()">📥 Save as Image</button>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- ── ORDER FORM MODAL ── -->
@@ -950,17 +878,6 @@ tr:hover td{background:#fff5f7}
   </div>
 </div>
 
-<!-- ── RESERVATION DETAIL MODAL ── -->
-<div class="modal-wrap" id="reservation-detail-modal">
-  <div class="modal">
-    <div class="modal-head">
-      <h3>📌 Reservation Details</h3>
-      <button class="close-btn" onclick="closeModal('reservation-detail-modal')">✕</button>
-    </div>
-    <div class="modal-body" id="reservation-detail-body"></div>
-  </div>
-</div>
-
 <script>
 // html2canvas is only needed when exporting an order/receipt as an image.
 // Loading the ~300KB library lazily (instead of inline) keeps first paint fast.
@@ -1024,7 +941,6 @@ let state = {
   adminLoggedIn: false, currentMode: 'customer',
   orderFilter: 'all', batchFilter: 'all', currentReceiptOrder: null,
   activeCat: 'all', searchQ: '', catSearchQ: '',
-  reservations: [], reservationFilter: 'all', resCounter: 5001, currentReservationProductId: null,
   productDetailQty: 1,
   masterlist: [], masterlistBatchFilter: 'all', custMlBatch: null
 };
@@ -1041,8 +957,6 @@ function loadLocal() {
       state.orders = d.orders||[];
       state.announcement = d.announcement||'';
       state.goCounter = d.goCounter||1001;
-      state.reservations = d.reservations||[];
-      state.resCounter = d.resCounter||5001;
       state.masterlist = d.masterlist||[];
     }
   } catch(e) {}
@@ -1052,7 +966,6 @@ function saveLocal() {
     localStorage.setItem('angelshop_v3', JSON.stringify({
       products: state.products, orders: state.orders,
       announcement: state.announcement, goCounter: state.goCounter,
-      reservations: state.reservations, resCounter: state.resCounter,
       masterlist: state.masterlist
     }));
   } catch(e) {}
@@ -1067,9 +980,7 @@ function initFirebase() {
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     try {
-      db.enablePersistence({ synchronizeTabs: true }).catch(function(e) {
-        console.warn('Firestore persistence:', e.code || e);
-      });
+      db.settings({ cache: { kind: 'persistent', tabManager: { kind: 'persistent-multi-tab' } } });
     } catch (e) { console.warn('Firestore cache settings:', e); }
     db.collection('settings').doc('announcement').get()
       .then(() => { firebaseReady = true; setSyncStatus('online'); startListeners(); })
@@ -1101,12 +1012,6 @@ function startListeners() {
     });
   });
 
-  db.collection('reservations').orderBy('createdAt', 'desc').onSnapshot(snap => {
-    state.reservations = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    saveLocal();
-    if (state.currentMode === 'admin') renderReservations();
-  }, () => {});
-
   db.collection('masterlist').onSnapshot(snap => {
     state.masterlist = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     saveLocal();
@@ -1133,7 +1038,6 @@ function startListeners() {
   db.collection('settings').doc('meta').onSnapshot(snap => {
     if (snap.exists) {
       state.goCounter = snap.data().goCounter||state.goCounter;
-      state.resCounter = snap.data().resCounter||state.resCounter;
     }
   });
 }
@@ -1155,7 +1059,7 @@ function switchMode(mode) {
   document.getElementById('cart-fab').style.display = mode==='customer' ? 'flex' : 'none';
   if (mode==='customer') { renderCustomerProducts(); renderCatSidebar(); }
   if (mode==='masterlist') { renderMasterlistView(); }
-  if (mode==='admin') { renderDashboard(); renderAdminProducts(); renderAdminOrders(); renderReservations(); renderMasterlistAdmin(); document.getElementById('announce-input').value = state.announcement; }
+  if (mode==='admin') { renderDashboard(); renderAdminProducts(); renderAdminOrders(); renderMasterlistAdmin(); document.getElementById('announce-input').value = state.announcement; }
 }
 function onAdminClick() {
   if (state.adminLoggedIn) { switchMode('admin'); return; }
@@ -1264,7 +1168,6 @@ function productCardHtml(p) {
         <button class="add-btn" ${p.status==='soldout'?'disabled':''} onclick="addToCart('${p.id}')">
           ${p.status==='soldout'?'Sold Out':'+ Order'}
         </button>
-        <button class="reserve-btn" onclick="openReservationModal('${p.id}')">📌 Reserve</button>
       </div>
     </div>
   </div>`;
@@ -1340,7 +1243,6 @@ function renderProductDetailBody(p) {
         <button class="add-btn" ${p.status==='soldout'?'disabled':''} style="flex:1;padding:.65rem" onclick="addToCartFromDetail('${p.id}')">
           ${p.status==='soldout'?'Sold Out':'+ Add to Cart'}
         </button>
-        <button class="reserve-btn" style="flex:1;padding:.65rem" onclick="closeProductDetailModal();openReservationModal('${p.id}')">📌 Reserve</button>
       </div>
     </div>`;
 }
@@ -1514,160 +1416,6 @@ function updateCartUI() {
 }
 function openCart() { updateCartUI(); document.getElementById('cart-overlay').classList.add('open'); document.getElementById('cart-drawer').classList.add('open'); }
 function closeCart() { document.getElementById('cart-overlay').classList.remove('open'); document.getElementById('cart-drawer').classList.remove('open'); }
-
-// ════════════════════════════════════════════
-// RESERVATION
-// ════════════════════════════════════════════
-function openReservationModal(productId) {
-  const p = state.products.find(x => x.id === productId); if (!p) return;
-  ['res-name','res-contact','res-fb'].forEach(x => document.getElementById(x).value = '');
-  document.getElementById('res-product-name').textContent = p.name + ' (₱' + parseFloat(p.price||0).toFixed(2) + ')';
-  document.getElementById('res-err').style.display = 'none';
-  state.currentReservationProductId = productId;
-  document.getElementById('reservation-modal').classList.add('open');
-}
-function closeReservationModal() { document.getElementById('reservation-modal').classList.remove('open'); state.currentReservationProductId = null; }
-
-async function submitReservation() {
-  const name = document.getElementById('res-name').value.trim();
-  const contact = document.getElementById('res-contact').value.trim();
-  const fb = document.getElementById('res-fb').value.trim();
-  const err = document.getElementById('res-err');
-  const productId = state.currentReservationProductId;
-  const product = state.products.find(x => x.id === productId);
-  if (!name || !contact) { err.textContent = '⚠ Please fill in Name and Contact Number.'; err.style.display = 'block'; return; }
-  err.style.display = 'none';
-  const btn = document.getElementById('submit-res-btn'); btn.disabled = true; btn.textContent = 'Saving…';
-  const resNum = 'RES-' + state.resCounter++;
-  const dateStr = new Date().toLocaleDateString('en-PH', { year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit' });
-  const resData = { resNum, productId, productName: product.name, productPrice: product.price, name, contact, fb, status:'pending', date: dateStr, createdAt: Date.now() };
-  let savedId = null;
-  if (firebaseReady) { savedId = await fsAdd('reservations', resData); await fsSet('settings','meta',{ goCounter: state.goCounter, resCounter: state.resCounter }); }
-  if (!savedId) { savedId = 'local_'+Date.now(); state.reservations.unshift({ id:savedId, ...resData }); saveLocal(); }
-  btn.disabled = false;
-  closeReservationModal();
-  document.getElementById('res-confirm-content').innerHTML = buildResConfirmHtml({ id:savedId, ...resData });
-  document.getElementById('res-confirm-modal').classList.add('open');
-  ['res-name','res-contact','res-fb'].forEach(id => document.getElementById(id).value = '');
-}
-
-function buildResConfirmHtml(r) {
-  return `<div class="receipt" id="res-confirm-printable" style="border-color:#90c4f0;background:#f0f7ff">
-    <div class="receipt-head" style="border-bottom-color:#90c4f0">
-      <div class="receipt-title" style="color:#1a3a5c">Angel Shop</div>
-      <div class="receipt-sub" style="color:#3a7abf">Group Orders · Reservation Confirmation</div>
-      <div class="receipt-go" style="color:#1a5fa8">${r.resNum}</div>
-      <div style="font-size:.72rem;color:#888;margin-top:.2rem">${r.date}</div>
-    </div>
-    <div style="background:#fff8f0;border-radius:8px;padding:.75rem 1rem;margin-bottom:.75rem;border-left:4px solid #e8679a">
-      <div style="font-weight:600;color:#8b1f42;margin-bottom:.3rem">📌 Reserved Item:</div>
-      <div style="color:#3d1a28;font-weight:500">${esc(r.productName)}</div>
-      <div style="color:#c2426d;font-size:.88rem;margin-top:.2rem">₱${parseFloat(r.productPrice||0).toFixed(2)}</div>
-    </div>
-    <div class="r-row"><span class="r-label">Name</span><span class="r-val">${esc(r.name)}</span></div>
-    <div class="r-row"><span class="r-label">Contact</span><span class="r-val">${esc(r.contact)}</span></div>
-    ${r.fb ? `<div class="r-row"><span class="r-label">FB Account</span><span class="r-val">${esc(r.fb)}</span></div>` : ''}
-    <div style="background:#fff0f5;border-radius:8px;padding:.6rem .85rem;margin-top:.75rem;font-size:.74rem;color:#8b1f42;line-height:1.6">
-      <div style="font-weight:600;margin-bottom:.3rem">📌 What happens next?</div>
-      <ul style="padding-left:1rem;list-style:none">
-        <li style="margin-bottom:.2rem">✓ We have received your reservation request</li>
-        <li style="margin-bottom:.2rem">✓ We will contact you via DM or FB message</li>
-        <li style="margin-bottom:.2rem">✓ Once the item is available, we will notify you</li>
-        <li>✓ You can then proceed with placing your order</li>
-      </ul>
-    </div>
-  </div>`;
-}
-
-async function saveResConfirmAsImage() {
-  const btn = document.getElementById('save-res-img-btn'); btn.disabled = true; btn.textContent = '⏳ Generating…';
-  try {
-    const el = document.getElementById('res-confirm-printable');
-    await ensureHtml2Canvas();
-    const canvas = await html2canvas(el, { backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false,windowWidth:420,windowHeight:el.scrollHeight+40 });
-    canvas.toBlob(async blob => {
-      const file = new File([blob], 'AngelShop-Reservation.png', { type:'image/png' });
-      if (navigator.canShare && navigator.canShare({ files:[file] })) {
-        try { await navigator.share({ files:[file], title:'Angel Shop Reservation Confirmation' }); btn.disabled=false; btn.textContent='📥 Save as Image'; return; }
-        catch(e) { if (e.name==='AbortError') { btn.disabled=false; btn.textContent='📥 Save as Image'; return; } }
-      }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href=url; a.download='AngelShop-Reservation.png'; a.style.display='none';
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 5000);
-      btn.disabled=false; btn.textContent='📥 Save as Image';
-    }, 'image/png');
-  } catch(e) { alert('Could not generate image.'); btn.disabled=false; btn.textContent='📥 Save as Image'; }
-}
-
-// ════════════════════════════════════════════
-// ADMIN — RESERVATIONS
-// ════════════════════════════════════════════
-function renderReservations() {
-  const tbody = document.getElementById('admin-reservations-tbody');
-  const q = (document.getElementById('reservation-search')?.value||'').toLowerCase().trim();
-  let list = state.reservationFilter==='all' ? [...state.reservations] : state.reservations.filter(r => r.status===state.reservationFilter);
-  if (q) list = list.filter(r => (r.resNum||'').toLowerCase().includes(q)||(r.name||'').toLowerCase().includes(q)||(r.productName||'').toLowerCase().includes(q)||(r.contact||'').toLowerCase().includes(q));
-  list = list.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
-  if (!list.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c2426d;padding:2rem">No reservations found.</td></tr>'; return; }
-  tbody.innerHTML = list.map(r => `
-    <tr>
-      <td style="font-weight:600;color:#1a5fa8">${r.resNum}</td>
-      <td><div style="font-size:.83rem;font-weight:500">${esc(r.productName)}</div><div style="font-size:.72rem;color:#888">₱${parseFloat(r.productPrice||0).toFixed(2)}</div></td>
-      <td>${esc(r.name)}</td>
-      <td style="font-size:.77rem">${esc(r.fb||'—')}</td>
-      <td>${esc(r.contact)}</td>
-      <td><select onchange="updateReservationStatus('${r.id}',this.value)" style="font-size:.77rem;padding:3px 6px;border-radius:6px;border:1px solid #90c4f0;background:#fff">
-        <option value="pending" ${r.status==='pending'?'selected':''}>⏳ Pending</option>
-        <option value="approved" ${r.status==='approved'?'selected':''}>✅ Approved</option>
-        <option value="converted" ${r.status==='converted'?'selected':''}>🛒 Converted</option>
-        <option value="cancelled" ${r.status==='cancelled'?'selected':''}>❌ Cancelled</option>
-      </select></td>
-      <td style="font-size:.73rem;white-space:nowrap">${r.date}</td>
-      <td><div class="action-row">
-        <button class="btn btn-secondary btn-sm" onclick="viewReservation('${r.id}')">View</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteReservation('${r.id}')">Del</button>
-      </div></td>
-    </tr>`).join('');
-}
-
-function filterReservations(status, el) {
-  state.reservationFilter = status;
-  document.querySelectorAll('#panel-reservations .filter-row .chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active'); renderReservations();
-}
-
-async function updateReservationStatus(id, status) {
-  const r = state.reservations.find(x => x.id===id);
-  if (r) { r.status=status; saveLocal(); if (firebaseReady) await fsUpdate('reservations',id,{status}); }
-}
-
-async function deleteReservation(id) {
-  if (!confirm('Delete this reservation permanently?')) return;
-  state.reservations = state.reservations.filter(r => r.id!==id);
-  saveLocal(); renderReservations(); if (firebaseReady) await fsDelete('reservations',id);
-}
-
-function viewReservation(id) {
-  const r = state.reservations.find(x => x.id===id); if (!r) return;
-  document.getElementById('reservation-detail-body').innerHTML = `
-    <div style="display:flex;flex-direction:column;gap:.75rem">
-      <div style="background:#e0f0ff;border-radius:10px;padding:.85rem;border-left:4px solid #1a5fa8">
-        <div style="font-weight:600;color:#1a3a5c;margin-bottom:.4rem">📌 Reserved Product</div>
-        <div style="color:#3d1a28;font-weight:500">${esc(r.productName)}</div>
-        <div style="color:#1a5fa8;font-weight:700;margin-top:.2rem">₱${parseFloat(r.productPrice||0).toFixed(2)}</div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.84rem">
-        <div><span style="color:#c2426d;font-weight:500">RES#:</span> ${r.resNum}</div>
-        <div><span style="color:#c2426d;font-weight:500">Date:</span> ${r.date}</div>
-        <div><span style="color:#c2426d;font-weight:500">Name:</span> ${esc(r.name)}</div>
-        <div><span style="color:#c2426d;font-weight:500">Contact:</span> ${esc(r.contact)}</div>
-        ${r.fb?`<div style="grid-column:1/-1"><span style="color:#c2426d;font-weight:500">FB:</span> ${esc(r.fb)}</div>`:''}
-      </div>
-      <button class="btn btn-secondary btn-sm" onclick="closeModal('reservation-detail-modal')">Close</button>
-    </div>`;
-  document.getElementById('reservation-detail-modal').classList.add('open');
-}
 
 // ════════════════════════════════════════════
 // BATCH HELPERS
@@ -2077,7 +1825,7 @@ async function submitOrder() {
   const currentBatch = getDefaultBatch();
   const orderData = { goNum, name, fb, contact, address, shipping, notes, items, total, status:'pending', batch:currentBatch, date:dateStr, createdAt:Date.now() };
   let savedId = null;
-  if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter, resCounter:state.resCounter }); }
+  if (firebaseReady) { savedId = await fsAdd('orders', orderData); await fsSet('settings','meta',{ goCounter:state.goCounter }); }
   if (!savedId) { savedId = 'local_'+Date.now(); state.orders.unshift({ id:savedId, ...orderData }); saveLocal(); }
   await autoAddOrderItemsToMasterlist(items, currentBatch);
   btn.disabled = false; state.cart = []; updateCartUI(); closeOrderModal();
@@ -2344,13 +2092,12 @@ async function saveArrivalReceiptImage() {
 // ADMIN TABS
 // ════════════════════════════════════════════
 function adminTab(tab) {
-  const tabs = ['dashboard','products','reservations','orders','masterlist','arrival','announcements'];
+  const tabs = ['dashboard','products','orders','masterlist','arrival','announcements'];
   document.querySelectorAll('.admin-tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('panel-'+tab).classList.add('active');
   if (tab==='dashboard') renderDashboard();
   if (tab==='products') renderAdminProducts();
-  if (tab==='reservations') renderReservations();
   if (tab==='orders') renderAdminOrders();
   if (tab==='masterlist') renderMasterlistAdmin();
   if (tab==='arrival') renderArrivalPanel();
@@ -2361,7 +2108,7 @@ function adminTab(tab) {
 // DASHBOARD
 // ════════════════════════════════════════════
 function renderDashboard() {
-  const orders = state.orders, products = state.products, reservations = state.reservations;
+  const orders = state.orders, products = state.products;
   const STATUSES = [
     {key:'pending',label:'Pending',emoji:'⏳'},{key:'confirmed',label:'Confirmed',emoji:'✅'},
     {key:'order_placed',label:'Order Placed',emoji:'🛒'},{key:'cn_warehouse',label:'CN Warehouse',emoji:'🏭'},
@@ -2397,20 +2144,10 @@ function renderDashboard() {
       <div class="dash-grid">
         <div class="dash-card"><div class="dc-val">${orders.length}</div><div class="dc-label">Total Orders</div></div>
         ${STATUSES.map(s=>`<div class="dash-card"><div class="dc-val" style="font-size:1.3rem">${orders.filter(o=>o.status===s.key).length}</div><div class="dc-label">${s.emoji} ${s.label}</div></div>`).join('')}
-        <div class="dash-card" style="border-color:#90c4f0;background:#e0f0ff"><div class="dc-val" style="font-size:1.2rem;color:#1a5fa8">${reservations.length}</div><div class="dc-label">📌 Reservations</div></div>
         <div class="dash-card" style="border-color:#c0d8f0;background:#f0f7ff"><div class="dc-val" style="font-size:.9rem;color:#1a5fa8">₱${grandTotal.toFixed(2)}</div><div class="dc-label">💰 Orders Revenue</div></div>
         <div class="dash-card" style="border-color:#f4c97a;background:#fff8e6"><div class="dc-val" style="font-size:.9rem;color:#b87a00">₱${totalSF.toFixed(2)}</div><div class="dc-label">📬 Total SF Fees</div></div>
         <div class="dash-card" style="border-color:#8b1f42;background:#fff0f5"><div class="dc-val" style="font-size:.85rem;color:#8b1f42">₱${grandRevenue.toFixed(2)}</div><div class="dc-label">🏆 Grand Total</div></div>
         <div class="dash-card"><div class="dc-val">${products.length}</div><div class="dc-label">🛍 Products</div></div>
-      </div>
-    </div>
-    <div class="dash-section">
-      <div class="dash-section-title">✿ Reservation Status</div>
-      <div class="dash-grid">
-        <div class="dash-card" style="border-color:#90c4f0"><div class="dc-val" style="color:#1a5fa8">${reservations.filter(r=>r.status==='pending').length}</div><div class="dc-label">⏳ Pending</div></div>
-        <div class="dash-card" style="border-color:#90c4f0"><div class="dc-val" style="color:#1a7a4a">${reservations.filter(r=>r.status==='approved').length}</div><div class="dc-label">✅ Approved</div></div>
-        <div class="dash-card" style="border-color:#90c4f0"><div class="dc-val" style="color:#7a4f00">${reservations.filter(r=>r.status==='converted').length}</div><div class="dc-label">🛒 Converted</div></div>
-        <div class="dash-card" style="border-color:#ff9a9a"><div class="dc-val" style="color:#a32d2d">${reservations.filter(r=>r.status==='cancelled').length}</div><div class="dc-label">❌ Cancelled</div></div>
       </div>
     </div>
     <div class="dash-section">
