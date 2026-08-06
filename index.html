@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Angel Shop Group Orders</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%BF%3C/text%3E%3C/svg%3E" />
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -909,7 +910,7 @@ const firebaseConfig = {
 };
 const ADMIN_PASSWORD = "angelshop2025";
 const CONFIG_FILLED = firebaseConfig.apiKey !== "PASTE_YOUR_apiKey_HERE";
-let db = null, firebaseReady = false;
+let db = null, storage = null, firebaseReady = false;
 
 const MASTERLIST_STATUSES = [
   {key:'order_placed',label:'Order Placed',emoji:'🛒'},
@@ -980,8 +981,9 @@ function initFirebase() {
     if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     db = firebase.firestore();
     try {
-      db.settings({ cache: { kind: 'persistent', tabManager: { kind: 'persistent-multi-tab' } } });
+      db.settings({ cache: { kind: 'persistent', tabManager: { kind: 'persistent-multi-tab' } }, merge: true });
     } catch (e) { console.warn('Firestore cache settings:', e); }
+    try { storage = firebase.storage(); } catch (e) { console.warn('Firebase Storage unavailable:', e); storage = null; }
     db.collection('settings').doc('announcement').get()
       .then(() => { firebaseReady = true; setSyncStatus('online'); startListeners(); })
       .catch(e => { console.warn('Firestore:', e); setSyncStatus('offline'); fallbackToLocal(); });
@@ -1042,6 +1044,26 @@ function startListeners() {
   });
 }
 function fallbackToLocal() { loadLocal(); renderCustomerProducts(); renderCatSidebar(); updateAnnounceDisplay(); renderMasterlistView(); }
+// Uploads a compressed data: URL to Firebase Storage and returns its (short)
+// download URL. This is the key fix for "adding a product feels slow": instead
+// of stuffing a 50-150KB base64 string into every product document (which then
+// gets sent over the wire and re-parsed on every listener update / render),
+// each Firestore doc only stores a small URL string. If Storage isn't
+// available (offline, not configured, or the upload fails) it safely falls
+// back to keeping the base64 string so nothing breaks.
+async function uploadImageDataUrl(dataUrl, folder) {
+  if (!dataUrl || !dataUrl.startsWith('data:')) return dataUrl;
+  if (!firebaseReady || !storage) return dataUrl;
+  try {
+    const path = folder + '/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.jpg';
+    const ref = storage.ref().child(path);
+    await ref.putString(dataUrl, 'data_url', { contentType: 'image/jpeg' });
+    return await ref.getDownloadURL();
+  } catch (e) {
+    console.warn('Image upload to Storage failed, keeping embedded image instead:', e);
+    return dataUrl;
+  }
+}
 async function fsSet(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).set(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
 async function fsAdd(c,d){if(!firebaseReady)return null;setSyncStatus('syncing');try{const r=await db.collection(c).add(d);setSyncStatus('online');return r.id;}catch(e){console.warn(e);setSyncStatus('offline');return null;}}
 async function fsUpdate(c,id,d){if(!firebaseReady)return;setSyncStatus('syncing');try{await db.collection(c).doc(id).update(d);setSyncStatus('online');}catch(e){console.warn(e);setSyncStatus('offline');}}
@@ -1152,7 +1174,7 @@ function productCardHtml(p) {
     <div class="product-img-wrap" onclick="openProductDetailModal('${p.id}')">
       ${isNew ? '<span class="new-badge">New ✦</span>' : ''}
       <div class="product-img">
-        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" loading="lazy"/>` : '<span style="font-size:2.5rem">🛍</span>'}
+        ${p.img ? `<img src="${p.img}" alt="${esc(p.name)}" loading="lazy" decoding="async"/>` : '<span style="font-size:2.5rem">🛍</span>'}
       </div>
       <span class="zoom-hint">🔍 View</span>
     </div>
@@ -1285,7 +1307,7 @@ function renderAdminProducts() {
   tbody.innerHTML = sorted.map(p => `
     <tr>
       <td><div style="width:42px;height:42px;border-radius:7px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.3rem">
-        ${p.img ? `<img src="${p.img}" style="width:100%;height:100%;object-fit:cover"/>` : '🛍'}</div></td>
+        ${p.img ? `<img src="${p.img}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"/>` : '🛍'}</div></td>
       <td><div style="font-weight:500">${esc(p.name)}</div><div style="font-size:.73rem;color:#888">${esc(p.desc||'')}</div>${isNewProduct(p)?'<span style="font-size:.65rem;background:#e8679a;color:#fff;padding:1px 6px;border-radius:6px;font-weight:700">NEW</span>':''}</td>
       <td><span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;white-space:nowrap">${esc(p.category||'—')}</span></td>
       <td>₱${parseFloat(p.price||0).toFixed(2)}</td>
@@ -1334,12 +1356,13 @@ function previewImg(input) {
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 600; let w = img.width, h = img.height;
+      const MAX = 500; let w = img.width, h = img.height;
       if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
       const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       document.getElementById('p-img-data').value = dataUrl;
+      document.getElementById('p-img-data').dataset.changed = '1';
       const pr = document.getElementById('p-img-prev'); pr.src = dataUrl; pr.style.display = 'block';
     }; img.src = e.target.result;
   }; reader.readAsDataURL(file);
@@ -1350,7 +1373,16 @@ async function saveProduct() {
   const price = parseFloat(document.getElementById('p-price').value);
   if (!name || isNaN(price)) { alert('Please fill in the product name and price.'); return; }
   const btn = document.getElementById('save-prod-btn'); btn.disabled = true; btn.textContent = 'Saving…';
-  const data = { name, price, stock: parseInt(document.getElementById('p-stock').value)||0, desc: document.getElementById('p-desc').value.trim(), category: document.getElementById('p-category').value.trim(), img: document.getElementById('p-img-data').value, status: document.getElementById('p-status').value };
+  let img = document.getElementById('p-img-data').value;
+  // Only touch the network if the photo actually changed — uploads to Storage
+  // instead of embedding the (large) base64 string into the Firestore document.
+  // This keeps documents tiny and the product list snappy as it grows.
+  if (img && img.startsWith('data:')) {
+    btn.textContent = 'Uploading photo…';
+    img = await uploadImageDataUrl(img, 'products');
+  }
+  const data = { name, price, stock: parseInt(document.getElementById('p-stock').value)||0, desc: document.getElementById('p-desc').value.trim(), category: document.getElementById('p-category').value.trim(), img, status: document.getElementById('p-status').value };
+  btn.textContent = 'Saving…';
   const editId = document.getElementById('p-edit-id').value;
   if (editId) {
     const idx = state.products.findIndex(p => p.id === editId);
@@ -1599,7 +1631,7 @@ function renderMasterlistView() {
       const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase());
       return `<tr>
         <td style="font-weight:500;white-space:nowrap"><div style="display:flex;align-items:center;gap:.5rem">
-          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+          <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
           <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
         </div></td>
         <td style="white-space:nowrap">${m.category ? `<span class="product-cat-tag" style="white-space:nowrap">${esc(m.category)}</span>` : '—'}</td>
@@ -1632,7 +1664,7 @@ function mlRowHtml(m) {
   const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === (m.itemName||'').trim().toLowerCase());
   return `<tr>
     <td style="font-weight:500"><div style="display:flex;align-items:center;gap:.5rem">
-      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+      <div style="width:32px;height:32px;border-radius:6px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0${mImg?';cursor:zoom-in':''}" ${mImg?`onclick="openLightboxFromEl(this)" data-img="${esc(mImg)}" data-name="${esc(m.itemName)}"`:''}>${mImg?`<img src="${mImg}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
       <span${matchedProduct?` style="cursor:pointer;text-decoration:underline;text-underline-offset:2px" onclick="openProductDetailModal('${matchedProduct.id}')" title="View product"`:''}>${esc(m.itemName)}</span>
     </div></td>
     <td style="max-width:140px">${m.category ? `<span style="font-size:.78rem;background:#ffd6e7;color:#8b1f42;padding:2px 8px;border-radius:10px;display:inline-block;max-width:130px;white-space:normal;word-break:normal;overflow-wrap:break-word;line-height:1.4;vertical-align:middle;text-align:center">${esc(m.category)}</span>` : '—'}</td>
@@ -1686,11 +1718,11 @@ function previewMlImg(input) {
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      const MAX = 400; let w = img.width, h = img.height;
+      const MAX = 350; let w = img.width, h = img.height;
       if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
       const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       document.getElementById('ml-img-data').value = dataUrl;
       const pr = document.getElementById('ml-img-prev'); pr.src = dataUrl; pr.style.display = 'block';
     }; img.src = e.target.result;
@@ -1745,7 +1777,12 @@ async function saveMasterlistItem() {
   if (!itemName) { alert('Please enter the item name.'); return; }
   let batch = document.getElementById('ml-batch').value;
   if (batch === '__new__') { const n = prompt('Enter new batch name:'); if (!n||!n.trim()) return; batch = n.trim(); }
+  const btn = document.getElementById('save-ml-btn'); btn.disabled = true; btn.textContent = 'Saving…';
   let img = document.getElementById('ml-img-data').value;
+  if (img && img.startsWith('data:')) {
+    btn.textContent = 'Uploading photo…';
+    img = await uploadImageDataUrl(img, 'masterlist');
+  }
   if (!img) {
     const matchedProduct = state.products.find(p => (p.name||'').trim().toLowerCase() === itemName.toLowerCase());
     if (matchedProduct && matchedProduct.img) img = matchedProduct.img;
@@ -1759,7 +1796,7 @@ async function saveMasterlistItem() {
     status: document.getElementById('ml-status').value,
     batch
   };
-  const btn = document.getElementById('save-ml-btn'); btn.disabled = true; btn.textContent = 'Saving…';
+  btn.textContent = 'Saving…';
   const editId = document.getElementById('ml-edit-id').value;
   if (editId) {
     const idx = state.masterlist.findIndex(x => x.id===editId);
@@ -2159,7 +2196,7 @@ function renderDashboard() {
       ${prodList.length===0?'<p style="color:#c2426d;font-size:.83rem">No orders yet.</p>':prodList.map(([name,data])=>`
         <div style="margin-bottom:.9rem">
           <div class="prod-summary-row">
-            <div style="width:40px;height:40px;border-radius:8px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${data.img?`<img src="${data.img}" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
+            <div style="width:40px;height:40px;border-radius:8px;background:#ffd6e7;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${data.img?`<img src="${data.img}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover"/>`:'🛍'}</div>
             <div class="ps-name">${esc(name)}</div>
             <div class="ps-orders">${data.qty} ordered</div>
             <div class="ps-revenue">₱${data.revenue.toFixed(2)}</div>
@@ -2206,7 +2243,9 @@ function loadScript(src, cb) {
 }
 loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js', function() {
   loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js', function() {
-    initFirebase();
+    loadScript('https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js', function() {
+      initFirebase();
+    });
   });
 });
 </script>
