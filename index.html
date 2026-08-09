@@ -289,13 +289,6 @@ tr:hover td{background:#fff5f7}
 .cust-row .cr-name{font-weight:600;color:#3d1a28}
 .cust-row .cr-meta{color:#888;font-size:.74rem;margin-top:1px}
 
-/* ── NOTES BOX ── */
-.notes-box{background:#fff0f5;border:1.5px solid #f4a0c0;border-radius:12px;padding:1rem 1.2rem;margin:0 0 1rem;font-size:.8rem;color:#5c0e27;line-height:1.7}
-.notes-box .notes-title{font-family:'Playfair Display',serif;font-size:1rem;color:#8b1f42;font-weight:600;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
-.notes-box ul{padding-left:1.1rem;display:flex;flex-direction:column;gap:.35rem}
-.notes-box li{list-style:none;padding-left:.2rem;position:relative}
-.notes-box li::before{content:'•';color:#e8679a;position:absolute;left:-.9rem;font-weight:700}
-
 /* ── MASTERLIST CARD (customer view) ── */
 .ml-card{background:#fff;border:1.5px solid #ffc0d5;border-radius:14px;padding:.9rem 1rem;margin-bottom:.75rem;width:100%}
 .ml-card-head{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem}
@@ -1051,16 +1044,26 @@ function fallbackToLocal() { loadLocal(); renderCustomerProducts(); renderCatSid
 // each Firestore doc only stores a small URL string. If Storage isn't
 // available (offline, not configured, or the upload fails) it safely falls
 // back to keeping the base64 string so nothing breaks.
+// UPLOAD_TIMEOUT_MS guards against a stuck upload (e.g. slow/blocked network,
+// Storage misconfiguration) hanging forever and leaving the Save button stuck
+// on "Uploading photo…" with the product never actually saved.
+const UPLOAD_TIMEOUT_MS = 15000;
+function withTimeout(promise, ms) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('upload-timeout')), ms);
+    promise.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+  });
+}
 async function uploadImageDataUrl(dataUrl, folder) {
   if (!dataUrl || !dataUrl.startsWith('data:')) return dataUrl;
   if (!firebaseReady || !storage) return dataUrl;
   try {
     const path = folder + '/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.jpg';
     const ref = storage.ref().child(path);
-    await ref.putString(dataUrl, 'data_url', { contentType: 'image/jpeg' });
-    return await ref.getDownloadURL();
+    await withTimeout(ref.putString(dataUrl, 'data_url', { contentType: 'image/jpeg' }), UPLOAD_TIMEOUT_MS);
+    return await withTimeout(ref.getDownloadURL(), UPLOAD_TIMEOUT_MS);
   } catch (e) {
-    console.warn('Image upload to Storage failed, keeping embedded image instead:', e);
+    console.warn('Image upload to Storage failed or timed out, keeping embedded image instead:', e);
     return dataUrl;
   }
 }
@@ -1377,26 +1380,52 @@ async function saveProduct() {
   // Only touch the network if the photo actually changed — uploads to Storage
   // instead of embedding the (large) base64 string into the Firestore document.
   // This keeps documents tiny and the product list snappy as it grows.
+  // uploadImageDataUrl is now guarded by a timeout (see UPLOAD_TIMEOUT_MS) so a
+  // stuck/blocked upload can never leave this button stuck forever — it will
+  // fall back to saving the product with the embedded image instead.
   if (img && img.startsWith('data:')) {
     btn.textContent = 'Uploading photo…';
     img = await uploadImageDataUrl(img, 'products');
   }
   const data = { name, price, stock: parseInt(document.getElementById('p-stock').value)||0, desc: document.getElementById('p-desc').value.trim(), category: document.getElementById('p-category').value.trim(), img, status: document.getElementById('p-status').value };
   btn.textContent = 'Saving…';
-  const editId = document.getElementById('p-edit-id').value;
-  if (editId) {
-    const idx = state.products.findIndex(p => p.id === editId);
-    if (idx > -1) state.products[idx] = { id: editId, ...state.products[idx], ...data };
-    if (firebaseReady) await fsUpdate('products', editId, data);
-    else saveLocal();
-  } else {
-    const ts = Date.now();
-    if (firebaseReady) await fsAdd('products', { ...data, createdAt: ts });
-    else { state.products.unshift({ id:'local_'+ts, ...data, createdAt: ts }); saveLocal(); }
+  try {
+    const editId = document.getElementById('p-edit-id').value;
+    if (editId) {
+      const idx = state.products.findIndex(p => p.id === editId);
+      if (idx > -1) state.products[idx] = { id: editId, ...state.products[idx], ...data };
+      if (firebaseReady) await withTimeout(fsUpdate('products', editId, data), UPLOAD_TIMEOUT_MS);
+      saveLocal();
+    } else {
+      const ts = Date.now();
+      let addedId = null;
+      if (firebaseReady) addedId = await withTimeout(fsAdd('products', { ...data, createdAt: ts }), UPLOAD_TIMEOUT_MS);
+      if (!addedId) { state.products.unshift({ id:'local_'+ts, ...data, createdAt: ts }); }
+      saveLocal();
+    }
+    renderAdminProducts(); renderCustomerProducts(); renderCatSidebar();
+    renderMasterlistView(); renderMasterlistAdmin();
+    closeProductModal(); showAlert('prod-alert', '✓ Product saved!', 'success');
+  } catch (e) {
+    console.warn('Save product failed/timed out, saving locally instead:', e);
+    // Guaranteed fallback: always save locally so the product is never lost,
+    // even if Firestore itself is slow/unreachable.
+    const editId = document.getElementById('p-edit-id').value;
+    if (editId) {
+      const idx = state.products.findIndex(p => p.id === editId);
+      if (idx > -1) state.products[idx] = { id: editId, ...state.products[idx], ...data };
+    } else {
+      state.products.unshift({ id:'local_'+Date.now(), ...data, createdAt: Date.now() });
+    }
+    saveLocal();
+    renderAdminProducts(); renderCustomerProducts(); renderCatSidebar();
+    renderMasterlistView(); renderMasterlistAdmin();
+    closeProductModal();
+    showAlert('prod-alert', '⚠ Saved locally — connection to the server was slow/unavailable.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = document.getElementById('p-edit-id').value ? 'Save Changes' : 'Add Product';
   }
-  renderAdminProducts(); renderCustomerProducts(); renderCatSidebar();
-  renderMasterlistView(); renderMasterlistAdmin();
-  btn.disabled = false; closeProductModal(); showAlert('prod-alert', '✓ Product saved!', 'success');
 }
 
 async function deleteProduct(id) {
@@ -1797,19 +1826,37 @@ async function saveMasterlistItem() {
     batch
   };
   btn.textContent = 'Saving…';
-  const editId = document.getElementById('ml-edit-id').value;
-  if (editId) {
-    const idx = state.masterlist.findIndex(x => x.id===editId);
-    if (idx > -1) state.masterlist[idx] = { ...state.masterlist[idx], ...data };
-    if (firebaseReady) await fsUpdate('masterlist', editId, data);
-    else saveLocal();
-  } else {
-    const ts = Date.now();
-    if (firebaseReady) await fsAdd('masterlist', { ...data, createdAt: ts });
-    else { state.masterlist.push({ id:'local_'+ts, ...data, createdAt: ts }); saveLocal(); }
+  try {
+    const editId = document.getElementById('ml-edit-id').value;
+    if (editId) {
+      const idx = state.masterlist.findIndex(x => x.id===editId);
+      if (idx > -1) state.masterlist[idx] = { ...state.masterlist[idx], ...data };
+      if (firebaseReady) await withTimeout(fsUpdate('masterlist', editId, data), UPLOAD_TIMEOUT_MS);
+      saveLocal();
+    } else {
+      const ts = Date.now();
+      let addedId = null;
+      if (firebaseReady) addedId = await withTimeout(fsAdd('masterlist', { ...data, createdAt: ts }), UPLOAD_TIMEOUT_MS);
+      if (!addedId) { state.masterlist.push({ id:'local_'+ts, ...data, createdAt: ts }); }
+      saveLocal();
+    }
+    closeMasterlistModal();
+    renderMasterlistAdmin(); renderMasterlistView();
+  } catch (e) {
+    console.warn('Save masterlist item failed/timed out, saving locally instead:', e);
+    const editId = document.getElementById('ml-edit-id').value;
+    if (editId) {
+      const idx = state.masterlist.findIndex(x => x.id===editId);
+      if (idx > -1) state.masterlist[idx] = { ...state.masterlist[idx], ...data };
+    } else {
+      state.masterlist.push({ id:'local_'+Date.now(), ...data, createdAt: Date.now() });
+    }
+    saveLocal();
+    closeMasterlistModal();
+    renderMasterlistAdmin(); renderMasterlistView();
+  } finally {
+    btn.disabled = false;
   }
-  btn.disabled = false; closeMasterlistModal();
-  renderMasterlistAdmin(); renderMasterlistView();
 }
 
 async function updateMlEta(id, val) {
